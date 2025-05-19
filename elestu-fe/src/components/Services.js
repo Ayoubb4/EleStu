@@ -1,26 +1,35 @@
-//src/components/Services.js
-import React from 'react';
+// src/components/Services.js
+import React, { useState, useEffect } from 'react';
 import '../App.css';
 import Navbar from './Navbar';
 import studioImg from '../images/studio.jpg';
 import { useNavigate } from 'react-router-dom';
 
-const Services = () => {
+function Services() {
     const navigate = useNavigate();
+    const [services, setServices] = useState([]);
 
-    const cards = Array(6).fill({
-        name: "Max Payton",
-        description: "Producción musical completa, Mezcla y masterización. 11€/h"
-    });
-
-    const handleAddServiceClick = () => {
-        // Redirige a la página de creación de servicio
+    function handleAddServiceClick() {
         navigate('/add-service');
-    };
+    }
+
+    async function fetchServices() {
+        try {
+            const response = await fetch('http://localhost:3000/api/services');
+            const data = await response.json();
+            setServices(data);
+        } catch (error) {
+            console.error('Error fetching services:', error);
+        }
+    }
+
+    useEffect(function () {
+        fetchServices();
+    }, []);
 
     return (
         <div className="services-page">
-            <Navbar /> {/* Usa el componente Navbar */}
+            <Navbar />
 
             <div className="hero-section">
                 <div className="hero-overlay">
@@ -35,23 +44,25 @@ const Services = () => {
             </div>
 
             <div className="card-grid">
-                {cards.map((card, index) => (
-                    <div className="card" key={index}>
-                        <img src={studioImg} alt="Studio" />
-                        <div className="card-info">
-                            <h3>{card.name}</h3>
-                            <p>{card.description}</p>
+                {services.map(function (service) {
+                    return (
+                        <div className="card" key={service.id}>
+                            <img src={studioImg} alt="Studio" />
+                            <div className="card-info">
+                                <h3>{service.title}</h3>
+                                <p>{service.description}</p>
+                                <p>{service.price} €</p>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
-            {/* Botón flotante de añadir servicio */}
             <button className="add-service-btn" onClick={handleAddServiceClick}>
                 +
             </button>
         </div>
     );
-};
+}
 
 export default Services;
