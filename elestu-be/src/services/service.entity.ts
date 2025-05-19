@@ -20,6 +20,6 @@ export class Service {
     image: string;
 
     @ManyToOne(() => User, user => user.servicios)
-    @JoinColumn({ name: 'userid' }) // Esto ya crea la columna userid y la usa internamente
+    @JoinColumn({ name: 'userid' })
     user: User;
 }

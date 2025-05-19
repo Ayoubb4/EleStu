@@ -1,3 +1,4 @@
+//src/components/AddService.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../App.css';
@@ -27,7 +28,7 @@ function AddService() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const userId = localStorage.getItem('userId');  // Obtener el ID del usuario desde el localStorage
+        const userId = localStorage.getItem('userid');
         if (!userId) {
             console.error('Usuario no autenticado');
             toast.error('Usuario no autenticado');
