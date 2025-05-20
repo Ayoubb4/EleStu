@@ -1,4 +1,4 @@
-// src/components/ServicesList.js
+//src/components/ServiceList.js
 import React, { useState, useEffect } from 'react';
 
 function ServicesList() {
@@ -23,6 +23,13 @@ function ServicesList() {
                         <h3>{service.title}</h3>
                         <p>{service.description}</p>
                         <p>${service.price}</p>
+                        {service.image && (
+                            <img
+                                src={service.image}
+                                alt="Vista previa del servicio"
+                                style={{ width: '200px', height: 'auto' }}
+                            />
+                        )}
                     </li>
                 ))}
             </ul>
