@@ -404,7 +404,7 @@ p {
 
 .service-detail {
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* Cambiado a column por defecto para mobile-first o stacking */
   max-width: 800px;
   width: 100%;
   padding: 20px;
@@ -414,6 +414,26 @@ p {
   text-align: center;
   margin: 20px auto;
 }
+
+/* Flexbox para la vista detallada: imagen a la izquierda, info a la derecha */
+@media (min-width: 768px) { /* Para pantallas más grandes */
+  .service-detail {
+    flex-direction: row; /* La imagen y la info se ponen en fila */
+    align-items: flex-start; /* Alinea los elementos al inicio */
+    gap: 20px; /* Espacio entre la imagen y la info */
+  }
+  .service-detail-image {
+    width: 60%; /* La imagen ocupa más espacio */
+    max-height: none; /* Elimina max-height para permitir que la imagen se ajuste */
+  }
+  .service-detail-info-and-actions { /* Nuevo contenedor para las cajas y el botón */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra las cajas y el botón */
+    width: 40%; /* La información ocupa menos espacio */
+  }
+}
+
 
 .service-detail-image {
   width: 100%;
@@ -452,6 +472,7 @@ p {
   font-size: 1.3em;
   margin-bottom: 15px;
   text-align: center;
+  width: 100%; /* Para que ocupe todo el ancho disponible en su contenedor */
 }
 
 .service-type-box {
@@ -462,6 +483,7 @@ p {
   font-size: 1em;
   margin-bottom: 15px;
   text-align: center;
+  width: 100%; /* Para que ocupe todo el ancho disponible en su contenedor */
 }
 
 .hire-button {
@@ -473,6 +495,7 @@ p {
   font-size: 1.2em;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  width: 100%; /* Para que ocupe todo el ancho disponible en su contenedor */
 }
 
 .hire-button:hover {
@@ -486,7 +509,7 @@ p {
   color: #1e3a8a;
   margin-top: 30px;
   margin-bottom: 15px;
-  text-align: left;
+  text-align: center; /* Centrado para que coincida con la imagen */
 }
 
 .service-description-box {
@@ -494,6 +517,9 @@ p {
   padding: 15px;
   border-radius: 8px;
   text-align: left;
+  margin: 20px auto; /* Centrar la caja de descripción */
+  max-width: 800px; /* Ancho máximo igual al service-detail */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Sutil sombra */
 }
 
 .service-description-box p {

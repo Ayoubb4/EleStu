@@ -1,8 +1,7 @@
-// src/components/Services.js
 import React, { useState, useEffect } from 'react';
 import '../App.css';
 import Navbar from './Navbar';
-import studioImg from '../images/studio.jpg';
+import studioImg from '../images/studio.jpg'; // Asegúrate de que esta importación sea correcta
 import { useNavigate } from 'react-router-dom';
 
 function Services() {
@@ -11,6 +10,12 @@ function Services() {
 
     function handleAddServiceClick() {
         navigate('/add-service');
+    }
+
+    // AÑADIDO: Función para manejar el clic en una tarjeta de servicio
+    function handleServiceClick(service) {
+        localStorage.setItem('lastService', JSON.stringify(service)); // Guarda el servicio en localStorage
+        navigate('/service-preview'); // Redirige a la vista previa del servicio
     }
 
     async function fetchServices() {
@@ -46,7 +51,9 @@ function Services() {
             <div className="card-grid">
                 {services.map(function (service) {
                     return (
-                        <div className="card" key={service.id}>
+                        // MODIFICADO: Añadido el evento onClick a la tarjeta
+                        <div className="card" key={service.id} onClick={() => handleServiceClick(service)}>
+                            {/* Se utiliza studioImg como imagen por defecto para las tarjetas */}
                             <img src={studioImg} alt="Studio" />
                             <div className="card-info">
                                 <h3>{service.title}</h3>

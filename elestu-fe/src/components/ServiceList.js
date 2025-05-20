@@ -1,4 +1,3 @@
-//src/components/ServiceList.js
 import React, { useState, useEffect } from 'react';
 
 function ServicesList() {
