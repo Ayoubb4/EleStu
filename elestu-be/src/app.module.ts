@@ -10,6 +10,7 @@ import { User } from './users/user.entity'
 import {Service} from "./services/service.entity";
 import {Studio} from "./studios/studio.entity";
 import { ServicesModule } from './services/services.module';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { ServicesModule } from './services/services.module';
     AuthModule,
     UserModule,
     StudioModule,
-    ServicesModule
+    ServicesModule,
+    PaymentsModule
   ],
   controllers: [AppController],
   providers: [AppService]

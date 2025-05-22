@@ -9,7 +9,7 @@ import { loadStripe } from '@stripe/stripe-js';
 const stripePromise = loadStripe('pk_test_51RRYlABLLQhi6zmnhz8XOG6GmVPXGFroC6nQmhDWhP0Jf4gkuQP1Xd4k5Zeici1faTW3q5sJpWDCSOZGhEjzQhdz000E6PdJW4');
 
 // Componente interno que usa los hooks de Stripe
-function CheckoutForm({ orderSummary, onPaymentSuccess, onPaymentError }) {
+function CheckoutForm({ orderSummary, onPaymentSuccess, onPaymentError, userId, selectedPaymentMethod }) {
     const stripe = useStripe();
     const elements = useElements();
     const [loading, setLoading] = useState(false);
@@ -27,11 +27,12 @@ function CheckoutForm({ orderSummary, onPaymentSuccess, onPaymentError }) {
         setLoading(true);
         setMessage('');
 
+        console.log("Selected Payment Method in CheckoutForm:", selectedPaymentMethod);
+
         // 1. Crear un PaymentIntent en tu backend
-        // Aquí debes enviar el monto y la moneda al backend.
-        // También puedes enviar el ID del servicio o el orderSummary completo.
+        // CAMBIADO: Añadido '/api' al path para que coincida con el prefijo global del backend
         try {
-            const response = await fetch('http://localhost:3000/payments/create-payment-intent', {
+            const response = await fetch('http://localhost:3000/api/payments/create-payment-intent', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -41,7 +42,8 @@ function CheckoutForm({ orderSummary, onPaymentSuccess, onPaymentError }) {
                     currency: 'eur',
                     serviceId: orderSummary ? orderSummary.id : null,
                     serviceTitle: orderSummary ? orderSummary.title : 'Unknown Service',
-                    // Puedes añadir más detalles del servicio aquí si los necesitas en el backend
+                    userId: userId,
+                    selectedPaymentMethod: selectedPaymentMethod,
                 }),
             });
 
@@ -84,7 +86,7 @@ function CheckoutForm({ orderSummary, onPaymentSuccess, onPaymentError }) {
         }
     };
 
-    const [cardDetails, setCardDetails] = useState({ // Mantenemos este estado para los campos manuales que no son de Stripe
+    const [cardDetails, setCardDetails] = useState({
         nameOnCard: '',
         country: ''
     });
@@ -119,33 +121,9 @@ function CheckoutForm({ orderSummary, onPaymentSuccess, onPaymentError }) {
         <form onSubmit={handleProcessPayment} className="card-info-section">
             <h3>Card information</h3>
             <div className="input-group">
-                {/* Stripe CardElement para la tarjeta de crédito */}
                 <CardElement options={CARD_ELEMENT_OPTIONS} className="payment-input stripe-card-element" />
-                {/* El icono de bandera se mantiene si quieres un elemento visual adicional */}
                 <span className="flag-icon">🇪🇸</span>
             </div>
-            {/* Los campos de MM/YY y CVC ya están incluidos en CardElement, los eliminamos o los dejamos si son para otros métodos */}
-            {/* Si solo usas CardElement, estos inputs ya no son necesarios */}
-            {/*
-            <div className="input-group-inline">
-                <input
-                    type="text"
-                    name="expiry"
-                    placeholder="MM/YY"
-                    value={cardDetails.expiry}
-                    onChange={handleCardDetailsChange}
-                    className="payment-input small-input"
-                />
-                <input
-                    type="text"
-                    name="cvc"
-                    placeholder="CVC"
-                    value={cardDetails.cvc}
-                    onChange={handleCardDetailsChange}
-                    className="payment-input small-input"
-                />
-            </div>
-            */}
 
             <h3>Name on card</h3>
             <div className="input-group">
@@ -173,7 +151,6 @@ function CheckoutForm({ orderSummary, onPaymentSuccess, onPaymentError }) {
                     <option value="ES">España</option>
                     <option value="US">United States</option>
                     <option value="UK">United Kingdom</option>
-                    {/* Añade más países según sea necesario */}
                 </select>
             </div>
 
@@ -191,14 +168,21 @@ function PaymentMethodPage() {
     const [currentStep, setCurrentStep] = useState(1);
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
     const [orderSummary, setOrderSummary] = useState(null);
+    const [userId, setUserId] = useState(null);
 
     useEffect(() => {
+        const storedUserId = localStorage.getItem('userid');
+        if (storedUserId) {
+            setUserId(storedUserId);
+        } else {
+            console.warn("User ID not found in localStorage. Payment might not be linked to a user.");
+        }
+
         const serviceData = localStorage.getItem('currentServiceForPayment');
         if (serviceData) {
             setOrderSummary(JSON.parse(serviceData));
         } else {
             console.warn("No service found for payment. Redirecting to services.");
-            // navigate('/services'); // Descomentar si quieres redirigir automáticamente
         }
     }, [navigate]);
 
@@ -208,14 +192,12 @@ function PaymentMethodPage() {
     };
 
     const handlePaymentSuccess = () => {
-        setCurrentStep(3); // Avanza al paso 3 (confirmación)
+        setCurrentStep(3);
         console.log("Pago exitoso. Revisar el correo de confirmación.");
     };
 
     const handlePaymentError = (errorMessage) => {
-        // Aquí podrías manejar el error, quizás volver al paso 2 o mostrar un mensaje específico
         console.error("Error en el pago:", errorMessage);
-        // Puedes establecer un estado para mostrar un mensaje de error en la UI
     };
 
     const renderStepCircles = () => (
@@ -264,17 +246,17 @@ function PaymentMethodPage() {
                     </>
                 );
             case 2:
-                // Paso 2: Información de la Tarjeta (envuelto en Elements)
                 return (
                     <>
                         <h2 className="payment-method-title">Payment Method</h2>
                         {renderStepCircles()}
-                        {/* Envuelve el formulario de pago con Elements */}
                         <Elements stripe={stripePromise}>
                             <CheckoutForm
                                 orderSummary={orderSummary}
                                 onPaymentSuccess={handlePaymentSuccess}
                                 onPaymentError={handlePaymentError}
+                                userId={userId}
+                                selectedPaymentMethod={selectedPaymentMethod}
                             />
                         </Elements>
                     </>

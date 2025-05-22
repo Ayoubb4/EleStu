@@ -2,6 +2,9 @@ import { Controller, Get, Post, Body, Param, UploadedFile, UseInterceptors } fro
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ServicesService } from './services.service';
 import { CreateServiceDto } from './dto/create-service.dto';
+// Make sure @types/multer is installed (npm install --save-dev @types/multer)
+// This type should be available globally if @types/multer is correctly set up.
+// If you still have issues, you might need to adjust tsconfig.json or use 'any' as a last resort.
 
 @Controller('services')
 export class ServicesController {
@@ -15,7 +18,6 @@ export class ServicesController {
     console.log('Recibiendo solicitud para crear servicio:', createServiceDto);
     if (file) {
       console.log('Archivo recibido:', file.originalname);
-      // Guardamos la ruta de la imagen en createServiceDto (por ejemplo)
       createServiceDto.image = file.filename;
     }
     return this.servicesService.create(createServiceDto);

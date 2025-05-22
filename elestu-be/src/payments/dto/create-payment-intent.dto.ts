@@ -1,4 +1,4 @@
-import { IsNumber, IsString, IsNotEmpty, Min } from 'class-validator';
+import { IsNumber, IsString, IsNotEmpty, Min, IsOptional } from 'class-validator';
 
 export class CreatePaymentIntentDto {
     @IsNumber()
@@ -12,4 +12,8 @@ export class CreatePaymentIntentDto {
     @IsString()
     @IsNotEmpty()
     serviceTitle: string; // Para metadatos y email de confirmación
+
+    @IsString()
+    @IsOptional() // Puede ser opcional si no siempre hay un usuario logueado
+    userId?: string; // NUEVO: ID del usuario registrado
 }

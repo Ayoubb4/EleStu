@@ -1,21 +1,21 @@
 import { Controller, Post, Body, Res, Req, RawBodyRequest, HttpStatus } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
-import { CreatePaymentIntentDto } from './dto/create-payment-intent.dto'; // Crearemos este DTO
-import { ConfigService } from '@nestjs/config'; // Para obtener la clave secreta del webhook
-import { Request, Response } from 'express'; // Importar Request y Response de express
+import { CreatePaymentIntentDto } from './dto/create-payment-intent.dto';
+import { ConfigService } from '@nestjs/config';
+import { Request, Response } from 'express';
 
 @Controller('payments')
 export class PaymentsController {
     constructor(
         private readonly paymentsService: PaymentsService,
-        private readonly configService: ConfigService, // Inyectar ConfigService
+        private readonly configService: ConfigService,
     ) {}
 
     @Post('create-payment-intent')
     async createPaymentIntent(@Body() createPaymentIntentDto: CreatePaymentIntentDto) {
         try {
-            const { amount, currency, serviceTitle } = createPaymentIntentDto;
-            const paymentIntent = await this.paymentsService.createPaymentIntent(amount, currency, serviceTitle);
+            const { amount, currency, serviceTitle, userId } = createPaymentIntentDto;
+            const paymentIntent = await this.paymentsService.createPaymentIntent(amount, currency, serviceTitle, userId);
             return paymentIntent;
         } catch (error) {
             return { error: error.message };
@@ -26,15 +26,21 @@ export class PaymentsController {
     @Post('webhook')
     async handleWebhook(@Req() req: RawBodyRequest<Request>, @Res() res: Response) {
         const sig = req.headers['stripe-signature'];
-        const rawBody = req.rawBody; // NestJS RawBodyRequest para obtener el cuerpo crudo
-        const webhookSecret = this.configService.get<string>('STRIPE_WEBHOOK_SECRET'); // Obtener el secreto del webhook
+        const rawBody = req.rawBody; // Esto debería estar disponible ahora
 
-        if (!sig || !webhookSecret) {
-            return res.status(HttpStatus.BAD_REQUEST).send('Webhook Secret or Signature missing');
+        const webhookSecret = this.configService.get<string>('STRIPE_WEBHOOK_SECRET');
+
+        // ¡CRUCIAL! Asegúrate de que rawBody y sig no sean undefined
+        if (!rawBody || !sig || !webhookSecret) {
+            console.error('Webhook Error: Missing rawBody, signature, or webhook secret.');
+            return res.status(HttpStatus.BAD_REQUEST).send('Webhook Secret, Signature, or Raw Body missing');
         }
 
+        // Asegúrate de que sig sea un string (puede venir como string o string[])
+        const signature = Array.isArray(sig) ? sig[0] : sig;
+
         try {
-            await this.paymentsService.handleStripeWebhook(rawBody, sig, webhookSecret);
+            await this.paymentsService.handleStripeWebhook(rawBody, signature, webhookSecret);
             return res.status(HttpStatus.OK).send({ received: true });
         } catch (error) {
             console.error('Error handling webhook:', error.message);
