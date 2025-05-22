@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../App.css'; // Make sure this path is correct if App.css contains the new styles
-import Navbar from './Navbar'; // Added Navbar import
+import '../App.css';
+import Navbar from './Navbar';
 
 function ServicePreview() {
     const navigate = useNavigate();
@@ -14,44 +14,46 @@ function ServicePreview() {
         } else {
             setService(JSON.parse(data));
         }
-    }, []);
+    }, [navigate]);
+
+    // NUEVO: Función para manejar el clic en el botón "HIRE"
+    function handleHireClick() {
+        // Opcional: Puedes guardar el servicio actual en localStorage de nuevo si la página de pago lo necesita
+        localStorage.setItem('currentServiceForPayment', JSON.stringify(service));
+        navigate('/payment-method'); // Redirige a la nueva página de métodos de pago
+    }
 
     if (!service) return null;
 
     return (
-        <div className="service-preview-page"> {/* Added a wrapper div for the whole page */}
-            <Navbar /> {/* Added Navbar */}
-            <div className="service-detail-container"> {/* Main container for layout */}
+        <div className="service-preview-page">
+            <Navbar />
+            <div className="service-detail-container">
                 <div className="service-detail">
-                    {/* Image Section - The large image in the preview */}
-                    <img src={service.image} alt="Servicio" className="service-detail-image" />
+                    <img src={service.image || "https://placehold.co/600x400/0038E1/FFFFFF?text=Service+Image"} alt="Servicio" className="service-detail-image" />
 
-                    <div className="service-detail-info-and-actions"> {/* New div to group info and actions */}
+                    <div className="service-detail-info-and-actions">
                         <div className="service-detail-info">
-                            {/* Price Box */}
                             <div className="price-box">
                                 <p>Price per Hour</p>
-                                <p>{service.price}€</p> {/* Using service.price here */}
+                                <p>{service.price}€</p>
                             </div>
 
-                            {/* Service Type Box */}
                             <div className="service-type-box">
                                 <p>SERVICE</p>
-                                <h4>{service.title.toUpperCase()}</h4> {/* Using service.title here */}
+                                <h4>{service.title.toUpperCase()}</h4>
                             </div>
 
-                            {/* Hire Button */}
-                            <button className="hire-button">HIRE</button>
+                            {/* MODIFICADO: Añadido el onClick handler */}
+                            <button className="hire-button" onClick={handleHireClick}>HIRE</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Service Description Section */}
             <h2 className="service-description-title">Service Description</h2>
             <div className="service-description-box">
-                <p>{service.description}</p> {/* Using service.description here */}
-                {/* You can add more detailed descriptions from your service object if available */}
+                <p>{service.description}</p>
                 <p>
                     Mezcla profesional:
                     <br />

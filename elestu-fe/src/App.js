@@ -6,7 +6,8 @@ import ForgotPassword from "./components/ForgotPassword";
 import Services from "./components/Services";
 import AddService from './components/AddService';
 import ServiceDetail from './components/ServiceDetail';
-import ServicePreview from './components/ServicePreview'; // Import ServicePreview
+import ServicePreview from './components/ServicePreview';
+import PaymentMethodPage from './components/PaymentMethodPage'; // Importa el componente de pago
 
 function App() {
     return (
@@ -18,8 +19,9 @@ function App() {
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/add-service" element={<AddService />} />
                 <Route path="/service/:id" element={<ServiceDetail />} />
-                <Route path="/" element={<Navigate replace to="/login" />} />
                 <Route path="/service-preview" element={<ServicePreview />} />
+                <Route path="/payment-method" element={<PaymentMethodPage />} />
+                <Route path="/" element={<Navigate replace to="/login" />} />
             </Routes>
         </div>
     );

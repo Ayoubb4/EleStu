@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../App.css';
 import Navbar from './Navbar';
-import studioImg from '../images/studio.jpg'; // Asegúrate de que esta importación sea correcta
 import { useNavigate } from 'react-router-dom';
 
 function Services() {
@@ -54,7 +53,7 @@ function Services() {
                         // MODIFICADO: Añadido el evento onClick a la tarjeta
                         <div className="card" key={service.id} onClick={() => handleServiceClick(service)}>
                             {/* Se utiliza studioImg como imagen por defecto para las tarjetas */}
-                            <img src={studioImg} alt="Studio" />
+                            <img src={service.image} alt="Service" className="service-detail-image" />
                             <div className="card-info">
                                 <h3>{service.title}</h3>
                                 <p>{service.description}</p>

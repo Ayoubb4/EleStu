@@ -9,8 +9,8 @@ function Navbar() {
             <div className="navbar-content">
                 <img src={logoGif} alt="Logo" className="navbar-logo" />
                 <div className="nav-links">
-                    <a href="/services">Servicios</a>
-                    <a href="#">Estadísticas</a>
+                    <a href="/services">Services</a>
+                    <a href="/studios">Studios</a>
                 </div>
                 <Settings className="settings-icon" />
             </div>
