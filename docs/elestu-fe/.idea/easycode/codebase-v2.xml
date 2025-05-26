@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="com.obiscr.chatgpt.settings.EasyCodeState">
+    <option name="projectFiles" value="$PROJECT_DIR$/public/index.html;E:/WebstormProjects/elestu-fe/public/manifest.json;E:/WebstormProjects/elestu-fe/src/components/ForgotPassword.js;E:/WebstormProjects/elestu-fe/src/components/Login.js;E:/WebstormProjects/elestu-fe/src/components/Navbar.js;E:/WebstormProjects/elestu-fe/src/components/Register.js;E:/WebstormProjects/elestu-fe/src/components/Services.js;E:/WebstormProjects/elestu-fe/src/components/Welcome.js;E:/WebstormProjects/elestu-fe/src/services/authService.js;E:/WebstormProjects/elestu-fe/src/services/marketplaceService.js;E:/WebstormProjects/elestu-fe/src/App.css;E:/WebstormProjects/elestu-fe/src/App.js;E:/WebstormProjects/elestu-fe/src/index.css;E:/WebstormProjects/elestu-fe/src/index.js;E:/WebstormProjects/elestu-fe/src/reportWebVitals.js;E:/WebstormProjects/elestu-fe/src/setupTests.js;E:/WebstormProjects/elestu-fe/package-lock.json;E:/WebstormProjects/elestu-fe/package.json;E:/WebstormProjects/elestu-fe/README.md" />
+  </component>
+</project>
