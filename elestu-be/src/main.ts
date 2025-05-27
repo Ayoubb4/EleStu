@@ -44,13 +44,19 @@ async function bootstrap() {
         logger.log('Middleware de sesión configurado');
 
         app.enableCors({
-            // AÑADIDO: 'http://localhost:3001' para permitir solicitudes desde tu frontend React
-            origin: ['http://localhost:8000', 'http://127.0.0.1:8000', 'http://localhost:3000', 'http://localhost:3001'],
+            origin: [
+                'http://localhost:8000',
+                'http://127.0.0.1:8000',
+                'http://localhost:3000',
+                'http://localhost:3001',
+                'https://ele-stu.vercel.app'
+            ],
             methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
             credentials: true,
             allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Cookie', 'Origin', 'X-Requested-With'],
             exposedHeaders: ['Set-Cookie'],
         });
+
         logger.log('CORS configurado');
 
         app.useGlobalPipes(new ValidationPipe({
