@@ -87,6 +87,10 @@ async function bootstrap() {
         const port = process.env.PORT || 3000;
         await app.listen(port);
         logger.log(`🚀 Servidor corriendo en: http://localhost:${port}`);
+
+        const baseUrl = process.env.RENDER_EXTERNAL_URL || `http://localhost:${port}`;
+        logger.log(`🌍 API disponible en: ${baseUrl}`);
+
     } catch (error) {
         logger.error(`Error al iniciar la aplicación: ${error.message}`, error.stack);
         throw error;
