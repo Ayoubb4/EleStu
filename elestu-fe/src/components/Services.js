@@ -19,7 +19,7 @@ function Services() {
 
     async function fetchServices() {
         try {
-            const response = await fetch('http://localhost:3000/api/services');
+            const response = await fetch('https://elestu.onrender.com/api/services');
             const data = await response.json();
             setServices(data);
         } catch (error) {

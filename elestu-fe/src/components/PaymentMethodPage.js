@@ -32,13 +32,13 @@ function CheckoutForm({ orderSummary, onPaymentSuccess, onPaymentError, userId, 
         // 1. Crear un PaymentIntent en tu backend
         // CAMBIADO: Añadido '/api' al path para que coincida con el prefijo global del backend
         try {
-            const response = await fetch('http://localhost:3000/api/payments/create-payment-intent', {
+            const response = await fetch('https://elestu.onrender.com/api/payments/create-payment-intent', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    amount: orderSummary ? orderSummary.price * 100 : 0, // Stripe usa centavos
+                    amount: orderSummary ? orderSummary.price * 100 : 0,
                     currency: 'eur',
                     serviceId: orderSummary ? orderSummary.id : null,
                     serviceTitle: orderSummary ? orderSummary.title : 'Unknown Service',

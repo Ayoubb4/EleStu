@@ -9,7 +9,7 @@ function ServiceDetail() {
     useEffect(() => {
         const fetchService = async () => {
             try {
-                const response = await fetch(`http://localhost:3000/api/services/${id}`);
+                const response = await fetch(`https://elestu.onrender.com/api/services/${id}`);
                 const data = await response.json();
                 setService(data);
             } catch (error) {

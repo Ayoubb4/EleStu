@@ -47,7 +47,7 @@ function AddService() {
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:3000/api/services', {
+            const response = await fetch('https://elestu.onrender.com/api/services', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

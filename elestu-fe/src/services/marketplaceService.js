@@ -1,7 +1,7 @@
 //src/services/marketplaceService.js
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'https://elestu.onrender.com/api';
 
 // Trae la lista completa de proveedores
 export const getProviders = async () => {
