@@ -1,13 +1,10 @@
+//src/studios/studio.module.ts
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { StudioService } from './studio.service';
-import { Studio } from './studio.entity'; // Asegúrate de que esta ruta sea correcta
+import { GooglePlacesService } from './google-places.service';
+import { StudioController } from './studio.controller';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([Studio]) // Registra la entidad Studio
-    ],
-    providers: [StudioService],
-    exports: [StudioService]
+    providers: [GooglePlacesService],
+    controllers: [StudioController],
 })
 export class StudioModule {}

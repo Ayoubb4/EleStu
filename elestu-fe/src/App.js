@@ -7,7 +7,10 @@ import Services from "./components/Services";
 import AddService from './components/AddService';
 import ServiceDetail from './components/ServiceDetail';
 import ServicePreview from './components/ServicePreview';
-import PaymentMethodPage from './components/PaymentMethodPage'; // Importa el componente de pago
+import PaymentMethodPage from './components/PaymentMethodPage';
+import StudiosPage from "./components/StudiosPage";
+import StudioPreview from "./components/StudioPreview";
+import BookingForm from "./components/BookingForm"; // Importa el componente de pago
 
 function App() {
     return (
@@ -22,6 +25,9 @@ function App() {
                 <Route path="/service-preview" element={<ServicePreview />} />
                 <Route path="/payment-method" element={<PaymentMethodPage />} />
                 <Route path="/" element={<Navigate replace to="/login" />} />
+                <Route path="/studios" element={<StudiosPage />} />
+                <Route path="/studio-preview" element={<StudioPreview />} />
+                <Route path="/booking-form" element={<BookingForm />} />
             </Routes>
         </div>
     );

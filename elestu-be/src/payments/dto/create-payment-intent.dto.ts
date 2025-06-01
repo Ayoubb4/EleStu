@@ -1,3 +1,4 @@
+//src/payments/dto/create-payment-intent.dto.ts
 import { IsNumber, IsString, IsNotEmpty, Min, IsOptional } from 'class-validator';
 
 export class CreatePaymentIntentDto {

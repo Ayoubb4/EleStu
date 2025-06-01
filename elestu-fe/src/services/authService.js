@@ -1,7 +1,7 @@
-//src/services/authService.js
+// src/services/authService.js
 import axios from 'axios';
 
-const API_URL = 'https://elestu.onrender.com/api';
+const API_URL = 'http://localhost:3000/api';
 
 export const register = async (name, email, password) => {
     try {
@@ -18,6 +18,7 @@ export const register = async (name, email, password) => {
         // Guardar los datos del usuario en localStorage
         localStorage.setItem('user', JSON.stringify(response.data));
         localStorage.setItem('userid', response.data.id); // Guardar el userid
+        localStorage.setItem('userEmail', response.data.email); // <--- ADDED FOR REGISTER
         localStorage.setItem('isAuthenticated', 'true');
 
         return { success: true, data: response.data };
@@ -41,10 +42,17 @@ export const login = async (email, password) => {
 
         console.log('Respuesta de login:', response.data);
 
+        // IMPORTANT: Check the structure of response.data.user
+        // Based on your console.log('Respuesta de login:', response.data),
+        // ensure that response.data.user exists and contains id and email.
+        // If your backend directly returns { id, email, ... } at the root,
+        // then you'd use response.data.id and response.data.email
+
         if (response.data.success) {
             // Guardar la información del usuario
             localStorage.setItem('user', JSON.stringify(response.data.user));
             localStorage.setItem('userid', response.data.user.id); // Guardar el userid en login
+            localStorage.setItem('userEmail', response.data.user.email); // <--- ADDED FOR LOGIN
             localStorage.setItem('isAuthenticated', 'true');
 
             return { success: true, data: response.data };
@@ -66,6 +74,7 @@ export const login = async (email, password) => {
 export const logout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('userid');
+    localStorage.removeItem('userEmail'); // <--- ADDED FOR LOGOUT (good practice)
     localStorage.removeItem('isAuthenticated');
     console.log('Sesión cerrada correctamente');
 };
@@ -88,6 +97,8 @@ export const verifyAuth = async () => {
         console.error('Error verificando autenticación:', error.response?.data || error);
         // Si hay un error, limpiamos los datos del localStorage
         localStorage.removeItem('user');
+        localStorage.removeItem('userid'); // <--- ADDED FOR VERIFYAUTH ERROR (good practice)
+        localStorage.removeItem('userEmail'); // <--- ADDED FOR VERIFYAUTH ERROR (good practice)
         localStorage.removeItem('isAuthenticated');
         return false;
     }
@@ -119,7 +130,8 @@ export const getCurrentUser = () => {
     if (!userStr) return null;
 
     try {
-        return JSON.parse(userStr);
+        const user = JSON.parse(userStr);
+        return user;
     } catch (error) {
         console.error('Error al parsear datos de usuario:', error);
         return null;

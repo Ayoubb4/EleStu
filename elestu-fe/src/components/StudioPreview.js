@@ -1,60 +1,57 @@
-//src/components/ServicePreview.js
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import '../App.css';
 import Navbar from './Navbar';
 
-function ServicePreview() {
+function StudioPreview() { // Renamed from ServicePreview to StudioPreview
     const navigate = useNavigate();
-    const [service, setService] = useState(null);
+    const location = useLocation();
+    const [studio, setStudio] = useState(null);
 
     useEffect(function () {
-        const data = localStorage.getItem('lastService');
-        if (!data) {
-            navigate('/services');
+        const { studio } = location.state || {};
+        if (!studio) {
+            navigate('/studios');
         } else {
-            setService(JSON.parse(data));
+            setStudio(studio);
         }
-    }, [navigate]);
+    }, [navigate, location.state]);
 
-    // NUEVO: Función para manejar el clic en el botón "HIRE"
     function handleHireClick() {
-        // Opcional: Puedes guardar el servicio actual en localStorage de nuevo si la página de pago lo necesita
-        localStorage.setItem('currentServiceForPayment', JSON.stringify(service));
-        navigate('/payment-method'); // Redirige a la nueva página de métodos de pago
+        navigate('/booking-form', { state: { studio } });
     }
 
-    if (!service) return null;
+    if (!studio) return null;
 
     return (
-        <div className="service-preview-page">
+        <div className="service-preview-page"> {/* Keeping the class name as 'service-preview-page' for existing CSS to apply */}
             <Navbar />
             <div className="service-detail-container">
                 <div className="service-detail">
-                    <img src={service.image || "https://placehold.co/600x400/0038E1/FFFFFF?text=Service+Image"} alt="Servicio" className="service-detail-image" />
+                    <img src={studio.imageUrl || "https://placehold.co/600x400/0038E1/FFFFFF?text=Studio+Image"} alt="Estudio de Grabación" className="service-detail-image" />
 
                     <div className="service-detail-info-and-actions">
                         <div className="service-detail-info">
                             <div className="price-box">
                                 <p>Price per Hour</p>
-                                <p>{service.price}€</p>
+                                <p>{studio.price}$</p>
                             </div>
 
-                            <div className="service-type-box">
-                                <p>SERVICE</p>
-                                <h4>{service.title.toUpperCase()}</h4>
+                            <div className="location-box">
+                                <p>Location</p>
+                                <img src="https://www.flaticon.com/svg/v.icon/icons/svg/1057/1057630.svg" alt="Location Icon" className="location-icon" />
+                                <p>{studio.location.address}</p>
                             </div>
 
-                            {/* MODIFICADO: Añadido el onClick handler */}
                             <button className="hire-button" onClick={handleHireClick}>HIRE</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <h2 className="service-description-title">Service Description</h2>
+            <h2 className="service-description-title">Service Description</h2> {/* Keeping as "Service Description" as it's a description of the service offered by the studio */}
             <div className="service-description-box">
-                <p>{service.description}</p>
+                <p>{studio.description}</p>
                 <p>
                     Mezcla profesional:
                     <br />
@@ -77,4 +74,4 @@ function ServicePreview() {
     );
 }
 
-export default ServicePreview;
+export default StudioPreview;

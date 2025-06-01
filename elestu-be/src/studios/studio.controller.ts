@@ -1,21 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Studio } from './studio.entity';
+//src/studios/studio.controller.ts
+import { Controller, Get } from '@nestjs/common';
+import { GooglePlacesService } from './google-places.service';
 
-@Injectable()
-export class StudioService {
-    constructor(
-        @InjectRepository(Studio)
-        private studioRepository: Repository<Studio>
-    ) {}
+@Controller('studios')
+export class StudioController {
+    constructor(private googlePlacesService: GooglePlacesService) {}
 
-    async create(data: Partial<Studio>) {
-        const studio = this.studioRepository.create(data);
-        return this.studioRepository.save(studio);
-    }
-
-    async findAll() {
-        return this.studioRepository.find();
+    @Get()
+    async getStudios() {
+        return this.googlePlacesService.searchRecordingStudiosInSpain();
     }
 }
+

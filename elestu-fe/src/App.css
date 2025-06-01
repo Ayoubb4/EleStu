@@ -5,7 +5,6 @@
 @font-face {
   font-family: 'Firmos';
   src: url('./font/firmos-9mv27.otf') format('opentype');
-  font-weight: normal;
   font-style: normal;
 }
 
@@ -806,4 +805,557 @@ p {
   .pay-button {
     width: 100%; /* Botón de ancho completo en móviles */
   }
+}
+
+/* ===========================================================
+   10. Forgot Password – Estructura y estilos
+   =========================================================== */
+
+.forgot-password-page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Full viewport height */
+  background-color: white; /* White background as per image */
+  font-family: 'Firmos', sans-serif; /* Ensure font is applied */
+}
+
+.forgot-password-header {
+  width: 100%;
+  background-color: #0038E1; /* Strong blue from image */
+  padding: 3rem 0; /* Adjust padding to match header height in image */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom-left-radius: 20px; /* Slight rounding at bottom */
+  border-bottom-right-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow below header */
+}
+
+.forgot-password-logo-text {
+  font-family: 'Firmos', sans-serif; /* Use Firmos font */
+  color: white;
+  font-size: 5rem; /* Large font size for the logo text */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Add text shadow for depth */
+  letter-spacing: 0.15em; /* Spacing between letters */
+  margin: 0; /* Remove default margin from h1 */
+}
+
+.forgot-password-content-wrapper {
+  flex-grow: 1; /* Allows content to take up remaining vertical space */
+  display: flex;
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Center horizontally */
+  padding: 20px; /* Padding around the central content box */
+}
+
+.forgot-password-box {
+  background-color: white; /* Central content box has a white background */
+  padding: 40px; /* Internal padding */
+  border-radius: 15px; /* Subtle rounding */
+  width: 100%;
+  max-width: 800px; /* Max width to contain elements for larger screens */
+  text-align: center;
+}
+
+.forgot-password-title {
+  font-family: 'Firmos', sans-serif;
+  font-size: 3.5rem; /* Large and bold, adjusted from login-box h2 */
+  color: black; /* Text color */
+  margin-bottom: 3rem; /* Space below the title */
+  line-height: 1.2; /* Adjust line height for multi-line text */
+}
+
+.forgot-password-form .input-group {
+  margin-bottom: 2rem; /* Space below input field */
+}
+
+.forgot-password-input {
+  font-family: 'Firmos', sans-serif;
+  width: 100%;
+  padding: 1.5rem; /* Larger padding for a taller input */
+  border-radius: 50px; /* Fully rounded corners */
+  border: 2px solid #ccc; /* Light grey border */
+  background-color: #e0e0e0; /* Light grey background as in image */
+  font-size: 2.2rem; /* Large font size for input text */
+  text-align: center;
+  color: #333; /* Darker text color */
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1); /* Inner shadow for depth */
+  outline: none; /* Remove default outline */
+  transition: all 0.3s ease;
+}
+
+.forgot-password-input::placeholder {
+  color: #999;
+}
+
+.forgot-password-input:focus {
+  border-color: #0038E1; /* Blue border on focus */
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(0, 56, 225, 0.2); /* Blue glow on focus */
+}
+
+.forgot-password-buttons-container {
+  display: flex;
+  justify-content: space-between; /* Space out the two buttons */
+  gap: 20px; /* Gap between buttons */
+  margin-top: 3rem; /* Space above buttons */
+}
+
+/* Base style for both buttons */
+.forgot-password-button {
+  font-family: 'Firmos', sans-serif;
+  flex: 1; /* Make buttons take equal space */
+  padding: 1.5rem 2rem; /* Larger padding for bigger buttons */
+  border-radius: 50px; /* Fully rounded corners */
+  border: none;
+  font-size: 2.5rem; /* Large font size for button text */
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for lift */
+  transition: all 0.3s ease;
+  text-decoration: none; /* For the Link component */
+  display: flex; /* For centering text in button/link */
+  justify-content: center;
+  align-items: center;
+  color: #333; /* Dark text for both buttons as per image */
+  background-color: #e0e0e0; /* Light grey background as in image */
+}
+
+.forgot-password-button:hover {
+  background-color: #d0d0d0; /* Slightly darker grey on hover */
+  transform: translateY(-2px); /* Slight lift on hover */
+}
+
+.forgot-password-button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Styles for messages */
+.forgot-password-message {
+  font-family: 'Firmos', sans-serif;
+  font-size: 2rem;
+  margin-top: 1.5rem;
+  padding: 0.8rem 1.5rem;
+  border-radius: 10px;
+  font-weight: bold;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.forgot-password-message.success {
+  color: #4CAF50; /* Green for success */
+  background-color: #e6ffe6;
+  border: 1px solid #4CAF50;
+}
+
+.forgot-password-message.error {
+  color: #f44336; /* Red for error */
+  background-color: #ffe6e6;
+  border: 1px solid #f44336;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .forgot-password-header {
+    padding: 2rem 0;
+  }
+  .forgot-password-logo-text {
+    font-size: 3.5rem;
+  }
+  .forgot-password-box {
+    padding: 30px;
+  }
+  .forgot-password-title {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+  }
+  .forgot-password-input {
+    padding: 1.2rem;
+    font-size: 1.8rem;
+  }
+  .forgot-password-buttons-container {
+    flex-direction: column; /* Stack buttons vertically on small screens */
+    gap: 15px;
+  }
+  .forgot-password-button {
+    padding: 1.2rem 1.5rem;
+    font-size: 2rem;
+  }
+  .forgot-password-message {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .forgot-password-header {
+    padding: 1.5rem 0;
+  }
+  .forgot-password-logo-text {
+    font-size: 2.8rem;
+  }
+  .forgot-password-box {
+    padding: 20px;
+  }
+  .forgot-password-title {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  .forgot-password-input {
+    font-size: 1.5rem;
+  }
+  .forgot-password-button {
+    font-size: 1.8rem;
+  }
+}
+/* ===========================================================
+12. Studios – Sección de Héroe y Ajustes de Tarjetas
+=========================================================== */
+
+ .studios-page-container {
+   /* Mantener los estilos existentes si los tenías */
+   font-family: 'Firmos', sans-serif;
+   background-color: white;
+   min-height: 100vh;
+   display: flex;
+   flex-direction: column;
+ }
+
+.hero-section {
+  background-image: url('./images/studio-background.gif');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  padding: 8rem 2rem; /* Ajusta el padding para la altura */
+  text-align: left;
+  position: relative;
+  overflow: hidden; /* Para contener la imagen */
+  box-shadow: inset 0 -100px 100px rgba(0, 0, 0, 0.6), inset 0 100px 100px rgba(0, 0, 0, 0.6); /* Gradiente oscuro */
+}
+
+.hero-content {
+  max-width: 800px; /* Ancho máximo para el contenido de texto */
+  margin-left: 10%; /* Ajusta el margen izquierdo */
+  position: relative;
+  z-index: 1; /* Asegura que el texto esté por encima del gradiente */
+}
+
+.hero-title {
+  font-family: 'Firmos', sans-serif;
+  font-size: 5rem; /* Ajusta el tamaño de la fuente como en la imagen */
+  margin-bottom: 1rem;
+  line-height: 1.1;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  color: white;
+}
+
+.hero-description {
+  font-family: 'Firmos', sans-serif;
+  font-size: 1.5rem; /* Tamaño de fuente para la descripción */
+  line-height: 1.6;
+  max-width: 600px;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+  color: white;
+}
+
+.studios-grid-section-title {
+  font-family: 'Firmos', sans-serif;
+  font-size: 4rem; /* Ajusta el tamaño del título de la sección */
+  color: #0038E1; /* Azul de tu Navbar */
+  text-align: center;
+  margin: 3rem 0 2rem; /* Espaciado antes y después */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.studio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* 3 columnas en pantallas grandes */
+  gap: 2.5rem; /* Espacio entre las tarjetas */
+  padding: 3rem;
+  justify-items: center; /* Centra las tarjetas en la cuadrícula */
+}
+
+.studio-card {
+  background-color: white; /* Fondo blanco como en la imagen */
+  color: #333;
+  text-align: center;
+  width: 100%;
+  max-width: 380px; /* Ancho máximo para cada tarjeta */
+  border: 1px solid #ccc; /* Borde sutil */
+  border-radius: 10px; /* Bordes ligeramente redondeados */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra para profundidad */
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.studio-card:hover {
+  transform: translateY(-5px); /* Pequeño levantamiento al pasar el ratón */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
+}
+
+.studio-card-image {
+  width: 100%;
+  height: 220px; /* Altura fija para las imágenes */
+  object-fit: cover; /* Cubrir el área, recortando si es necesario */
+  /* No hay borde inferior como en la versión anterior para ajustarse a la imagen */
+}
+
+.studio-card-info {
+  padding: 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centrar contenido */
+}
+
+.studio-card-title {
+  font-family: 'Firmos', sans-serif;
+  font-size: 2.5rem; /* Tamaño de fuente para el título */
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #0038E1; /* Azul como en la imagen */
+  text-transform: uppercase; /* Mayúsculas */
+}
+
+.studio-card-description {
+  font-size: 1.2rem; /* Tamaño de fuente para la descripción */
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 0; /* No margin-bottom ya que es la última línea */
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .hero-title {
+    font-size: 4rem;
+  }
+  .hero-description {
+    font-size: 1.3rem;
+  }
+  .studios-grid-section-title {
+    font-size: 3.5rem;
+  }
+  .studio-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Menos columnas en tablets */
+    padding: 2rem;
+    gap: 2rem;
+  }
+  .studio-card-image {
+    height: 180px;
+  }
+  .studio-card-title {
+    font-size: 2.2rem;
+  }
+  .studio-card-description {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 6rem 1rem;
+  }
+  .hero-content {
+    margin-left: 5%;
+    max-width: 100%;
+  }
+  .hero-title {
+    font-size: 3rem;
+  }
+  .hero-description {
+    font-size: 1.1rem;
+  }
+  .studios-grid-section-title {
+    font-size: 3rem;
+    margin: 2rem 0 1.5rem;
+  }
+  .studio-grid {
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+  .studio-card {
+    max-width: 320px;
+  }
+  .studio-card-image {
+    height: 160px;
+  }
+  .studio-card-title {
+    font-size: 2rem;
+  }
+  .studio-card-description {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-section {
+    padding: 4rem 1rem;
+    text-align: center; /* Centrar texto en móviles */
+  }
+  .hero-content {
+    margin-left: 0;
+  }
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  .hero-description {
+    font-size: 1rem;
+  }
+  .studios-grid-section-title {
+    font-size: 2.5rem;
+  }
+  .studio-grid {
+    grid-template-columns: 1fr; /* Una columna en móviles */
+    padding: 1rem;
+  }
+  .studio-card {
+    max-width: 100%;
+  }
+}
+
+
+/* ===========================================================
+13. AddService
+=========================================================== */
+
+/* Container for the AddService form - specific styling */
+.add-service-container {
+  max-width: 700px; /* Increased width for better layout */
+  margin: 30px auto; /* Centered with some margin */
+  padding: 25px 35px; /* More padding */
+  background-color: #ffffff; /* White background for the form itself */
+  border-radius: 12px; /* Softer rounded corners for the container */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* A subtle shadow */
+}
+
+.add-service-container h2 {
+  text-align: center;
+  color: #334155; /* Darker, more professional color for title */
+  margin-bottom: 30px;
+  font-size: 1.8em; /* Larger title */
+  font-weight: 600; /* Slightly less bold than 'bold' */
+}
+
+/* Styling for each form group (label + input) */
+.form-group {
+  margin-bottom: 22px; /* Space between form groups */
+}
+
+.form-group label {
+  display: block; /* Label on its own line */
+  font-weight: 600; /* Bold labels like in the image */
+  margin-bottom: 8px;
+  color: #1e293b; /* Dark gray for labels */
+  font-size: 0.95em;
+}
+
+/* Common styling for text inputs, textarea, and select */
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="file"],
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 14px 18px; /* Comfortable padding */
+  border-radius: 25px; /* Highly rounded corners like the image's inputs */
+  border: 1px solid #cbd5e1; /* Light gray border */
+  background-color: #f8fafc; /* Very light off-white/purpleish tint - adjust to match image's purple */
+  /* For a more purple background like the image, use something like: */
+  /* background-color: #ede7f6; */
+  /* border: 1px solid #d1c4e9; */
+  box-sizing: border-box;
+  font-size: 1em;
+  color: #334155; /* Text color inside input */
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.form-group input[type="text"]::placeholder,
+.form-group input[type="number"]::placeholder,
+.form-group textarea::placeholder {
+  color: #94a3b8; /* Lighter placeholder text */
+}
+
+/* Focus style for inputs */
+.form-group input[type="text"]:focus,
+.form-group input[type="number"]:focus,
+.form-group input[type="file"]:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #7c3aed; /* Purple border on focus - match button color */
+  /* box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2); /* Optional focus ring */
+  background-color: #ffffff; /* White background on focus */
+}
+
+.form-group input[type="file"] {
+  padding: 10px 12px; /* File input padding can be a bit different */
+}
+
+/* Style the button part of the file input if possible (browser specific) */
+.form-group input[type="file"]::file-selector-button {
+  padding: 8px 15px;
+  margin-right: 10px;
+  border-radius: 20px;
+  background-color: #a78bfa; /* Light purple */
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.form-group input[type="file"]::file-selector-button:hover {
+  background-color: #8b5cf6; /* Darker purple */
+}
+
+.form-group textarea {
+  min-height: 140px; /* Good default height for description */
+  resize: vertical; /* Allow vertical resizing */
+  font-family: inherit; /* Ensure textarea uses the same font */
+}
+
+/* Image preview styling */
+.image-preview-container {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  text-align: center; /* Center the preview image */
+}
+
+.preview-img {
+  max-width: 100%;
+  height: auto; /* Maintain aspect ratio */
+  max-height: 250px; /* Limit preview height */
+  border-radius: 8px; /* Rounded corners for the image */
+  border: 1px solid #e2e8f0; /* Light border for the image */
+  object-fit: cover; /* Ensure image covers the area nicely */
+}
+
+/* Submit button styling */
+.styled-button { /* Using the .styled-button class added to the button */
+  width: 100%;
+  padding: 15px 20px;
+  border-radius: 25px; /* Highly rounded corners */
+  border: none;
+  background-color: #8b5cf6; /* Main purple color - adjust to match image */
+  /* For a gradient like some modern buttons: */
+  /* background-image: linear-gradient(to right, #a78bfa, #8b5cf6); */
+  color: #ffffff; /* White text */
+  font-size: 1.15em; /* Slightly larger font */
+  font-weight: 600; /* Bold text */
+  cursor: pointer;
+  transition: background-color 0.25s ease, transform 0.1s ease;
+  text-transform: uppercase; /* Optional: if you want uppercase text like "Sign In Now" */
+  letter-spacing: 0.5px; /* Optional: slight letter spacing */
+}
+
+.styled-button:hover {
+  background-color: #7c3aed; /* Darker purple on hover */
+  transform: translateY(-1px); /* Slight lift on hover */
+}
+
+.styled-button:disabled {
+  background-color: #c4b5fd; /* Lighter, desaturated purple when disabled */
+  cursor: not-allowed;
+  transform: translateY(0);
 }

@@ -1,3 +1,4 @@
+//src/payments/payments.controller.ts
 import { Controller, Post, Body, Res, Req, RawBodyRequest, HttpStatus } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { CreatePaymentIntentDto } from './dto/create-payment-intent.dto';

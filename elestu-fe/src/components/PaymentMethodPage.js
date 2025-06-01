@@ -1,3 +1,4 @@
+//src/components/PaymentMethodPage.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../App.css';
@@ -5,7 +6,7 @@ import Navbar from './Navbar';
 import { Elements, useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 
-// Tu clave pública de Stripe (¡asegúrate de que sea la de prueba!)
+// clave pública de Stripe
 const stripePromise = loadStripe('pk_test_51RRYlABLLQhi6zmnhz8XOG6GmVPXGFroC6nQmhDWhP0Jf4gkuQP1Xd4k5Zeici1faTW3q5sJpWDCSOZGhEjzQhdz000E6PdJW4');
 
 // Componente interno que usa los hooks de Stripe
@@ -32,7 +33,7 @@ function CheckoutForm({ orderSummary, onPaymentSuccess, onPaymentError, userId, 
         // 1. Crear un PaymentIntent en tu backend
         // CAMBIADO: Añadido '/api' al path para que coincida con el prefijo global del backend
         try {
-            const response = await fetch('https://elestu.onrender.com/api/payments/create-payment-intent', {
+            const response = await fetch('http://localhost:3000/api/payments/create-payment-intent', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

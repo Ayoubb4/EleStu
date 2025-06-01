@@ -1,3 +1,4 @@
+//src/components/Services.js
 import React, { useState, useEffect } from 'react';
 import '../App.css';
 import Navbar from './Navbar';
@@ -19,7 +20,7 @@ function Services() {
 
     async function fetchServices() {
         try {
-            const response = await fetch('https://elestu.onrender.com/api/services');
+            const response = await fetch('http://localhost:3000/api/services');
             const data = await response.json();
             setServices(data);
         } catch (error) {

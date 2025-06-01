@@ -1,3 +1,4 @@
+//src/payments/payments.service.ts
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import Stripe from 'stripe';
 import { ConfigService } from '@nestjs/config';
@@ -39,6 +40,8 @@ export class PaymentsService {
             console.error(`Webhook Error: ${err.message}`);
             throw new Error(`Webhook Error: ${err.message}`);
         }
+
+        console.log('📩 Evento Stripe recibido:', event.type);
 
         switch (event.type) {
             case 'payment_intent.succeeded':
@@ -124,5 +127,8 @@ export class PaymentsService {
                 console.error('Verifica las credenciales de correo o la configuración SMTP en tu archivo .env.');
             }
         }
+
+        console.log('👉 paymentIntent.metadata:', paymentIntent.metadata);
+        console.log('👉 Enviando correo a:', customerEmail);
     }
 }

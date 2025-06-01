@@ -1,12 +1,12 @@
-//src/users/user.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-import { OneToMany } from 'typeorm';
+// src/users/user.entity.ts
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Service } from "../services/service.entity";
+import { Booking } from '../bookings/entities/booking.entity'; // <--- Import Booking entity
 
-@Entity('Usuarios') // Si la tabla se llama 'Usuarios', mantenemos este nombre
+@Entity('Usuarios') // Maintain this name as it matches your database table
 export class User {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn() // This will correctly map to your integer primary key
+    id: number; // The type is number, matching your integer ID in DB
 
     @Column({ type: 'varchar', length: 100 })
     name: string;
@@ -17,6 +17,9 @@ export class User {
     @Column({ type: 'varchar', length: 100 })
     password: string;
 
-    @OneToMany(() => Service, service => service.user) // Relación OneToMany con la entidad Service
-    servicios: Service[];  // Aquí almacenaremos todos los servicios asociados a un usuario
+    @OneToMany(() => Service, service => service.user)
+    servicios: Service[];
+
+    @OneToMany(() => Booking, booking => booking.user) // <--- Add this OneToMany relationship
+    bookings: Booking[]; // <--- Property to hold all bookings associated with this user
 }
