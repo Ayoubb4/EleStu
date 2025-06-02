@@ -57,7 +57,6 @@ function Services() {
                             <img src={service.image} alt="Service" className="service-detail-image" />
                             <div className="card-info">
                                 <h3>{service.title}</h3>
-                                <p>{service.description}</p>
                                 <p>{service.price} €</p>
                             </div>
                         </div>

@@ -1,3 +1,4 @@
+//src/auth/auth.controller.ts
 import { Controller, Post, Body, Get, Logger } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
@@ -14,6 +15,17 @@ export class AuthController {
             return await this.authService.login(loginData);
         } catch (error) {
             this.logger.error(`Error en solicitud de login: ${error.message}`);
+            throw error;
+        }
+    }
+
+    @Post('request-email-verification')
+    async requestEmailVerification(@Body() data: { oldEmail: string; newEmail: string }) {
+        this.logger.log(`Solicitud de código de verificación para cambiar el correo de: ${data.oldEmail}`);
+        try {
+            return await this.authService.sendEmailVerificationCode(data.oldEmail, data.newEmail);
+        } catch (error) {
+            this.logger.error(`Error al enviar código de verificación: ${error.message}`);
             throw error;
         }
     }

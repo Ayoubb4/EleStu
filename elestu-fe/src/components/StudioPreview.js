@@ -1,7 +1,10 @@
+//src/components/StudioPreview.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../App.css';
 import Navbar from './Navbar';
+import locationPin from '../images/location-pin.png';
+
 
 function StudioPreview() { // Renamed from ServicePreview to StudioPreview
     const navigate = useNavigate();
@@ -24,8 +27,8 @@ function StudioPreview() { // Renamed from ServicePreview to StudioPreview
     if (!studio) return null;
 
     return (
-        <div className="service-preview-page"> {/* Keeping the class name as 'service-preview-page' for existing CSS to apply */}
-            <Navbar />
+        <div className="service-preview-page">
+            <Navbar /> {/* Tu componente Navbar manejará el logo, "Estudios" y el icono de ajustes */}
             <div className="service-detail-container">
                 <div className="service-detail">
                     <img src={studio.imageUrl || "https://placehold.co/600x400/0038E1/FFFFFF?text=Studio+Image"} alt="Estudio de Grabación" className="service-detail-image" />
@@ -38,9 +41,9 @@ function StudioPreview() { // Renamed from ServicePreview to StudioPreview
                             </div>
 
                             <div className="location-box">
-                                <p>Location</p>
-                                <img src="https://www.flaticon.com/svg/v.icon/icons/svg/1057/1057630.svg" alt="Location Icon" className="location-icon" />
-                                <p>{studio.location.address}</p>
+                                <p>Location</p> {/* Este <p> es para el texto "Location" */}
+                                <img src={locationPin} alt="Location Icon" className="location-icon" />
+                                <p>{studio.location.address}</p> {/* Este <p> es para la dirección */}
                             </div>
 
                             <button className="hire-button" onClick={handleHireClick}>HIRE</button>
@@ -49,7 +52,7 @@ function StudioPreview() { // Renamed from ServicePreview to StudioPreview
                 </div>
             </div>
 
-            <h2 className="service-description-title">Service Description</h2> {/* Keeping as "Service Description" as it's a description of the service offered by the studio */}
+            <h2 className="service-description-title">Service Description</h2>
             <div className="service-description-box">
                 <p>{studio.description}</p>
                 <p>

@@ -6,12 +6,14 @@
   font-family: 'Firmos';
   src: url('./font/firmos-9mv27.otf') format('opentype');
   font-style: normal;
+  font-weight: normal; /* Esto NO hará que Firmos se vea delgada */
 }
 
 html, body {
-  font-family: 'Firmos', sans-serif;
+  font-family: 'Firmos', sans-serif; /* Si solo usas Firmos, esta será tu fuente principal */
   margin: 0;
   padding: 0;
+  font-weight: normal; /* Establece el peso normal por defecto */
 }
 
 /* ===========================================================
@@ -20,14 +22,19 @@ html, body {
 
 p {
   display: block;
-  font-size: 2.5rem;
+  font-size: 2.5rem; /* OJO: 2.5rem es muy grande para un párrafo. Considera 1rem o 1.1rem */
   margin-block-start: 1em;
   margin-block-end: 1em;
   margin-inline-start: 0;
   margin-inline-end: 0;
   unicode-bidi: isolate;
+  font-weight: normal; /* Asegura que los párrafos sean normales */
 }
 
+/* --- NUEVA REGLA PARA TODOS LOS TÍTULOS (h1 a h6) --- */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: normal;
+}
 /* ===========================================================
    3. Fondo de Login
    =========================================================== */
@@ -164,7 +171,6 @@ p {
   display: block;
   font-family: 'Firmos', sans-serif;
   font-size: 2rem;
-  font-weight: bold;
   color: black;
   margin-top: 2rem;
   margin-bottom: 0.5rem;
@@ -188,7 +194,6 @@ p {
   border: none;
   border-radius: 30px;
   font-size: 2.5rem;
-  font-weight: bold;
   background: #cbb6ff;
   color: black;
   font-family: 'Firmos', sans-serif;
@@ -216,7 +221,6 @@ p {
 .register-box p a {
   color: #003cff;
   text-decoration: none;
-  font-weight: bold;
 }
 
 .register-box p a:hover {
@@ -231,26 +235,28 @@ p {
   width: 100%;
   background-color: #0038E1;
   display: flex;
-  justify-content: flex-end; /* Alinea el contenido (enlaces e icono) a la derecha */
+  justify-content: flex-end; /* Alinea navbar-content a la derecha */
   align-items: center;
   padding: 1rem 2rem;
   position: sticky;
   top: 0;
   z-index: 1000;
   position: relative; /* Necesario para el posicionamiento absoluto del logo */
-  min-height: 90px; /* Asegura que el navbar tenga suficiente altura para el logo grande */
+  min-height: 120px; /* Asegura que el navbar tenga suficiente altura para el logo grande */
+  box-sizing: border-box; /* Para que el padding no añada anchura extra */
 }
 
 .navbar-content {
   display: flex;
   align-items: center;
-  justify-content: flex-end; /* Asegura que los elementos dentro de navbar-content estén a la derecha */
-  width: auto; /* Permite que el contenido determine el ancho */
-  gap: 1.5rem; /* Espacio entre nav-links y settings-icon */
+  /* Ya justify-content: flex-end; en el padre, no lo necesitamos aquí a menos que quieras controlar el espacio interno */
+  /* width: auto; ya está bien */
+  gap: 1.5rem; /* Espacio entre nav-links y settings-link (si el settings-link está directo) */
+  margin-left: auto; /* Esto empuja este contenido a la derecha, dejando espacio para el logo centrado */
 }
 
 .navbar-logo,
-.nav-logo {
+.nav-logo { /* Aunque tienes los dos, solo uno debería ser usado en el HTML */
   height: 350px; /* Aumentado para que el logo se vea más grande */
   object-fit: contain;
   position: absolute; /* Posicionamiento absoluto para centrarlo */
@@ -267,17 +273,33 @@ p {
 
 .nav-links a {
   color: white;
-  font-size: 1.8rem; /* Aumentado el tamaño de la fuente para que el texto sea más grande */
+  font-size: 3rem; /* Aumentado el tamaño de la fuente para que el texto sea más grande */
   text-decoration: none;
-  font-weight: bold;
   text-shadow: 1px 1px black;
+  transition: color 0.3s ease; /* Transición para el hover */
+}
+
+.nav-links a:hover {
+  color: #ddd; /* Color al pasar el ratón */
+}
+
+.settings-link { /* Clase para el enlace que envuelve el icono */
+  color: white; /* Color del icono */
+  text-decoration: none; /* Quita el subrayado del enlace */
+  display: flex; /* Para centrar el icono y controlar su tamaño */
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-link:hover {
+  color: #ddd; /* Color del enlace/icono al pasar el ratón */
 }
 
 .settings-icon {
-  font-size: 2rem; /* Aumentado el tamaño del icono */
+  font-size: 2rem;
   cursor: pointer;
-  color: white;
-  margin-left: 1.5rem; /* Añade espacio entre el último enlace y el icono de ajustes */
+  color: inherit;
+  transition: color 0.3s ease;
 }
 
 /* ===========================================================
@@ -347,11 +369,11 @@ p {
 }
 
 .card-info h3 {
-  font-size: 1.5rem;
+  font-size: 2rem;
 }
 
 .card-info p {
-  font-size: 1rem;
+  font-size: 1.7rem;
 }
 
 /* Floating Add Button */
@@ -415,7 +437,7 @@ p {
   max-width: 800px;
   width: 100%;
   padding: 20px;
-  background-color: #f0f8ff;
+  background-color: #f0f8ff; /* Color de fondo del contenedor principal */
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
@@ -438,71 +460,82 @@ p {
     flex-direction: column;
     align-items: center; /* Centra las cajas y el botón */
     width: 40%; /* La información ocupa menos espacio */
+    /* Añadido para simular el espacio entre las cajas y el borde de su contenedor */
+    padding-top: 20px;
   }
 }
 
-
 .service-detail-image {
   width: 100%;
-  max-height: 400px;
+  max-height: 500px;
   object-fit: cover;
   border-radius: 8px;
   margin-bottom: 20px;
 }
 
+/* Elimina el padding-top de service-detail-info si está causando un espacio extra */
 .service-detail-info {
-  padding-top: 20px;
+  /* padding-top: 20px; */ /* Considera eliminarlo si el layout lo permite, ya está el padding en service-detail-info-and-actions */
+  width: 100%; /* Asegura que ocupe el 100% del ancho de su padre */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra las cajas dentro de este div */
 }
 
-.service-detail-info p {
-  font-size: 1.1em;
-  color: #333;
-  line-height: 1.6;
-  margin-bottom: 20px;
-  text-align: left;
-}
-
-.service-price {
-  margin-top: 20px;
-  font-size: 1.5em;
-  color: #4CAF50;
-  text-align: center;
-}
 
 /* Info Boxes & Buttons */
 
-.price-box {
-  background-color: #a7c957;
-  color: white;
+.price-box,
+.location-box { /* Aplica estilos comunes a ambas cajas */
+  background-color: #92b0f4; /* Un azul más claro para las cajas, similar a la imagen */
+  color: black;
   padding: 10px 20px;
   border-radius: 5px;
-  font-size: 1.3em;
-  margin-bottom: 15px;
+  font-size: 1.5em;
+  margin-bottom: 15px; /* Espacio entre las cajas */
   text-align: center;
-  width: 100%; /* Para que ocupe todo el ancho disponible en su contenedor */
+  width: 80%; /* Ajusta el ancho para que parezca más compacto como en la imagen */
+  max-width: 250px; /* Ancho máximo para que no se estiren demasiado en pantallas grandes */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100px; /* Altura fija para que las cajas se vean uniformes */
 }
 
-.service-type-box {
-  background-color: #4a4e69;
-  color: white;
-  padding: 8px 15px;
-  border-radius: 5px;
-  font-size: 1em;
-  margin-bottom: 15px;
-  text-align: center;
-  width: 100%; /* Para que ocupe todo el ancho disponible en su contenedor */
+.price-box p,
+.location-box p {
+  margin: 5px 0; /* Espacio entre los textos dentro de la caja */
+  font-size: 1em; /* Ajusta el tamaño de la fuente si es necesario */
+}
+
+.price-box p:first-child { /* "Price per Hour" */
+  font-size: 0.8em;
+  color: #e0e0e0; /* Color más suave para el texto superior */
+}
+
+.price-box p:last-child { /* El precio en sí */
+  font-size: 2em; /* Más grande para el precio */
+}
+
+.location-box .location-icon {
+  width: 30px; /* Tamaño del pin de ubicación */
+  height: 30px;
+  margin-bottom: 5px; /* Espacio entre el icono y el texto de la dirección */
 }
 
 .hire-button {
-  background-color: #f9c74f;
+  background-color: #f9c74f; /* Color del botón */
   color: #333;
   padding: 12px 30px;
   border: none;
   border-radius: 5px;
-  font-size: 1.2em;
+  font-size: 2em;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  width: 100%; /* Para que ocupe todo el ancho disponible en su contenedor */
+  width: 80%; /* Para que ocupe un ancho similar al de las cajas */
+  max-width: 250px; /* Mismo ancho máximo que las cajas */
+  margin-top: 10px; /* Espacio entre la última caja y el botón */
 }
 
 .hire-button:hover {
@@ -512,7 +545,7 @@ p {
 /* Descripción del servicio */
 
 .service-description-title {
-  font-size: 2em;
+  font-size: 4em;
   color: #1e3a8a;
   margin-top: 30px;
   margin-bottom: 15px;
@@ -531,7 +564,7 @@ p {
 
 .service-description-box p {
   margin-bottom: 10px;
-  font-size: 1em;
+  font-size: 2.5em;
   color: #555;
 }
 /* ===========================================================
@@ -565,7 +598,6 @@ p {
   color: #1e3a8a;
   margin-bottom: 30px;
   text-align: center;
-  font-weight: bold;
   text-shadow: 1px 1px black;
 }
 
@@ -585,7 +617,6 @@ p {
   justify-content: center;
   align-items: center;
   font-size: 1.2rem;
-  font-weight: bold;
   border: 2px solid #ccc;
 }
 
@@ -618,7 +649,6 @@ p {
   border-bottom: 1px solid #eee;
   font-size: 1.1rem;
   color: #333;
-  font-weight: bold;
   cursor: pointer; /* Para indicar que es clickeable */
   transition: background-color 0.2s ease;
 }
@@ -654,7 +684,6 @@ p {
   color: #333;
   margin-bottom: 5px;
   text-align: left;
-  font-weight: bold;
 }
 
 .input-group {
@@ -711,7 +740,6 @@ p {
   align-items: center;
   gap: 15px;
   font-size: 1.2rem;
-  font-weight: bold;
   color: #1e3a8a;
   text-align: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -732,7 +760,6 @@ p {
   margin-top: 30px;
   margin-bottom: 15px;
   text-align: center;
-  font-weight: bold;
 }
 
 .order-summary-box {
@@ -760,7 +787,6 @@ p {
 }
 
 .expected-result {
-  font-weight: bold;
   color: #4CAF50; /* Verde para el check */
   margin-top: 20px;
   text-align: center;
@@ -776,7 +802,6 @@ p {
   cursor: pointer;
   transition: background-color 0.3s ease;
   margin-top: 20px; /* Ajuste el margen superior */
-  font-weight: bold;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: auto; /* Para que el botón no ocupe todo el ancho si no es necesario */
 }
@@ -908,7 +933,6 @@ p {
   border-radius: 50px; /* Fully rounded corners */
   border: none;
   font-size: 2.5rem; /* Large font size for button text */
-  font-weight: bold;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for lift */
   transition: all 0.3s ease;
@@ -937,7 +961,6 @@ p {
   margin-top: 1.5rem;
   padding: 0.8rem 1.5rem;
   border-radius: 10px;
-  font-weight: bold;
   text-align: center;
   line-height: 1.2;
 }
@@ -1112,7 +1135,6 @@ p {
 .studio-card-title {
   font-family: 'Firmos', sans-serif;
   font-size: 2.5rem; /* Tamaño de fuente para el título */
-  font-weight: bold;
   margin-bottom: 0.5rem;
   color: #0038E1; /* Azul como en la imagen */
   text-transform: uppercase; /* Mayúsculas */
@@ -1235,7 +1257,6 @@ p {
   color: #334155; /* Darker, more professional color for title */
   margin-bottom: 30px;
   font-size: 1.8em; /* Larger title */
-  font-weight: 600; /* Slightly less bold than 'bold' */
 }
 
 /* Styling for each form group (label + input) */
@@ -1245,7 +1266,6 @@ p {
 
 .form-group label {
   display: block; /* Label on its own line */
-  font-weight: 600; /* Bold labels like in the image */
   margin-bottom: 8px;
   color: #1e293b; /* Dark gray for labels */
   font-size: 0.95em;
@@ -1342,7 +1362,6 @@ p {
   /* background-image: linear-gradient(to right, #a78bfa, #8b5cf6); */
   color: #ffffff; /* White text */
   font-size: 1.15em; /* Slightly larger font */
-  font-weight: 600; /* Bold text */
   cursor: pointer;
   transition: background-color 0.25s ease, transform 0.1s ease;
   text-transform: uppercase; /* Optional: if you want uppercase text like "Sign In Now" */
@@ -1358,4 +1377,171 @@ p {
   background-color: #c4b5fd; /* Lighter, desaturated purple when disabled */
   cursor: not-allowed;
   transform: translateY(0);
+}
+/* ===========================================================
+14. Settings
+=========================================================== */
+.settings-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra los elementos horizontalmente */
+  padding: 2rem;
+  background-color: #f0f2f5; /* Un fondo claro para la página */
+  min-height: calc(100vh - 90px); /* Altura mínima restando la altura del navbar */
+  color: #333; /* Color de texto general para la página */
+  box-sizing: border-box; /* Para que el padding no añada anchura extra */
+}
+
+.settings-title {
+  font-family: 'Firmos', sans-serif; /* Usamos Firmos para el título principal de la página */
+  font-size: 4rem; /* Un tamaño grande como el de tu imagen */
+  font-weight: normal; /* Firmos es naturalmente gruesa, no le añadimos más */
+  color: #0038E1; /* Color azul fuerte */
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.settings-section {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  max-width: 600px; /* Ancho máximo para las secciones de contenido */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra el contenido dentro de la sección */
+}
+
+.settings-section h2 {
+  font-family: 'Firmos', sans-serif; /* Firmos para los subtítulos de sección */
+  font-size: 2.2rem; /* Tamaño adecuado para subtítulos */
+  font-weight: normal; /* No negrita adicional */
+  color: #0038E1;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.change-button {
+  background-color: #A0D2FF; /* Azul claro para los botones de "Change" */
+  color: black;
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 25px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 200px; /* Ancho fijo para que se vean iguales */
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.change-button:hover {
+  background-color: #79B3ED; /* Azul un poco más oscuro al pasar el ratón */
+  transform: translateY(-2px);
+}
+
+/* Estilos para el contenedor de Preguntas Frecuentes (FAQ) */
+.faq-section {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 800px; /* Un poco más ancho para las FAQs */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.faq-section h2 {
+  font-family: 'Firmos', sans-serif;
+  font-size: 2.5rem; /* Tamaño para el título de FAQs */
+  font-weight: normal;
+  color: #0038E1;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.faq-scroll-container {
+  max-height: 400px; /* Altura máxima para el scroll */
+  overflow-y: auto; /* Habilita el scroll vertical */
+  width: 100%;
+  padding-right: 15px; /* Espacio para la barra de scroll */
+  box-sizing: border-box;
+}
+
+/* Estilos de la barra de scroll (webkit browsers) */
+.faq-scroll-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.faq-scroll-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.faq-scroll-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.faq-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+
+.faq-item {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #eee; /* Separador entre preguntas */
+}
+
+.faq-item:last-child {
+  border-bottom: none; /* No hay separador en la última pregunta */
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.faq-item h3 { /* Estilo para las preguntas de FAQ */
+  font-family: 'Roboto', sans-serif; /* Usamos Roboto para la pregunta */
+  font-size: 1.3rem;
+  font-weight: 700; /* Las preguntas suelen ir en negrita para destacar */
+  color: #0038E1;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.faq-item p { /* Estilo para las respuestas de FAQ */
+  font-family: 'Roboto', sans-serif; /* Usamos Roboto para la respuesta */
+  font-size: 1.1rem;
+  font-weight: 400; /* Peso normal para la respuesta */
+  color: #555;
+  margin: 0;
+}
+
+/* Botón de Cerrar Sesión */
+.logout-button {
+  background-color: #0038E1; /* Mismo azul del navbar */
+  color: white;
+  padding: 1rem 3rem;
+  border: none;
+  border-radius: 30px;
+  font-family: 'Firmos', sans-serif; /* Puedes usar Firmos para este botón si quieres que sea impactante */
+  font-size: 2rem; /* Tamaño grande para el botón */
+  font-weight: normal; /* Firmos es naturalmente gruesa */
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin-top: 2rem;
+}
+
+.logout-button:hover {
+  background-color: #002DAA; /* Azul un poco más oscuro al pasar el ratón */
+  transform: translateY(-2px);
 }

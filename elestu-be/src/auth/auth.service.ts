@@ -1,3 +1,4 @@
+//src/auth/auth.service.ts
 import { Injectable, UnauthorizedException, Logger, NotFoundException } from '@nestjs/common';
 import { UserService } from '../users/user.service';
 import * as nodemailer from 'nodemailer';
@@ -41,6 +42,32 @@ export class AuthService {
             user: userWithoutPassword
         };
     }
+
+    async sendEmailVerificationCode(oldEmail: string, newEmail: string) {
+        const user = await this.userService.findByEmail(oldEmail);
+        if (!user) {
+            throw new NotFoundException('Usuario no encontrado');
+        }
+
+        const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+        const mailOptions = {
+            from: 'elestu777@gmail.com',
+            to: oldEmail,
+            subject: 'Código de verificación para cambio de correo',
+            text: `Tu código de verificación es: ${verificationCode}`,
+        };
+
+        try {
+            await this.transporter.sendMail(mailOptions);
+            this.logger.log(`Código de verificación enviado a: ${oldEmail}`);
+            return { success: true, message: 'Código de verificación enviado' };
+        } catch (error) {
+            this.logger.error(`Error al enviar correo: ${error.message}`, error.stack);
+            throw new Error('No se pudo enviar el correo de verificación');
+        }
+    }
+
 
     async verify() {
         // Esta función simplemente devuelve true para simular verificación

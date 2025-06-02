@@ -6,6 +6,7 @@ import { Booking } from './entities/booking.entity';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { User } from '../users/user.entity'; // Import your User entity
+import { join } from 'path'; // <--- Añadido para construir rutas de archivo
 
 @Injectable()
 export class BookingsService {
@@ -14,7 +15,7 @@ export class BookingsService {
     constructor(
         @InjectRepository(Booking)
         private bookingsRepository: Repository<Booking>,
-        @InjectRepository(User) // <--- ADD THIS: Inject the User repository
+        @InjectRepository(User)
         private usersRepository: Repository<User>,
         private readonly mailerService: MailerService,
     ) {}
@@ -35,7 +36,7 @@ export class BookingsService {
 
             // 3. Save the booking to the database
             await this.bookingsRepository.save(newBooking);
-            this.logger.log(`Booking created for studio: ${newBooking.studioName} by user ${newBooking.userId} (${newBooking.userEmail})`);
+            this.logger.log(`Booking created for studio: ${newBooking.studioName} by user <span class="math-inline">\{newBooking\.userId\} \(</span>{newBooking.userEmail})`);
 
             // 4. Send confirmation email to the user
             await this.sendBookingConfirmationEmail(newBooking);
@@ -52,9 +53,13 @@ export class BookingsService {
 
     private async sendBookingConfirmationEmail(booking: Booking): Promise<void> {
         try {
+            // Ruta para el logo: Usamos process.cwd() para la raíz del proyecto
+            // y asumimos que nest-cli.json copia 'src/images' a 'dist/images'
+            const logoPath = join(process.cwd(), 'dist', 'images', 'EleStu.png'); // <--- RUTA DEL LOGO
+
             await this.mailerService.sendMail({
                 to: booking.userEmail,
-                subject: `Booking Confirmation for ${booking.studioName}`,
+                subject: `Confirmación de Reserva en ${booking.studioName}`, // Personalizamos el asunto
                 template: 'booking-confirmation',
                 context: {
                     studioName: booking.studioName,
@@ -64,6 +69,15 @@ export class BookingsService {
                     pricePerHour: booking.pricePerHour,
                     currentYear: new Date().getFullYear(),
                 },
+                // --- AÑADIDO PARA EL LOGO COMO CID ATTACHMENT ---
+                attachments: [
+                    {
+                        filename: 'EleStuLogo.png', // Nombre del archivo cuando se adjunta
+                        path: logoPath, // La ruta real al archivo en el servidor
+                        cid: 'EleStuLogo', // EL CID que debe coincidir con el 'src="cid:..."' en la plantilla HBS
+                    },
+                ],
+                // --- FIN DE LA ADICIÓN ---
             });
             this.logger.log(`Booking confirmation email sent to ${booking.userEmail}`);
         } catch (error) {

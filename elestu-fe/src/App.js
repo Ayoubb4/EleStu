@@ -10,7 +10,9 @@ import ServicePreview from './components/ServicePreview';
 import PaymentMethodPage from './components/PaymentMethodPage';
 import StudiosPage from "./components/StudiosPage";
 import StudioPreview from "./components/StudioPreview";
-import BookingForm from "./components/BookingForm"; // Importa el componente de pago
+import BookingForm from "./components/BookingForm";
+import SettingsPage from "./components/SettingsPage";
+import ChangeEmailPasswordPage from "./components/ChangeEmailPasswordPage"; // Importa el componente de pago
 
 function App() {
     return (
@@ -28,6 +30,8 @@ function App() {
                 <Route path="/studios" element={<StudiosPage />} />
                 <Route path="/studio-preview" element={<StudioPreview />} />
                 <Route path="/booking-form" element={<BookingForm />} />
+                <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/change-email-password" element={<ChangeEmailPasswordPage />} />
             </Routes>
         </div>
     );

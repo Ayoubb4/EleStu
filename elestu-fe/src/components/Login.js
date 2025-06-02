@@ -1,4 +1,3 @@
-//src/components/Login.js
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { login } from '../services/authService';
@@ -14,6 +13,9 @@ function Login() {
         e.preventDefault();
         const result = await login(email, password);
         if (result.success) {
+            // 🔽 Guarda el email en localStorage
+            localStorage.setItem('userEmail', email);
+
             navigate('/services');
         } else {
             setError(result.error || 'Error en el inicio de sesión');
@@ -51,7 +53,6 @@ function Login() {
                     <p>
                         Don't have an account?{' '}
                         <button type="submit"><Link to="/register">Sign Up</Link></button>
-
                     </p>
                     <p>
                         Forgetting your password{' '}
