@@ -4,14 +4,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BookingsController } from './bookings.controller';
 import { BookingsService } from './bookings.service';
 import { Booking } from './entities/booking.entity';
+import { ServiceBooking } from './entities/service-booking.entity'; // <--- AÑADE ESTA IMPORTACIÓN
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { User } from '../users/user.entity'; // <--- IMPORT USER ENTITY HERE
+import { User } from '../users/user.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([Booking, User]), // <--- ADD USER ENTITY HERE for BookingsService
+        TypeOrmModule.forFeature([Booking, User, ServiceBooking]), // <--- AÑADE ServiceBooking AQUÍ
         MailerModule.forRootAsync({
             imports: [ConfigModule],
             useFactory: async (configService: ConfigService) => ({

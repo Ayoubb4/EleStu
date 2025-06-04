@@ -13,6 +13,7 @@ import { ServicesModule } from './services/services.module';
 import { PaymentsModule } from './payments/payments.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { Booking } from './bookings/entities/booking.entity';
+import { ServiceBooking } from './bookings/entities/service-booking.entity'; // <--- AÑADE ESTA IMPORTACIÓN
 
 // --- ADDED FOR MAILER ---
 import { MailerModule } from '@nestjs-modules/mailer';
@@ -32,8 +33,8 @@ import { join } from 'path';
       username: process.env.DB_USER || 'EleStuAdmin',
       password: process.env.DB_PASSWORD || '123456',
       database: process.env.DB_NAME || 'EleStu',
-      entities: [User, Service, Booking],
-      synchronize: false,
+      entities: [User, Service, Booking, ServiceBooking], // <--- AÑADE ServiceBooking AQUÍ
+      synchronize: false, // Es false, lo cual es bueno para producción. Considera true SOLO para desarrollo inicial.
       logging: true,
     }),
     // --- MODIFIED MAILER MODULE CONFIGURATION ---
@@ -51,8 +52,7 @@ import { join } from 'path';
         from: '"EleStu" <elestu777@gmail.com>',
       },
       template: {
-        // CAMBIO AQUÍ: Simplificamos la ruta para que apunte directamente a 'templates' dentro de 'dist'
-        dir: join(__dirname, '..', 'templates'), // <--- RUTA MODIFICADA
+        dir: join(__dirname, '..', 'templates'),
         adapter: new HandlebarsAdapter(),
         options: {
           strict: true,

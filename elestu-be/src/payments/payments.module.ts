@@ -1,4 +1,4 @@
-//src/payments/payments.module.ts
+// src/payments/payments.module.ts
 import { Module, forwardRef } from '@nestjs/common';
 import { PaymentsController } from './payments.controller';
 import { PaymentsService } from './payments.service';
@@ -19,7 +19,7 @@ import { UserModule } from '../users/user.module'; // MODIFICADO: Importar UserM
             useFactory: (configService: ConfigService) => {
                 const apiKey = configService.get<string>('STRIPE_SECRET_KEY')!;
                 return new Stripe(apiKey, {
-                    apiVersion: '2025-04-30.basil',
+                    apiVersion: "2025-05-28.basil", // CORREGIDO: Versión de API actualizada
                 });
             },
             inject: [ConfigService],

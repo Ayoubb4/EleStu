@@ -1,7 +1,8 @@
 // src/users/user.entity.ts
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Service } from "../services/service.entity";
-import { Booking } from '../bookings/entities/booking.entity'; // <--- Import Booking entity
+import { Booking } from '../bookings/entities/booking.entity'; // Import Booking entity
+import { ServiceBooking } from '../bookings/entities/service-booking.entity'; // Importar ServiceBooking
 
 @Entity('Usuarios') // Maintain this name as it matches your database table
 export class User {
@@ -20,6 +21,10 @@ export class User {
     @OneToMany(() => Service, service => service.user)
     servicios: Service[];
 
-    @OneToMany(() => Booking, booking => booking.user) // <--- Add this OneToMany relationship
-    bookings: Booking[]; // <--- Property to hold all bookings associated with this user
+    @OneToMany(() => Booking, booking => booking.user) // Esta relación ya existía
+    bookings: Booking[]; // Property to hold all bookings associated with this user
+
+    // Relación inversa específica con ServiceBookings
+    @OneToMany(() => ServiceBooking, serviceBooking => serviceBooking.user)
+    serviceBookings: ServiceBooking[]; // Esta es la propiedad que faltaba para ServiceBooking
 }
