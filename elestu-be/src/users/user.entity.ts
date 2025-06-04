@@ -1,13 +1,13 @@
 // src/users/user.entity.ts
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Service } from "../services/service.entity";
-import { Booking } from '../bookings/entities/booking.entity'; // Import Booking entity
-import { ServiceBooking } from '../bookings/entities/service-booking.entity'; // Importar ServiceBooking
+import { Booking } from '../bookings/entities/booking.entity';
+import { ServiceBooking } from '../bookings/entities/service-booking.entity';
 
-@Entity('Usuarios') // Maintain this name as it matches your database table
+@Entity('Usuarios')
 export class User {
-    @PrimaryGeneratedColumn() // This will correctly map to your integer primary key
-    id: number; // The type is number, matching your integer ID in DB
+    @PrimaryGeneratedColumn()
+    id: number;
 
     @Column({ type: 'varchar', length: 100 })
     name: string;
@@ -18,13 +18,17 @@ export class User {
     @Column({ type: 'varchar', length: 100 })
     password: string;
 
+    // --- AÑADIDO ---
+    @Column({ type: 'varchar', length: 20, nullable: true }) // La columna ya existe en tu BD y es nullable
+    phoneNumber?: string; // Hacemos la propiedad opcional en la entidad también
+    // --- FIN DE LA ADICIÓN ---
+
     @OneToMany(() => Service, service => service.user)
     servicios: Service[];
 
-    @OneToMany(() => Booking, booking => booking.user) // Esta relación ya existía
-    bookings: Booking[]; // Property to hold all bookings associated with this user
+    @OneToMany(() => Booking, booking => booking.user)
+    bookings: Booking[];
 
-    // Relación inversa específica con ServiceBookings
     @OneToMany(() => ServiceBooking, serviceBooking => serviceBooking.user)
-    serviceBookings: ServiceBooking[]; // Esta es la propiedad que faltaba para ServiceBooking
+    serviceBookings: ServiceBooking[];
 }

@@ -1,0 +1,54 @@
+{{!-- src/templates/service-booked-notification-owner.hbs --}}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>¡Servicio Contratado!</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f8f8f8; }
+        .email-container { max-width: 600px; margin: 20px auto; background-color: #ffffff; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
+        .header { background-color: #0056b3; /* Un color azul EleStu, puedes ajustarlo */ color: #ffffff; padding: 20px; text-align: center; }
+        .header img.logo { max-width: 120px; margin-bottom: 10px; }
+        .header h1 { margin: 0; font-size: 24px; }
+        .content { padding: 25px; }
+        .content p { margin-bottom: 15px; font-size: 16px; }
+        .content strong { color: #000; }
+        .details-section { background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin-bottom: 20px; border-left: 4px solid #0056b3; }
+        .details-section p { margin-bottom: 8px; }
+        .footer { font-size: 0.9em; color: #777; text-align: center; padding: 15px; border-top: 1px solid #eee; }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <div class="header">
+        <h1>¡Has Recibido una Nueva Reserva!</h1>
+    </div>
+    <div class="content">
+        <p>Hola <strong>{{ownerName}}</strong>,</p>
+        <p>¡Buenas noticias! Un cliente ha reservado tu servicio: <strong>"{{serviceTitle}}"</strong>.</p>
+
+        <div class="details-section">
+            <p><strong>Detalles de la Reserva:</strong></p>
+            <p>
+                Fecha: <strong>{{bookingDate}}</strong><br>
+                Hora: <strong>{{bookingTime}}</strong><br>
+                Descripción adicional: <em>{{bookingDescription}}</em><br>
+                Precio Pagado: <strong>{{price}} {{currency}}</strong>
+            </p>
+        </div>
+
+        <div class="details-section">
+            <p><strong>Información del Cliente:</strong></p>
+            <p>
+                Nombre: <strong>{{contractingUserName}}</strong><br>
+                Email: <strong><a href="mailto:{{contractingUserEmail}}">{{contractingUserEmail}}</a></strong>
+            </p>
+        </div>
+        <p>Puedes ponerte en contacto con el cliente si es necesario para coordinar los detalles.</p>
+        <p>¡Enhorabuena por la reserva!</p>
+    </div>
+    <div class="footer">
+        <p>&copy; {{currentYear}} EleStu. Todos los derechos reservados.</p>
+    </div>
+</div>
+</body>
+</html>

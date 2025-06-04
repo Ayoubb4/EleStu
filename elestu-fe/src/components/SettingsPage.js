@@ -1,16 +1,38 @@
 // src/components/SettingsPage.js
-import { useNavigate } from 'react-router-dom'; // Para la redirección
+import React from 'react'; // Asegúrate de importar React si no lo haces globalmente
+import { useNavigate } from 'react-router-dom';
 import '../App.css'; // Asegúrate de importar tus estilos globales
 
 // Componente de página de Ajustes
 function SettingsPage() {
-    const navigate = useNavigate(); // Hook para la navegación
+    const navigate = useNavigate();
+
     const handleLogout = () => {
-        // Lógica para cerrar sesión
-        // TODO: Eliminar token de autenticación (localStorage, cookies, etc.)
-        console.log('Cerrar Sesión');
-        alert('Sesión cerrada (simulado). Redirigiendo a inicio.');
-        navigate('/'); // Redirige al inicio
+        console.log('Cerrando Sesión...');
+
+        // --- INICIO DE LÓGICA DE CIERRE DE SESIÓN REAL ---
+        // 1. Eliminar el ID del usuario del localStorage
+        localStorage.removeItem('userid');
+        console.log('UserID eliminado del localStorage.');
+
+        // 2. Eliminar el token de autenticación (si usas uno)
+        // Reemplaza 'authToken' con el nombre real de la clave de tu token si es diferente
+        localStorage.removeItem('authToken'); // O 'token', según cómo lo llames
+        console.log('AuthToken (si existe) eliminado del localStorage.');
+
+        // 3. (Opcional) Si usas cookies para la sesión, también deberías limpiarlas.
+        // Esto es más complejo y depende de cómo estén configuradas (httpOnly, etc.)
+        // A menudo, para tokens JWT en localStorage, los dos pasos anteriores son suficientes.
+
+        // 4. (Opcional) Si tienes algún estado global de la aplicación (Context API, Redux, Zustand, etc.)
+        // que almacene información del usuario, deberías limpiarlo también.
+        // Ejemplo: dispatch({ type: 'LOGOUT_USER' });
+        // --- FIN DE LÓGICA DE CIERRE DE SESIÓN REAL ---
+
+        alert('Has cerrado sesión correctamente. Serás redirigido a la página de inicio.');
+        navigate('/'); // Redirige al inicio (o a la página de login)
+        // Podrías querer forzar un refresco de la página para asegurar que todo el estado se reinicie
+        // window.location.reload(); // Descomenta si es necesario, pero la navegación y limpieza de estado suelen ser suficientes.
     };
 
     // --- Preguntas Frecuentes (FAQs) ---
@@ -51,33 +73,30 @@ function SettingsPage() {
 
     return (
         <div className="settings-page">
-            <h1 className="settings-title">Settings</h1> {/* Título principal */}
+            <h1 className="settings-title">Ajustes</h1> {/* Título principal */}
 
             {/* Sección de Cambio de Email y Contraseña */}
             <section className="settings-section">
-                <h2>Change Email & Password</h2>
+                <h2>Cambiar Email y Contraseña</h2> {/* Corregido título duplicado */}
                 <button
                     className="change-button"
-                    onClick={function() {
-                        navigate('/change-email-password');
-                    }}
+                    onClick={() => navigate('/change-email-password')}
                     style={{ marginBottom: '10px' }}
                 >
-                    Change
+                    Cambiar
                 </button>
             </section>
 
             {/* Sección de Cambio de Datos Personales */}
+            {/* Considera si esta sección es diferente a la anterior o si el título debería variar */}
             <section className="settings-section">
-                <h2>Change Email & Password</h2>
+                <h2>Actualizar Datos Personales</h2> {/* Ejemplo de título diferente */}
                 <button
                     className="change-button"
-                    onClick={function() {
-                        navigate('/change-personal-data');
-                    }}
+                    onClick={() => navigate('/change-personal-data')}
                     style={{ marginBottom: '10px' }}
                 >
-                    Change
+                    Actualizar
                 </button>
             </section>
 
@@ -85,20 +104,18 @@ function SettingsPage() {
             <section className="faq-section">
                 <h2>Preguntas Frecuentes</h2>
                 <div className="faq-scroll-container">
-                    {faqs.map(function(faq, index) {
-                        return (
-                            <div key={index} className="faq-item">
-                                <h3>{faq.q}</h3>
-                                <p>{faq.a}</p>
-                            </div>
-                        );
-                    })}
+                    {faqs.map((faq, index) => ( // Cambiado a arrow function para el map
+                        <div key={index} className="faq-item">
+                            <h3>{faq.q}</h3>
+                            <p>{faq.a}</p>
+                        </div>
+                    ))}
                 </div>
             </section>
 
             {/* Botón de Cerrar Sesión */}
             <button className="logout-button" onClick={handleLogout}>
-                Log Out
+                Cerrar Sesión
             </button>
         </div>
     );
