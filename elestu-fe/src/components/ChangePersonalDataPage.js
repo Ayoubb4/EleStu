@@ -1,20 +1,20 @@
-// src/components/ChangeEmailPasswordPage.js
+// src/components/ChangePersonalDataPage.js
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
-import SecurityForm from './SecurityForm'; // Reutilizamos el formulario que ya hicimos
+import PersonalInfoForm from './PersonalInfoForm'; // Reutilizamos el formulario que ya hicimos
 import '../App.css';
 
-function ChangeEmailPasswordPage() {
+function ChangePersonalDataPage() {
     const navigate = useNavigate();
 
     return (
         <div className="settings-subpage">
             <Navbar />
-            <h1 className="settings-title-main">Configuración</h1> {/* Título como en la imagen */}
+            <h1 className="settings-title-main">Change Personal Data</h1>
 
             <div className="form-container">
-                <SecurityForm />
+                <PersonalInfoForm />
             </div>
 
             <button className="go-back-button" onClick={() => navigate(-1)}>
@@ -24,4 +24,4 @@ function ChangeEmailPasswordPage() {
     );
 }
 
-export default ChangeEmailPasswordPage;
+export default ChangePersonalDataPage;

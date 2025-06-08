@@ -82,9 +82,9 @@ h1, h2, h3, h4, h5, h6 {
 .login-box label {
   display: block;
   font-family: 'Firmos', sans-serif;
-  font-size: 1.5rem;
+  font-size: 2rem;
   color: #a4baff;
-  margin-top: 1.5rem;
+  margin-top: 2rem;
 }
 
 .login-box input {
@@ -120,7 +120,7 @@ h1, h2, h3, h4, h5, h6 {
   cursor: pointer;
   text-shadow: 1px 1px 0 black;
   transition: background 0.3s ease;
-  margin-top: 1.5rem;
+  margin-top: 2rem;
 }
 
 .login-box button:hover {
@@ -228,80 +228,100 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ===========================================================
-   6. Navbar – Estilos comunes
+   6. Navbar – Estilos comunes (Actualizado)
    =========================================================== */
 
 .navbar {
   width: 100%;
   background-color: #0038E1;
   display: flex;
-  justify-content: flex-end; /* Alinea navbar-content a la derecha */
+  justify-content: space-between; /* Espacio entre logo y contenido derecho */
   align-items: center;
-  padding: 1rem 2rem;
+  padding: 0.5rem 2rem; /* Padding vertical y horizontal */
+  min-height: 80px;
+  box-sizing: border-box;
   position: sticky;
   top: 0;
   z-index: 1000;
-  position: relative; /* Necesario para el posicionamiento absoluto del logo */
-  min-height: 120px; /* Asegura que el navbar tenga suficiente altura para el logo grande */
-  box-sizing: border-box; /* Para que el padding no añada anchura extra */
 }
 
+/* Contenedor del logo para que sea un enlace */
+.navbar-logo-link {
+  /* Posicionamiento absoluto para centrar el logo perfectamente */
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-logo {
+  height: 250px; /* Altura del logo */
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+.navbar-logo:hover {
+  transform: scale(1.05);
+}
+
+
+/* Contenedor para los enlaces y el icono de ajustes a la derecha */
 .navbar-content {
   display: flex;
   align-items: center;
-  /* Ya justify-content: flex-end; en el padre, no lo necesitamos aquí a menos que quieras controlar el espacio interno */
-  /* width: auto; ya está bien */
-  gap: 1.5rem; /* Espacio entre nav-links y settings-link (si el settings-link está directo) */
-  margin-left: auto; /* Esto empuja este contenido a la derecha, dejando espacio para el logo centrado */
-}
-
-.navbar-logo,
-.nav-logo { /* Aunque tienes los dos, solo uno debería ser usado en el HTML */
-  height: 350px; /* Aumentado para que el logo se vea más grande */
-  object-fit: contain;
-  position: absolute; /* Posicionamiento absoluto para centrarlo */
-  left: 50%; /* Mueve el punto de inicio al 50% del ancho del padre */
-  transform: translateX(-50%); /* Compensa el 50% del ancho del propio logo para centrarlo */
-  z-index: 1; /* Asegura que el logo esté por encima de otros elementos si hay superposición */
+  gap: 2rem; /* Espacio entre los enlaces y el icono de ajustes */
+  margin-left: auto; /* Empuja este contenido a la derecha */
 }
 
 .nav-links {
   display: flex;
-  gap: 2.5rem; /* Aumentado el espacio entre los enlaces para que se vean más separados */
+  gap: 2rem; /* Espacio entre "Services" y "Studios" */
   align-items: center;
 }
 
 .nav-links a {
   color: white;
-  font-size: 3rem; /* Aumentado el tamaño de la fuente para que el texto sea más grande */
+  font-family: 'Firmos', sans-serif; /* Asumiendo que tienes esta fuente */
+  font-size: 2.5rem;
   text-decoration: none;
-  text-shadow: 1px 1px black;
-  transition: color 0.3s ease; /* Transición para el hover */
+  text-shadow: 2px 2px 0px black; /* Sombra sólida para el efecto de tu diseño */
+  padding: 0.5rem;
+  transition: all 0.3s ease;
 }
 
-.nav-links a:hover {
-  color: #ddd; /* Color al pasar el ratón */
+/* --- ESTILO AÑADIDO PARA EL EFECTO BORROSO --- */
+.nav-links a.blurred {
+  opacity: 0.4; /* Hacemos el texto semitransparente */
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.7); /* Sombra que simula un desenfoque/brillo */
+  transform: scale(0.95); /* Opcional: hacerlo un poco más pequeño */
 }
 
-.settings-link { /* Clase para el enlace que envuelve el icono */
-  color: white; /* Color del icono */
-  text-decoration: none; /* Quita el subrayado del enlace */
-  display: flex; /* Para centrar el icono y controlar su tamaño */
+.nav-links a:not(.blurred):hover {
+  color: #ddd; /* Color al pasar el ratón solo si no está borroso */
+  transform: scale(1.05);
+}
+
+
+.settings-link {
+  color: white;
+  display: flex;
   align-items: center;
   justify-content: center;
+  transition: transform 0.3s ease;
 }
 
 .settings-link:hover {
-  color: #ddd; /* Color del enlace/icono al pasar el ratón */
+  transform: scale(1.1) rotate(45deg);
 }
 
 .settings-icon {
-  font-size: 2rem;
+  font-size: 2.5rem; /* Icono de ajustes un poco más grande */
   cursor: pointer;
-  color: inherit;
-  transition: color 0.3s ease;
+  stroke-width: 2.5; /* Grosor del icono */
+  filter: drop-shadow(2px 2px 0px black); /* Sombra para el icono */
 }
-
 /* ===========================================================
    7. Services – Estructura general
    =========================================================== */
@@ -491,7 +511,7 @@ h1, h2, h3, h4, h5, h6 {
   color: black;
   padding: 10px 20px;
   border-radius: 5px;
-  font-size: 1.5em;
+  font-size: 2em;
   margin-bottom: 15px; /* Espacio entre las cajas */
   text-align: center;
   width: 80%; /* Ajusta el ancho para que parezca más compacto como en la imagen */
@@ -680,7 +700,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .card-info-section h3 {
-  font-size: 1.5rem;
+  font-size: 2rem;
   color: #333;
   margin-bottom: 5px;
   text-align: left;
@@ -719,7 +739,7 @@ h1, h2, h3, h4, h5, h6 {
   right: 15px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 1.5rem;
+  font-size: 2rem;
 }
 
 /* Estilos para el Paso 3: Confirmación */
@@ -798,7 +818,7 @@ h1, h2, h3, h4, h5, h6 {
   padding: 15px 40px;
   border: none;
   border-radius: 8px;
-  font-size: 1.5rem;
+  font-size: 2rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
   margin-top: 20px; /* Ajuste el margen superior */
@@ -884,7 +904,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .forgot-password-title {
   font-family: 'Firmos', sans-serif;
-  font-size: 3.5rem; /* Large and bold, adjusted from login-box h2 */
   color: black; /* Text color */
   margin-bottom: 3rem; /* Space below the title */
   line-height: 1.2; /* Adjust line height for multi-line text */
@@ -897,7 +916,7 @@ h1, h2, h3, h4, h5, h6 {
 .forgot-password-input {
   font-family: 'Firmos', sans-serif;
   width: 100%;
-  padding: 1.5rem; /* Larger padding for a taller input */
+  padding: 2rem; /* Larger padding for a taller input */
   border-radius: 50px; /* Fully rounded corners */
   border: 2px solid #ccc; /* Light grey border */
   background-color: #e0e0e0; /* Light grey background as in image */
@@ -929,7 +948,7 @@ h1, h2, h3, h4, h5, h6 {
 .forgot-password-button {
   font-family: 'Firmos', sans-serif;
   flex: 1; /* Make buttons take equal space */
-  padding: 1.5rem 2rem; /* Larger padding for bigger buttons */
+  padding: 2rem 2rem; /* Larger padding for bigger buttons */
   border-radius: 50px; /* Fully rounded corners */
   border: none;
   font-size: 2.5rem; /* Large font size for button text */
@@ -958,8 +977,8 @@ h1, h2, h3, h4, h5, h6 {
 .forgot-password-message {
   font-family: 'Firmos', sans-serif;
   font-size: 2rem;
-  margin-top: 1.5rem;
-  padding: 0.8rem 1.5rem;
+  margin-top: 2rem;
+  padding: 0.8rem 2rem;
   border-radius: 10px;
   text-align: center;
   line-height: 1.2;
@@ -1001,17 +1020,17 @@ h1, h2, h3, h4, h5, h6 {
     gap: 15px;
   }
   .forgot-password-button {
-    padding: 1.2rem 1.5rem;
+    padding: 1.2rem 2rem;
     font-size: 2rem;
   }
   .forgot-password-message {
-    font-size: 1.5rem;
+    font-size: 2rem;
   }
 }
 
 @media (max-width: 480px) {
   .forgot-password-header {
-    padding: 1.5rem 0;
+    padding: 2rem 0;
   }
   .forgot-password-logo-text {
     font-size: 2.8rem;
@@ -1021,7 +1040,7 @@ h1, h2, h3, h4, h5, h6 {
   }
   .forgot-password-title {
     font-size: 2rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
   }
   .forgot-password-input {
     font-size: 1.5rem;
@@ -1278,7 +1297,6 @@ h1, h2, h3, h4, h5, h6 {
 .form-group textarea,
 .form-group select {
   width: 100%;
-  padding: 14px 18px; /* Comfortable padding */
   border-radius: 25px; /* Highly rounded corners like the image's inputs */
   border: 1px solid #cbd5e1; /* Light gray border */
   background-color: #f8fafc; /* Very light off-white/purpleish tint - adjust to match image's purple */
@@ -1286,7 +1304,6 @@ h1, h2, h3, h4, h5, h6 {
   /* background-color: #ede7f6; */
   /* border: 1px solid #d1c4e9; */
   box-sizing: border-box;
-  font-size: 1em;
   color: #334155; /* Text color inside input */
   transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
@@ -1379,169 +1396,410 @@ h1, h2, h3, h4, h5, h6 {
   transform: translateY(0);
 }
 /* ===========================================================
-14. Settings
+   14. Settings Pages - DISEÑO FINAL
 =========================================================== */
-.settings-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Centra los elementos horizontalmente */
-  padding: 2rem;
-  background-color: #f0f2f5; /* Un fondo claro para la página */
-  min-height: calc(100vh - 90px); /* Altura mínima restando la altura del navbar */
-  color: #333; /* Color de texto general para la página */
-  box-sizing: border-box; /* Para que el padding no añada anchura extra */
-}
 
-.settings-title {
-  font-family: 'Firmos', sans-serif; /* Usamos Firmos para el título principal de la página */
-  font-size: 4rem; /* Un tamaño grande como el de tu imagen */
-  font-weight: normal; /* Firmos es naturalmente gruesa, no le añadimos más */
-  color: #0038E1; /* Color azul fuerte */
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
-.settings-section {
-  background-color: white;
-  border-radius: 8px;
-  padding: 1.5rem 2rem;
-  margin-bottom: 1.5rem;
-  width: 100%;
-  max-width: 600px; /* Ancho máximo para las secciones de contenido */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Centra el contenido dentro de la sección */
-}
-
-.settings-section h2 {
-  font-family: 'Firmos', sans-serif; /* Firmos para los subtítulos de sección */
-  font-size: 2.2rem; /* Tamaño adecuado para subtítulos */
-  font-weight: normal; /* No negrita adicional */
-  color: #0038E1;
-  margin-top: 0;
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.change-button {
-  background-color: #A0D2FF; /* Azul claro para los botones de "Change" */
-  color: black;
-  padding: 0.8rem 2rem;
-  border: none;
-  border-radius: 25px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  width: 200px; /* Ancho fijo para que se vean iguales */
-  text-align: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.change-button:hover {
-  background-color: #79B3ED; /* Azul un poco más oscuro al pasar el ratón */
-  transform: translateY(-2px);
-}
-
-/* Estilos para el contenedor de Preguntas Frecuentes (FAQ) */
-.faq-section {
-  background-color: white;
-  border-radius: 8px;
-  padding: 1.5rem 2rem;
-  margin-bottom: 2rem;
-  width: 100%;
-  max-width: 800px; /* Un poco más ancho para las FAQs */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+/* --- Estilo Base para las Páginas de Ajustes --- */
+.settings-page, .settings-subpage {
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: white; /* Fondo blanco como en las imágenes */
+  min-height: calc(100vh - 80px); /* Ajusta 80px a la altura de tu Navbar */
+  box-sizing: border-box;
+  padding-bottom: 2rem;
 }
 
-.faq-section h2 {
+/* Título principal grande (para "Settings", "Configuración", etc.) */
+.settings-title-main {
+  font-family: 'Firmos', sans-serif; /* Asumo que tienes esta fuente importada */
+  font-size: 3.5rem;
+  color: black;
+  margin-top: 2rem;
+  margin-bottom: 4rem;
+  text-align: center;
+  font-weight: normal; /* Firmos ya es gruesa */
+  letter-spacing: 1px;
+}
+
+/* --- Estilos para la Página Principal de Ajustes (/settings) --- */
+.settings-options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Espacio entre las opciones */
+  width: 100%;
+  max-width: 550px;
+  margin-bottom: 4rem;
+}
+
+.settings-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.settings-option-label {
   font-family: 'Firmos', sans-serif;
-  font-size: 2.5rem; /* Tamaño para el título de FAQs */
+  font-size: 1.8rem;
+  color: black;
   font-weight: normal;
-  color: #0038E1;
-  margin-top: 0;
-  margin-bottom: 1.5rem;
+}
+
+.change-button {
+  background-color: #A0D2FF; /* Azul claro */
+  color: black;
+  padding: 0.5rem 2rem;
+  border: 2px solid black;
+  border-radius: 25px; /* Bordes redondeados tipo píldora */
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 2px 2px 0px black; /* Sombra sólida para efecto 2D */
+}
+
+.change-button:hover {
+  background-color: #79B3ED;
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px black;
+}
+
+.faq-section-settings {
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 4rem;
   text-align: center;
 }
 
+.faq-section-settings h2 {
+  font-family: 'Firmos', sans-serif;
+  font-size: 3rem;
+  color: black;
+  margin-bottom: 1.5rem;
+}
+
 .faq-scroll-container {
-  max-height: 400px; /* Altura máxima para el scroll */
-  overflow-y: auto; /* Habilita el scroll vertical */
-  width: 100%;
-  padding-right: 15px; /* Espacio para la barra de scroll */
-  box-sizing: border-box;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 2px solid black;
+  padding: 1.5rem;
+  text-align: left;
 }
-
-/* Estilos de la barra de scroll (webkit browsers) */
-.faq-scroll-container::-webkit-scrollbar {
-  width: 8px;
-}
-
-.faq-scroll-container::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-.faq-scroll-container::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 10px;
-}
-
-.faq-scroll-container::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
 
 .faq-item {
   margin-bottom: 1.5rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid #eee; /* Separador entre preguntas */
+  border-bottom: 1px solid #ddd;
 }
-
 .faq-item:last-child {
-  border-bottom: none; /* No hay separador en la última pregunta */
+  border-bottom: none;
   margin-bottom: 0;
   padding-bottom: 0;
 }
 
-.faq-item h3 { /* Estilo para las preguntas de FAQ */
-  font-family: 'Roboto', sans-serif; /* Usamos Roboto para la pregunta */
-  font-size: 1.3rem;
-  font-weight: 700; /* Las preguntas suelen ir en negrita para destacar */
-  color: #0038E1;
-  margin-top: 0;
+.faq-item h3 {
+  font-family: 'Firmos', sans-serif;
+  font-size: 2rem;
+  color: black;
   margin-bottom: 0.5rem;
 }
+.faq-item p {
+  font-family: 'Firmos', sans-serif;
+  font-size: 1.7rem;
+  color: #333;
+}
 
-.faq-item p { /* Estilo para las respuestas de FAQ */
-  font-family: 'Roboto', sans-serif; /* Usamos Roboto para la respuesta */
-  font-size: 1.1rem;
-  font-weight: 400; /* Peso normal para la respuesta */
-  color: #555;
+.logout-button-large {
+  background-color: #A0D2FF;
+  color: black;
+  padding: 1rem 4rem;
+  border: 3px solid black;
+  border-radius: 30px;
+  font-family: 'Firmos', sans-serif;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 4px 4px 0px black;
+}
+
+.logout-button-large:hover {
+  background-color: #79B3ED;
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px black;
+}
+
+/* --- Estilos para las Sub-páginas de Formularios --- */
+.form-container {
+  width: 100%;
+  max-width: 450px;
+  margin-bottom: 2rem;
+  background-color: #F8F8F8; /* Fondo ligeramente gris para el contenedor del form */
+  padding: 2rem;
+  border: 2px solid black;
+  border-radius: 15px;
+}
+
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.settings-form .form-group {
+  text-align: left;
+}
+
+.settings-form .form-group label {
+  font-family: 'Firmos', sans-serif;
+  font-size: 1.5rem;
+  color: black;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.settings-form .form-input {
+  background-color: #D9D9D9; /* Fondo gris para el input */
+  border: 2px solid black;
+  border-radius: 20px;
+  padding: 0.8rem 1rem;
+  font-size: 1.2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.settings-form .form-button { /* Botón "Guardar Cambios" o "Save" */
+  background-color: #A0D2FF;
+  color: black;
+  padding: 0.8rem 2.5rem;
+  border: 2px solid black;
+  border-radius: 25px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: block;
+  margin: 1.5rem auto 0 auto;
+  box-shadow: 2px 2px 0px black;
+}
+
+.settings-form .form-button:hover {
+  background-color: #79B3ED;
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px black;
+}
+
+.go-back-button {
+  background-color: #A0D2FF;
+  color: black;
+  padding: 0.8rem 2.5rem;
+  border: 2px solid black;
+  border-radius: 25px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 1rem;
+  box-shadow: 2px 2px 0px black;
+}
+
+.go-back-button:hover {
+  background-color: #79B3ED;
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px black;
+}
+
+/* Mensajes de feedback en los formularios */
+.form-message {
+  margin-top: 1rem;
+  padding: 0.8rem;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 500;
+  border: 2px solid;
+}
+.form-message.success { background-color: #d4edda; color: #155724; border-color: #155724; }
+.form-message.error { background-color: #f8d7da; color: #721c24; border-color: #721c24; }
+
+
+/* ===========================================================
+   15. Campo de Teléfono - DISEÑO MEJORADO
+=========================================================== */
+
+/* El contenedor del grupo ahora se verá como un solo campo de entrada,
+   imitando el estilo de .settings-form .form-input */
+.phone-input-group {
+  display: flex;
+  align-items: center;
+  background-color: #D9D9D9; /* Mismo fondo gris que los otros inputs */
+  border: 2px solid black;
+  border-radius: 20px; /* Mismo borde redondeado */
+  transition: all 0.2s ease-in-out; /* Transición para el foco */
+  overflow: hidden; /* Oculta cualquier desbordamiento de los hijos */
+  padding: 0; /* Sin padding en el contenedor padre */
+}
+
+/* Cuando el usuario hace clic dentro del grupo (ya sea en el selector o en el input),
+   el contenedor entero se resalta. ¡Un toque profesional! */
+.phone-input-group:focus-within {
+  border-color: #0038E1; /* Color de resalte azul */
+  box-shadow: 0 0 0 3px rgba(0, 56, 225, 0.25);
+}
+
+/* Estilo para el selector de prefijo de país */
+.country-code-select {
+  /* Hacemos que se integre perfectamente en el grupo */
+  background-color: transparent; /* Fondo transparente */
+  border: none; /* Sin borde propio */
+  border-right: 2px solid #888; /* Línea separadora gris oscura */
+  padding: 0.8rem 1rem;
+  font-size: 1.5rem;
+  font-family: inherit; /* Hereda la fuente del formulario */
+  color: #333;
+  cursor: pointer;
+  align-self: stretch; /* Ocupa toda la altura del contenedor */
+
+  /* Quita la apariencia por defecto del navegador para un look limpio */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  /* Para navegadores que no soportan lo anterior, se puede añadir una flecha personalizada */
+  /* background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E'); */
+  /* background-repeat: no-repeat; */
+  /* background-position: right .7em top 50%; */
+  /* background-size: .65em auto; */
+}
+
+/* Estilo para el input del número de teléfono */
+.phone-number-input {
+  flex-grow: 1; /* Ocupa el espacio restante */
+  background-color: transparent; /* Fondo transparente */
+  border: none; /* Sin borde propio */
+  padding: 0.8rem 1rem;
+  font-size: 1.2rem;
+  width: 100%; /* Asegura que ocupe todo el espacio asignado por flex-grow */
+  color: #333;
+}
+
+/* Eliminar el resalte del navegador al hacer foco en los campos internos */
+.country-code-select:focus,
+.phone-number-input:focus {
+  outline: none;
+}
+
+/* ===========================================================
+   16. Footer - DISEÑO FINAL
+=========================================================== */
+
+.site-footer {
+  width: 100%;
+  background-color: #0038E1; /* Mismo azul que el navbar */
+  color: white;
+  padding: 2rem 4rem; /* Padding generoso para que no se vea apretado */
+  box-sizing: border-box;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between; /* Distribuye el espacio entre las secciones */
+  align-items: center; /* Alinea verticalmente los items */
+  width: 100%;
+  max-width: 1600px; /* Ancho máximo para el contenido del footer */
+  margin: 0 auto;
+  gap: 2rem; /* Espacio entre las secciones */
+}
+
+.footer-section {
+  font-family: 'Firmos', sans-serif; /* Asumiendo que esta es tu fuente principal */
+  text-shadow: 1px 1px 0px black; /* Sombra sólida como en el navbar */
+}
+
+/* --- Estilos para cada sección --- */
+
+/* 1. Copyright */
+.copyright-section {
+  font-size: 1.5rem;
+  opacity: 0.8; /* Ligeramente transparente para no robar protagonismo */
+}
+.copyright-section p {
   margin: 0;
 }
 
-/* Botón de Cerrar Sesión */
-.logout-button {
-  background-color: #0038E1; /* Mismo azul del navbar */
+
+/* 2. Redes Sociales */
+.social-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* Espacio entre cada red social */
+}
+.social-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem; /* Espacio entre el icono y el texto */
   color: white;
-  padding: 1rem 3rem;
-  border: none;
-  border-radius: 30px;
-  font-family: 'Firmos', sans-serif; /* Puedes usar Firmos para este botón si quieres que sea impactante */
-  font-size: 2rem; /* Tamaño grande para el botón */
-  font-weight: normal; /* Firmos es naturalmente gruesa */
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  margin-top: 2rem;
+  text-decoration: none;
+  font-size: 2rem;
+  transition: transform 0.2s ease;
+}
+.social-link:hover {
+  transform: scale(1.05);
+}
+.social-icon {
+  font-size: 2rem; /* Tamaño de los iconos */
 }
 
-.logout-button:hover {
-  background-color: #002DAA; /* Azul un poco más oscuro al pasar el ratón */
-  transform: translateY(-2px);
+
+/* 3. Enlaces de Navegación */
+.links-section {
+  display: flex;
+  gap: 4rem; /* Espacio entre las dos columnas de enlaces */
+  font-size: 2rem;
 }
+.links-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* Espacio entre enlaces de la misma columna */
+}
+.links-column a, .footer-logout-button {
+  color: white;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.links-column a:hover, .footer-logout-button:hover {
+  color: #A0D2FF; /* Azul claro al pasar el ratón */
+}
+/* Estilo para que el botón de logout se vea como un enlace */
+.footer-logout-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-family: 'Firmos', sans-serif;
+  font-size: 2rem;
+  cursor: pointer;
+  text-shadow: 2px 2px 0px black;
+}
+
+
+/* 4. Caja de Contacto con efecto "Glassmorphism" */
+.contact-section .contact-box {
+  background: rgba(255, 255, 255, 0.1); /* Fondo semitransparente */
+  backdrop-filter: blur(10px); /* El efecto de desenfoque del fondo */
+  -webkit-backdrop-filter: blur(10px); /* Para compatibilidad con Safari */
+  border-radius: 25px; /* Bordes redondeados */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Borde sutil */
+  padding: 2rem 2rem;
+  text-align: center;
+}
+.contact-box .contact-title {
+  font-size: 2rem;
+  margin: 0 0 0.5rem 0;
+}
+.contact-box .contact-email {
+  font-size: 1.2rem;
+  color: white;
+  text-decoration: none;
+  background-color: #e53e3e; /* Fondo rojo para el email */
+  padding: 0.3rem 0.8rem;
+  border-radius: 10px;
+}
+

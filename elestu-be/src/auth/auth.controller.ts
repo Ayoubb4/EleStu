@@ -1,5 +1,5 @@
-//src/auth/auth.controller.ts
-import { Controller, Post, Body, Get, Logger } from '@nestjs/common';
+// src/auth/auth.controller.ts
+import { Controller, Post, Body, Get, Logger, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -9,12 +9,27 @@ export class AuthController {
     constructor(private authService: AuthService) {}
 
     @Post('login')
+    // No necesitamos el objeto 'req' aquí, así que lo quitamos para mayor limpieza.
     async login(@Body() loginData: { email: string; password: string }) {
         this.logger.log(`Solicitud de inicio de sesión para: ${loginData.email}`);
         try {
+            // Llamamos al servicio solo con los datos de login.
             return await this.authService.login(loginData);
         } catch (error) {
             this.logger.error(`Error en solicitud de login: ${error.message}`);
+            throw error;
+        }
+    }
+
+    @Post('google')
+    // Tampoco necesitamos 'req' aquí. Solo el token que viene en el body.
+    async googleLogin(@Body('token') token: string) {
+        this.logger.log('Recibida solicitud de login con Google...');
+        try {
+            // --- CORREGIDO AQUÍ: Se llama a la función solo con 1 argumento ---
+            return await this.authService.loginWithGoogle(token);
+        } catch (error) {
+            this.logger.error(`Error en login con Google: ${error.message}`);
             throw error;
         }
     }

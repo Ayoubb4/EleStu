@@ -47,7 +47,7 @@ function Welcome() {
     return (
         <div className="container mx-auto px-4 py-6">
             <header className="flex items-center justify-between mb-6">
-                <h1 className="text-3xl font-bold">Marketplace Musical</h1>
+                <h1 className="text-3xl">Marketplace Musical</h1>
                 <button
                     onClick={handleLogout}
                     className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
