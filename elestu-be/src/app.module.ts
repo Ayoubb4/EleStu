@@ -17,46 +17,36 @@ import { join } from 'path';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, // Esto hace que ConfigModule esté disponible en toda la app
+      isGlobal: true,
+      envFilePath: '.env', // Asegura que lea el archivo .env en desarrollo
     }),
 
     // --- MODIFICACIÓN CLAVE PARA RENDER ---
-    // Se reemplaza la configuración de TypeOrm por una asíncrona que lee las variables de entorno
+    // Se simplifica la configuración de TypeORM para que use siempre las mismas
+    // variables de entorno, que configurarás tanto en tu PC como en Render.
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        const isProduction = configService.get<string>('NODE_ENV') === 'production';
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get<string>('DB_HOST'),
+        port: parseInt(configService.get<string>('DB_PORT', '5432')),
+        username: configService.get<string>('DB_USER'),
+        password: configService.get<string>('DB_PASSWORD'),
+        database: configService.get<string>('DB_NAME'),
 
-        // Esta es la configuración para producción (Render)
-        if (isProduction) {
-          return {
-            type: 'postgres',
-            // Render proporciona la URL completa en esta variable de entorno
-            url: configService.get<string>('DATABASE_URL'),
-            // Las bases de datos de Render requieren SSL
-            ssl: {
-              rejectUnauthorized: false,
-            },
-            autoLoadEntities: true,
-            // IMPORTANTE: En producción, synchronize debe ser false.
-            // Los cambios en la BD se deben manejar con migraciones.
-            synchronize: false,
-          };
-        }
+        // La opción ssl es CRUCIAL para conectar con bases de datos en la nube como la de Render.
+        // Se activa si NODE_ENV es 'production'.
+        ssl: configService.get<string>('NODE_ENV') === 'production'
+            ? { rejectUnauthorized: false }
+            : false,
 
-        // Esta es la configuración para desarrollo (tu PC)
-        return {
-          type: 'postgres',
-          host: configService.get<string>('DB_HOST'),
-          port: parseInt(configService.get<string>('DB_PORT', '5432')),
-          username: configService.get<string>('DB_USER'),
-          password: configService.get<string>('DB_PASSWORD'),
-          database: configService.get<string>('DB_NAME'),
-          autoLoadEntities: true,
-          synchronize: true, // Puedes dejarlo en true para desarrollo local
-        };
-      },
+        autoLoadEntities: true,
+
+        // IMPORTANTE: En producción (Render), esto debe ser false.
+        // En desarrollo local (tu PC), puedes ponerlo en true si quieres que las tablas se creen solas.
+        synchronize: configService.get<string>('NODE_ENV') !== 'production',
+      }),
     }),
     // --- FIN DE LA MODIFICACIÓN ---
 
