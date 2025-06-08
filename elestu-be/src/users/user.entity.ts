@@ -12,16 +12,19 @@ export class User {
     @Column({ type: 'varchar', length: 100 })
     name: string;
 
+    // --- AÑADIDO: Campo para Apellidos ---
+    @Column({ type: 'varchar', length: 100, nullable: true })
+    lastName?: string;
+    // --- FIN DE LA ADICIÓN ---
+
     @Column({ type: 'varchar', length: 100, unique: true })
     email: string;
 
     @Column({ type: 'varchar', length: 100 })
     password: string;
 
-    // --- AÑADIDO ---
-    @Column({ type: 'varchar', length: 20, nullable: true }) // La columna ya existe en tu BD y es nullable
-    phoneNumber?: string; // Hacemos la propiedad opcional en la entidad también
-    // --- FIN DE LA ADICIÓN ---
+    @Column({ type: 'varchar', length: 20, nullable: true })
+    phoneNumber?: string;
 
     @OneToMany(() => Service, service => service.user)
     servicios: Service[];

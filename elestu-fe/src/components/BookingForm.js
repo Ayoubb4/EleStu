@@ -12,67 +12,65 @@ function BookingForm() {
     const [selectedTime, setSelectedTime] = useState('');
     const [description, setDescription] = useState('');
 
-    // Estados para almacenar el email y ID del usuario logueado
-    const [userEmail, setUserEmail] = useState('');
-    const [currentUserId, setCurrentUserId] = useState(null);
+    // Estados para almacenar datos del usuario logueado
+    const [currentUser, setCurrentUser] = useState(null);
 
     const [bookingSuccess, setBookingSuccess] = useState(false);
     const [error, setError] = useState('');
 
     useEffect(() => {
         // 1. Obtener datos del estudio desde la navegación
-        const { studio } = location.state || {};
-        if (!studio) {
-            navigate('/studios'); // Redirigir si no hay datos de estudio
-        } else {
-            setStudio(studio);
+        const { studio: studioFromState } = location.state || {};
+        if (!studioFromState) {
+            console.error("No se encontraron datos del estudio. Redirigiendo...");
+            navigate('/studios');
+            return; // Detener la ejecución si no hay estudio
         }
+        setStudio(studioFromState);
 
-        // 2. Lógica de AUTENTICACIÓN: Obtener datos del usuario desde localStorage
-        // *** IMPORTANTE: Las claves 'userId' y 'userEmail' deben coincidir EXACTAMENTE
-        // con cómo las guardas en authService.js (revisa authService.js más abajo) ***
-        const storedUserId = localStorage.getItem('userId'); // Ahora se espera 'userId' (camelCase)
-        const storedUserEmail = localStorage.getItem('userEmail'); // Ahora se espera 'userEmail' (camelCase)
+        // --- AÑADIDO: Lógica de AUTENTICACIÓN robusta ---
+        // Obtenemos los datos del usuario directamente del objeto 'user'
+        // que guardamos en localStorage durante el login.
+        try {
+            const userString = localStorage.getItem('user');
+            const token = localStorage.getItem('authToken');
+            const userId = localStorage.getItem('userid'); // Verificamos la clave 'userid' en minúsculas
 
-        if (storedUserId) {
-            // Convertir userId a número, ya que el backend probablemente espera un entero
-            setCurrentUserId(parseInt(storedUserId, 10));
-        } else {
-            // Si userId no se encuentra, significa que el usuario no está logueado o los datos faltan
-            setError('User ID not found. Please log in to make a booking.');
-            // Opcional: navegar a la página de login
-            // navigate('/login');
+            if (userString && token && userId) {
+                const userData = JSON.parse(userString);
+                // Verificamos que los datos necesarios (id, email) existan
+                if (userData && userData.id && userData.email) {
+                    setCurrentUser(userData);
+                    console.log('Usuario autenticado encontrado:', userData);
+                } else {
+                    throw new Error('Datos de usuario en localStorage están corruptos o incompletos.');
+                }
+            } else {
+                // Si falta alguno de los datos clave de la sesión, no está autenticado
+                throw new Error('No se encontraron datos de sesión (token o id de usuario).');
+            }
+        } catch (err) {
+            console.error('Error al verificar la autenticación del usuario:', err.message);
+            setError('Por favor, inicia sesión para hacer una reserva.');
         }
+        // --- FIN DE LA LÓGICA AÑADIDA ---
 
-        if (storedUserEmail) {
-            setUserEmail(storedUserEmail);
-        } else {
-            setError('User email not found. Please log in to make a booking.');
-            // Opcional: navegar a la página de login
-            // navigate('/login');
-        }
-        // console.log("User ID from localStorage:", storedUserId);
-        // console.log("User Email from localStorage:", storedUserEmail);
-
-    }, [navigate, location.state]); // Dependencias para useEffect
+    }, [navigate, location.state]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setBookingSuccess(false);
 
-        // Validaciones frontend, incluyendo datos del usuario
-        if (!selectedDate || !selectedTime || !description || !userEmail || currentUserId === null) {
-            setError('Please fill in all booking details and ensure you are logged in.');
-            console.log("Faltan datos para la reserva:", { selectedDate, selectedTime, description, userEmail, currentUserId });
+        if (!selectedDate || !selectedTime || !description) {
+            setError('Por favor, completa todos los campos de la reserva.');
             return;
         }
 
-        // Obtener el token de autenticación de localStorage
-        const authToken = localStorage.getItem('authToken'); // Asegúrate de que esta clave coincide con la de authService.js
-        if (!authToken) {
-            setError('Authentication token not found. Please log in.');
-            navigate('/login'); // Redirigir al login si no hay token
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken || !currentUser) {
+            setError('Sesión no válida o expirada. Por favor, inicia sesión de nuevo.');
+            navigate('/login');
             return;
         }
 
@@ -83,16 +81,15 @@ function BookingForm() {
             time: selectedTime,
             description: description,
             pricePerHour: studio.price,
-            userEmail: userEmail,       // Enviamos el email del usuario
-            userId: currentUserId,       // Enviamos el ID del usuario
+            userEmail: currentUser.email, // Email del usuario autenticado
+            userId: currentUser.id,       // ID del usuario autenticado
         };
 
         try {
-            const response = await fetch('http://localhost:3000/api/bookings', { // Tu endpoint de backend
+            const response = await fetch('http://localhost:3000/api/bookings', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    // **CRUCIAL:** Enviar el token de autenticación en el header Authorization
                     'Authorization': `Bearer ${authToken}`,
                 },
                 body: JSON.stringify(bookingDetails),
@@ -100,17 +97,12 @@ function BookingForm() {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                console.error("Respuesta de error del backend:", errorData);
                 throw new Error(errorData.message || 'Error al enviar la reserva.');
             }
 
             setBookingSuccess(true);
-            // Limpiar los campos del formulario después de una reserva exitosa
-            setSelectedDate('');
-            setSelectedTime('');
-            setDescription('');
-            // No limpiar userEmail o currentUserId ya que representan al usuario logueado
-            console.log("Reserva enviada con éxito.");
+            alert('¡Reserva enviada con éxito!');
+            navigate('/studios'); // Redirigir después de la reserva exitosa
 
         } catch (err) {
             console.error('Error al enviar la reserva:', err);
@@ -118,38 +110,39 @@ function BookingForm() {
         }
     };
 
-    // Muestra un mensaje de carga si el estudio aún no se ha cargado
-    if (!studio) {
+    // Muestra el error si no se pudo autenticar al usuario
+    if (error) {
         return (
-            <div className="booking-page-container">
+            <div className="login-required-page">
                 <Navbar />
-                <h2 className="booking-form-title">Cargando formulario de reserva...</h2>
+                <div className="login-required-content">
+                    <h1>Login Requerido</h1>
+                    <p>{error}</p>
+                    <button onClick={() => navigate('/login')} className="submit-booking-button">Ir al Login</button>
+                </div>
             </div>
         );
     }
 
-    // Muestra un mensaje si el usuario no está logueado o faltan datos esenciales
-    if (currentUserId === null || userEmail === '') {
+    // Muestra un mensaje de carga mientras se verifica todo
+    if (!studio || !currentUser) {
         return (
             <div className="booking-page-container">
                 <Navbar />
-                <h2 className="booking-form-title">Login Required</h2>
-                <p className="booking-error-message">Please log in to make a booking. User ID or Email not found.</p>
-                {error && <p className="booking-error-message">{error}</p>}
-                {/* Botón para redirigir al usuario a la página de login */}
-                <button onClick={() => navigate('/login')} className="submit-booking-button">Go to Login</button>
+                <h2 className="booking-form-title">Cargando...</h2>
             </div>
         );
     }
+
 
     return (
         <div className="booking-page-container">
             <Navbar />
-            <h2 className="booking-form-title">Book Studio: {studio.name}</h2>
+            <h2 className="booking-form-title">Reservar Estudio: {studio.name}</h2>
             <div className="booking-form-container">
                 <form onSubmit={handleSubmit} className="booking-form">
                     <div className="form-group">
-                        <label htmlFor="date">Select Date:</label>
+                        <label htmlFor="date">Seleccionar Fecha:</label>
                         <input
                             type="date"
                             id="date"
@@ -159,7 +152,7 @@ function BookingForm() {
                         />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="time">Select Time:</label>
+                        <label htmlFor="time">Seleccionar Hora:</label>
                         <input
                             type="time"
                             id="time"
@@ -168,33 +161,31 @@ function BookingForm() {
                             required
                         />
                     </div>
-                    {/* Mostrar el email del usuario como solo lectura, ya que viene de la autenticación */}
                     <div className="form-group">
-                        <label htmlFor="userEmail">Your Email:</label>
+                        <label htmlFor="userEmail">Tu Email (de la sesión actual):</label>
                         <input
                             type="email"
                             id="userEmail"
-                            value={userEmail}
+                            value={currentUser.email}
                             readOnly // El usuario no debería poder cambiar su email aquí
                             required
                         />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="description">Brief Description of your needs:</label>
+                        <label htmlFor="description">Breve descripción de tus necesidades:</label>
                         <textarea
                             id="description"
                             rows="5"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            placeholder="e.g., 'Mixing and mastering session for an EP', 'Vocal recording for a single', 'Band rehearsal'"
+                            placeholder="Ej: 'Sesión de mezcla y mastering para un EP', 'Grabación de voz para un single', 'Ensayo de banda'"
                             required
                         ></textarea>
                     </div>
 
-                    {error && <p className="booking-error-message">{error}</p>}
-                    {bookingSuccess && <p className="booking-success-message">Booking submitted successfully! We will contact you soon.</p>}
+                    {bookingSuccess && <p className="booking-success-message">¡Reserva enviada con éxito! Te contactaremos pronto.</p>}
 
-                    <button type="submit" className="submit-booking-button">Confirm Booking</button>
+                    <button type="submit" className="submit-booking-button">Confirmar Reserva</button>
                 </form>
             </div>
         </div>

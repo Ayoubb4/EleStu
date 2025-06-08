@@ -1,38 +1,22 @@
 // src/components/SettingsPage.js
-import React from 'react'; // Asegúrate de importar React si no lo haces globalmente
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../App.css'; // Asegúrate de importar tus estilos globales
+import Navbar from './Navbar'; // Importamos el Navbar
+import PersonalInfoForm from './PersonalInfoForm'; // Importaremos el nuevo formulario de datos personales
+import SecurityForm from './SecurityForm'; // Importaremos el nuevo formulario de seguridad
+import { logout } from '../services/authService'; // Importamos la función de logout centralizada
+import '../App.css'; // Asegúrate de tener estilos para esta página
 
-// Componente de página de Ajustes
 function SettingsPage() {
     const navigate = useNavigate();
 
+    // Llama a la función de logout centralizada desde authService
     const handleLogout = () => {
-        console.log('Cerrando Sesión...');
-
-        // --- INICIO DE LÓGICA DE CIERRE DE SESIÓN REAL ---
-        // 1. Eliminar el ID del usuario del localStorage
-        localStorage.removeItem('userid');
-        console.log('UserID eliminado del localStorage.');
-
-        // 2. Eliminar el token de autenticación (si usas uno)
-        // Reemplaza 'authToken' con el nombre real de la clave de tu token si es diferente
-        localStorage.removeItem('authToken'); // O 'token', según cómo lo llames
-        console.log('AuthToken (si existe) eliminado del localStorage.');
-
-        // 3. (Opcional) Si usas cookies para la sesión, también deberías limpiarlas.
-        // Esto es más complejo y depende de cómo estén configuradas (httpOnly, etc.)
-        // A menudo, para tokens JWT en localStorage, los dos pasos anteriores son suficientes.
-
-        // 4. (Opcional) Si tienes algún estado global de la aplicación (Context API, Redux, Zustand, etc.)
-        // que almacene información del usuario, deberías limpiarlo también.
-        // Ejemplo: dispatch({ type: 'LOGOUT_USER' });
-        // --- FIN DE LÓGICA DE CIERRE DE SESIÓN REAL ---
-
+        logout();
         alert('Has cerrado sesión correctamente. Serás redirigido a la página de inicio.');
-        navigate('/'); // Redirige al inicio (o a la página de login)
-        // Podrías querer forzar un refresco de la página para asegurar que todo el estado se reinicie
-        // window.location.reload(); // Descomenta si es necesario, pero la navegación y limpieza de estado suelen ser suficientes.
+        navigate('/');
+        // Forzar un refresco de la página para asegurar que todo el estado (ej. en el Navbar) se reinicie
+        window.location.reload();
     };
 
     // --- Preguntas Frecuentes (FAQs) ---
@@ -72,52 +56,54 @@ function SettingsPage() {
     ];
 
     return (
-        <div className="settings-page">
-            <h1 className="settings-title">Ajustes</h1> {/* Título principal */}
+        <>
+            <Navbar /> {/* Navbar añadido al principio de la página */}
+            <div className="settings-page-container"> {/* Un contenedor principal para dar estilo y centrar */}
+                <h1 className="settings-title">Configuración de la Cuenta</h1>
 
-            {/* Sección de Cambio de Email y Contraseña */}
-            <section className="settings-section">
-                <h2>Cambiar Email y Contraseña</h2> {/* Corregido título duplicado */}
-                <button
-                    className="change-button"
-                    onClick={() => navigate('/change-email-password')}
-                    style={{ marginBottom: '10px' }}
-                >
-                    Cambiar
-                </button>
-            </section>
+                {/* --- SECCIÓN PARA DATOS PERSONALES --- */}
+                <section className="settings-section">
+                    <h2>Datos Personales</h2>
+                    <p>Actualiza tu nombre, apellidos y número de teléfono.</p>
+                    {/* Aquí irá el componente del formulario para datos personales */}
+                    <PersonalInfoForm />
+                </section>
 
-            {/* Sección de Cambio de Datos Personales */}
-            {/* Considera si esta sección es diferente a la anterior o si el título debería variar */}
-            <section className="settings-section">
-                <h2>Actualizar Datos Personales</h2> {/* Ejemplo de título diferente */}
-                <button
-                    className="change-button"
-                    onClick={() => navigate('/change-personal-data')}
-                    style={{ marginBottom: '10px' }}
-                >
-                    Actualizar
-                </button>
-            </section>
+                <hr className="settings-divider" /> {/* Separador visual entre secciones */}
 
-            {/* Sección de Preguntas Frecuentes con Scroll */}
-            <section className="faq-section">
-                <h2>Preguntas Frecuentes</h2>
-                <div className="faq-scroll-container">
-                    {faqs.map((faq, index) => ( // Cambiado a arrow function para el map
-                        <div key={index} className="faq-item">
-                            <h3>{faq.q}</h3>
-                            <p>{faq.a}</p>
-                        </div>
-                    ))}
-                </div>
-            </section>
+                {/* --- SECCIÓN PARA DATOS DE SEGURIDAD --- */}
+                <section className="settings-section">
+                    <h2>Seguridad de la Cuenta</h2>
+                    <p>Cambia tu correo electrónico o contraseña. Se requerirá tu contraseña actual para realizar cualquier cambio.</p>
+                    {/* Aquí irá el componente del formulario para seguridad */}
+                    <SecurityForm />
+                </section>
 
-            {/* Botón de Cerrar Sesión */}
-            <button className="logout-button" onClick={handleLogout}>
-                Cerrar Sesión
-            </button>
-        </div>
+                <hr className="settings-divider" />
+
+                {/* --- SECCIÓN DE PREGUNTAS FRECUENTES --- */}
+                <section className="faq-section">
+                    <h2>Preguntas Frecuentes</h2>
+                    <div className="faq-scroll-container">
+                        {faqs.map((faq, index) => (
+                            <div key={index} className="faq-item">
+                                <h3>{faq.q}</h3>
+                                <p>{faq.a}</p>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                <hr className="settings-divider" />
+
+                {/* Botón de Cerrar Sesión */}
+                <section className="settings-section">
+                    <button className="logout-button" onClick={handleLogout}>
+                        Cerrar Sesión
+                    </button>
+                </section>
+            </div>
+        </>
     );
 }
 

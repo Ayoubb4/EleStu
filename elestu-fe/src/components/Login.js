@@ -8,7 +8,7 @@ function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(false); // Estado para feedback de carga
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
@@ -17,36 +17,27 @@ function Login() {
         setIsLoading(true);
 
         try {
-            const result = await login(email, password); // Llama a tu servicio de login
-            // `result` será lo que devuelve tu authService.login,
-            // que es: { success: true, data: { user: {...}, token: '...' } } o { success: false, error: '...' }
+            const result = await login(email, password);
+            // El 'result' que llega aquí desde authService ahora es:
+            // { success: true, user: {...}, token: '...' } en caso de éxito,
+            // o { success: false, error: '...' } en caso de fallo.
 
             // --- CORRECCIÓN EN LA CONDICIÓN ---
-            if (result.success && result.data && result.data.user && result.data.user.id) {
-                // Accedemos a través de result.data.user
-                const user = result.data.user;
-                const token = result.data.token;
-
-                localStorage.setItem('userid', user.id);
-                console.log('Login exitoso: UserID guardado en localStorage:', user.id);
-
-                if (token) {
-                    localStorage.setItem('authToken', token);
-                    console.log('Login exitoso: AuthToken guardado en localStorage.');
-                }
-
-                localStorage.setItem('userEmail', user.email);
-                localStorage.setItem('userName', user.name || ''); // Guardar nombre si existe
-
+            // Verificamos que 'result' tenga las propiedades que indican un éxito:
+            // 'success' en true, un objeto 'user' con su 'id', y un 'token'.
+            if (result.success && result.user && result.user.id && result.token) {
+                // authService.login ya guardó toda la información en localStorage.
+                // Aquí solo necesitamos confirmar el éxito y navegar.
+                console.log('Login exitoso y verificado en el componente. Navegando...');
                 navigate('/services');
             } else {
-                // Si la condición falla, 'result' podría tener un error o faltar datos
+                // Si la condición falla, es porque 'result' tiene un error o le faltan datos.
                 const errorMessage = result.error || 'Error en el inicio de sesión: datos de usuario incompletos o credenciales incorrectas.';
                 console.error('Error en el login o datos incompletos en la respuesta:', result);
                 setError(errorMessage);
             }
         } catch (err) {
-            // Errores de red o excepciones no esperadas en la llamada a login()
+            // Este bloque captura errores de red o excepciones no esperadas.
             console.error('Error catastrófico en handleLogin:', err);
             setError('Ocurrió un error al intentar iniciar sesión. Por favor, inténtalo de nuevo más tarde.');
         } finally {
