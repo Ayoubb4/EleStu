@@ -32,7 +32,7 @@ export const dataSourceOptions: DataSourceOptions = {
 
     // En producción (Render), NUNCA usar synchronize: true.
     // En local, lo activamos para que sea más fácil desarrollar.
-    synchronize: !isProduction,
+    synchronize: false,
 };
 
 // Creamos y exportamos la instancia de DataSource
