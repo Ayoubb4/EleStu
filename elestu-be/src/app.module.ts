@@ -1,4 +1,3 @@
-// src/app.module.ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -21,7 +20,6 @@ import { join } from 'path';
       envFilePath: '.env',
     }),
 
-    // --- Configuración Definitiva de TypeORM para Render ---
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -32,18 +30,52 @@ import { join } from 'path';
         }
         return {
           type: 'postgres',
-          url: databaseUrl, // Usa la URL completa directamente
+          url: databaseUrl,
           ssl: {
-            rejectUnauthorized: false, // Requerido por Render
+            rejectUnauthorized: false,
           },
           autoLoadEntities: true,
-          synchronize: false, // Nunca true en producción
+          synchronize: false,
         };
       },
     }),
-    // --- FIN ---
 
-    MailerModule.forRootAsync({ /* Tu configuración de Mailer se mantiene igual */ }),
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        // --- CORRECCIÓN FINAL AQUÍ ---
+        // Verificamos que las variables del email existan ANTES de usarlas
+        const emailHost = configService.get<string>('EMAIL_HOST');
+        const emailUser = configService.get<string>('EMAIL_USER');
+        const emailPass = configService.get<string>('EMAIL_PASS');
+        if (!emailHost || !emailUser || !emailPass) {
+          throw new Error('Las variables de entorno para el email (EMAIL_HOST, EMAIL_USER, EMAIL_PASS) no están definidas.');
+        }
+
+        return {
+          transport: {
+            host: emailHost,
+            port: parseInt(configService.get<string>('EMAIL_PORT', '587'), 10),
+            secure: configService.get<string>('EMAIL_SECURE') === 'true',
+            auth: {
+              user: emailUser,
+              pass: emailPass,
+            },
+          },
+          defaults: {
+            from: `"EleStu" <${emailUser}>`,
+          },
+          template: {
+            dir: join(__dirname, '..', 'templates'),
+            adapter: new HandlebarsAdapter(),
+            options: {
+              strict: true,
+            },
+          },
+        }
+      }
+    }),
     AuthModule,
     UserModule,
     StudioModule,
