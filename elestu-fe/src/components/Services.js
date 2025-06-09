@@ -1,37 +1,45 @@
-//src/components/Services.js
+// src/components/Services.js
 import React, { useState, useEffect } from 'react';
 import '../App.css';
 import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
-
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 function Services() {
     const navigate = useNavigate();
     const [services, setServices] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     function handleAddServiceClick() {
         navigate('/add-service');
     }
 
-    // AÑADIDO: Función para manejar el clic en una tarjeta de servicio
     function handleServiceClick(service) {
-        localStorage.setItem('lastService', JSON.stringify(service)); // Guarda el servicio en localStorage
-        navigate('/service-preview'); // Redirige a la vista previa del servicio
+        // Guardamos el servicio seleccionado para pasarlo a la siguiente página
+        localStorage.setItem('currentServiceForPayment', JSON.stringify(service));
+        // Navegamos a la página de pago/detalle del servicio
+        navigate('/payment-method'); // O '/service-preview' si prefieres
     }
 
-    async function fetchServices() {
-        try {
-            const response = await fetch(`${API_URL}/services`);
-            const data = await response.json();
-            setServices(data);
-        } catch (error) {
-            console.error('Error fetching services:', error);
+    useEffect(() => {
+        async function fetchServices() {
+            try {
+                setLoading(true);
+                const response = await fetch(`${API_URL}/services`);
+                if (!response.ok) {
+                    throw new Error('No se pudo conectar con el servidor para cargar los servicios.');
+                }
+                const data = await response.json();
+                setServices(data);
+            } catch (error) {
+                console.error('Error fetching services:', error);
+                setError(error.message);
+            } finally {
+                setLoading(false);
+            }
         }
-    }
-
-    useEffect(function () {
         fetchServices();
     }, []);
 
@@ -39,33 +47,59 @@ function Services() {
         <div className="services-page">
             <Navbar />
 
+            {/* Esta es la sección Hero que ya tenías */}
             <div className="hero-section">
                 <div className="hero-overlay">
-                    <h2>What are u searching?</h2>
+                    <h2>Qué estás buscando?</h2>
                     <p>
-                        The Services section of EleStu allows users to hire musicians, producers, and sound engineers,
-                        as well as rent recording studios through an Airbnb-style API. Additionally, users can find and offer
-                        music-related services via a system similar to Fiverr. The platform ensures an intuitive, visually
-                        appealing, and accessible experience for all.
+                        La sección de Servicios de EleStu te permite contratar músicos,
+                        productores e ingenieros de sonido. Encuentra y ofrece
+                        servicios musicales de forma intuitiva y visualmente atractiva.
                     </p>
                 </div>
             </div>
 
-            <div className="card-grid">
-                {services.map(function (service) {
-                    return (
-                        // MODIFICADO: Añadido el evento onClick a la tarjeta
-                        <div className="card" key={service.id} onClick={() => handleServiceClick(service)}>
-                            {/* Se utiliza studioImg como imagen por defecto para las tarjetas */}
-                            <img src={service.image} alt="Service" className="service-detail-image" />
-                            <div className="card-info">
-                                <h3>{service.title}</h3>
-                                <p>{service.price} €</p>
-                            </div>
-                        </div>
-                    );
-                })}
+            {/* --- TÍTULO AÑADIDO --- */}
+            <div className="services-title-container">
+                <h1 className="services-main-title">Servicios Disponibles</h1>
             </div>
+
+            {/* --- LÓGICA AÑADIDA para mostrar loading, error o el grid --- */}
+            {loading ? (
+                <p className="services-info-message">Cargando servicios...</p>
+            ) : error ? (
+                <p className="services-info-message error">{error}</p>
+            ) : (
+                <div className="card-grid">
+                    {services.length > 0 ? (
+                        services.map((service) => (
+                            <div className="card" key={service.id} onClick={() => handleServiceClick(service)}>
+                                <div className="card-image-container">
+                                    <img
+                                        src={service.image || 'https://placehold.co/400x300/cccccc/000000?text=No+Image'}
+                                        alt={service.title}
+                                    />
+                                </div>
+                                <div className="card-info">
+                                    <h3>{service.title}</h3>
+                                    {/* Suponiendo que el servicio tiene una breve descripción */}
+                                    <p className="card-description">{service.user?.name || 'Artista verificado'}</p>
+                                    <p className="card-price">{service.price}€</p>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        // --- MENSAJE AÑADIDO si no hay servicios ---
+                        <div className="no-services-message">
+                            <h2>Aún no hay servicios!</h2>
+                            <p>Sé el primero en marcar la diferencia. Crea un servicio y ponte activo.</p>
+                            <button className="add-first-service-btn" onClick={handleAddServiceClick}>
+                                Ofrecer mi Primer Servicio
+                            </button>
+                        </div>
+                    )}
+                </div>
+            )}
 
             <button className="add-service-btn" onClick={handleAddServiceClick}>
                 +

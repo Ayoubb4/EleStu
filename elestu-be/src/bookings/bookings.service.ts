@@ -2,11 +2,15 @@
 import { Injectable, InternalServerErrorException, Logger, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Booking } from './entities/booking.entity';
+import { Booking } from './entities/booking.entity'; // This seems to be your Studio Booking entity
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { MailerService } from '@nestjs-modules/mailer';
-import { User } from '../users/user.entity'; // Import your User entity
-import { join } from 'path'; // <--- Añadido para construir rutas de archivo
+import { User } from '../users/user.entity';
+import { join } from 'path';
+
+// Assuming you have a separate entity for Service Bookings.
+// Adjust the path and entity name if yours is different.
+import { ServiceBooking } from './entities/service-booking.entity'; // <-- ADDED: Path to your ServiceBooking entity
 
 @Injectable()
 export class BookingsService {
@@ -14,13 +18,18 @@ export class BookingsService {
 
     constructor(
         @InjectRepository(Booking)
-        private bookingsRepository: Repository<Booking>,
+        private studioBookingsRepository: Repository<Booking>, // Renamed for clarity: this is for studio bookings
+        @InjectRepository(ServiceBooking) // <-- ADDED: Inject repository for ServiceBooking
+        private serviceBookingsRepository: Repository<ServiceBooking>, // <-- ADDED: Repository for service bookings
         @InjectRepository(User)
         private usersRepository: Repository<User>,
         private readonly mailerService: MailerService,
     ) {}
 
     async create(createBookingDto: CreateBookingDto): Promise<Booking> {
+        // Your existing create method might need to be split or modified
+        // if it needs to handle both studio and service bookings based on DTO content.
+        // For now, it seems designed for studio bookings based on studioName, pricePerHour.
         try {
             // 1. Validate if the userId exists in the "Usuarios" table
             const user = await this.usersRepository.findOne({ where: { id: createBookingDto.userId } });
@@ -29,14 +38,14 @@ export class BookingsService {
             }
 
             // 2. Create a new booking instance from DTO
-            const newBooking = this.bookingsRepository.create({
+            const newBooking = this.studioBookingsRepository.create({ // Use studioBookingsRepository
                 ...createBookingDto,
                 user: user, // Link the user entity to the booking relationship
             });
 
             // 3. Save the booking to the database
-            await this.bookingsRepository.save(newBooking);
-            this.logger.log(`Booking created for studio: ${newBooking.studioName} by user <span class="math-inline">\{newBooking\.userId\} \(</span>{newBooking.userEmail})`);
+            await this.studioBookingsRepository.save(newBooking); // Use studioBookingsRepository
+            this.logger.log(`Booking created for studio: ${newBooking.studioName} by user ${newBooking.userId} (${newBooking.userEmail})`);
 
             // 4. Send confirmation email to the user
             await this.sendBookingConfirmationEmail(newBooking);
@@ -53,13 +62,11 @@ export class BookingsService {
 
     private async sendBookingConfirmationEmail(booking: Booking): Promise<void> {
         try {
-            // Ruta para el logo: Usamos process.cwd() para la raíz del proyecto
-            // y asumimos que nest-cli.json copia 'src/images' a 'dist/images'
-            const logoPath = join(process.cwd(), 'dist', 'images', 'EleStu.png'); // <--- RUTA DEL LOGO
+            const logoPath = join(process.cwd(), 'dist', 'images', 'EleStu.png');
 
             await this.mailerService.sendMail({
                 to: booking.userEmail,
-                subject: `Confirmación de Reserva en ${booking.studioName}`, // Personalizamos el asunto
+                subject: `Confirmación de Reserva en ${booking.studioName}`,
                 template: 'booking-confirmation',
                 context: {
                     studioName: booking.studioName,
@@ -69,19 +76,43 @@ export class BookingsService {
                     pricePerHour: booking.pricePerHour,
                     currentYear: new Date().getFullYear(),
                 },
-                // --- AÑADIDO PARA EL LOGO COMO CID ATTACHMENT ---
                 attachments: [
                     {
-                        filename: 'EleStuLogo.png', // Nombre del archivo cuando se adjunta
-                        path: logoPath, // La ruta real al archivo en el servidor
-                        cid: 'EleStuLogo', // EL CID que debe coincidir con el 'src="cid:..."' en la plantilla HBS
+                        filename: 'EleStuLogo.png',
+                        path: logoPath,
+                        cid: 'EleStuLogo',
                     },
                 ],
-                // --- FIN DE LA ADICIÓN ---
             });
             this.logger.log(`Booking confirmation email sent to ${booking.userEmail}`);
         } catch (error) {
             this.logger.error(`Error sending email for booking ${booking.id}: ${error.message}`, error.stack);
         }
     }
+
+    // --- UPDATED LOGIC FOR findUserBookings ---
+
+    async findUserBookings(userId: number): Promise<{ studioBookings: Booking[], serviceBookings: ServiceBooking[] }> {
+        try {
+            // Fetch studio bookings
+            const studioBookings = await this.studioBookingsRepository.find({
+                where: { user: { id: userId } },
+                order: { date: 'DESC', time: 'ASC' },
+            });
+
+            // Fetch service bookings
+            const serviceBookings = await this.serviceBookingsRepository.find({
+                where: { user: { id: userId } }, // Assuming ServiceBooking also has a 'user' relationship or 'userId' field
+                order: { date: 'DESC', time: 'ASC' },
+            });
+
+            return { studioBookings, serviceBookings };
+
+        } catch (error) {
+            this.logger.error(`Error fetching bookings for user ${userId}: ${error.message}`, error.stack);
+            throw new InternalServerErrorException('Failed to fetch user bookings.');
+        }
+    }
+
+    // --- END OF UPDATED LOGIC ---
 }

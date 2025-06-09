@@ -1,8 +1,9 @@
 // src/bookings/bookings.controller.ts
-import { Controller, Post, Body, Res, HttpStatus, Logger } from '@nestjs/common';
+import {Controller, Post, Body, Res, HttpStatus, Logger, UseGuards, Get, Req} from '@nestjs/common';
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { Response } from 'express';
+import {AuthGuard} from "@nestjs/passport";
 
 @Controller('bookings') // This controller will handle requests to /api/bookings
 export class BookingsController {
@@ -26,4 +27,22 @@ export class BookingsController {
             });
         }
     }
+
+    @UseGuards(AuthGuard('jwt')) // Protege esta ruta, solo usuarios autenticados pueden acceder
+    @Get('my') // Define la ruta GET /api/bookings/my
+    async findMyBookings(@Req() req: any, @Res() res: Response) {
+        // req.user contendrá la información del usuario autenticado gracias al JwtStrategy
+        const userId = req.user.id;
+        this.logger.log(`Fetching bookings for user ID: ${userId}`);
+        try {
+            const { studioBookings, serviceBookings } = await this.bookingsService.findUserBookings(userId);
+            return res.status(HttpStatus.OK).json({ studioBookings, serviceBookings });
+        } catch (error) {
+            this.logger.error(`Failed to fetch user bookings: ${error.message}`, error.stack);
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+                message: error.message || 'Error fetching user bookings.',
+            });
+        }
+    }
+
 }

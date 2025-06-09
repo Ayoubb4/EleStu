@@ -6,73 +6,61 @@ import '../App.css';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-
 function BookingForm() {
     const navigate = useNavigate();
     const location = useLocation();
-    const [studio, setStudio] = useState(null);
+    const { studio } = location.state || {};
+
     const [selectedDate, setSelectedDate] = useState('');
     const [selectedTime, setSelectedTime] = useState('');
     const [description, setDescription] = useState('');
-
-    // Estados para almacenar datos del usuario logueado
     const [currentUser, setCurrentUser] = useState(null);
-
+    const [isLoading, setIsLoading] = useState(true);
     const [bookingSuccess, setBookingSuccess] = useState(false);
     const [error, setError] = useState('');
 
     useEffect(() => {
-        // 1. Obtener datos del estudio desde la navegación
-        const { studio: studioFromState } = location.state || {};
-        if (!studioFromState) {
-            console.error("No se encontraron datos del estudio. Redirigiendo...");
+        if (!studio) {
             navigate('/studios');
-            return; // Detener la ejecución si no hay estudio
+            return;
         }
-        setStudio(studioFromState);
 
-        // --- AÑADIDO: Lógica de AUTENTICACIÓN robusta ---
-        // Obtenemos los datos del usuario directamente del objeto 'user'
-        // que guardamos en localStorage durante el login.
         try {
             const userString = localStorage.getItem('user');
             const token = localStorage.getItem('authToken');
-            const userId = localStorage.getItem('userid'); // Verificamos la clave 'userid' en minúsculas
-
-            if (userString && token && userId) {
+            if (userString && token) {
                 const userData = JSON.parse(userString);
-                // Verificamos que los datos necesarios (id, email) existan
                 if (userData && userData.id && userData.email) {
                     setCurrentUser(userData);
-                    console.log('Usuario autenticado encontrado:', userData);
                 } else {
-                    throw new Error('Datos de usuario en localStorage están corruptos o incompletos.');
+                    throw new Error('Datos de usuario en localStorage corruptos.');
                 }
             } else {
-                // Si falta alguno de los datos clave de la sesión, no está autenticado
-                throw new Error('No se encontraron datos de sesión (token o id de usuario).');
+                throw new Error('No se encontraron datos de sesión.');
             }
         } catch (err) {
-            console.error('Error al verificar la autenticación del usuario:', err.message);
             setError('Por favor, inicia sesión para hacer una reserva.');
+        } finally {
+            setIsLoading(false);
         }
-        // --- FIN DE LA LÓGICA AÑADIDA ---
-
-    }, [navigate, location.state]);
+    }, [navigate, location.state, studio]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setBookingSuccess(false);
+        setIsLoading(true);
 
-        if (!selectedDate || !selectedTime || !description) {
-            setError('Por favor, completa todos los campos de la reserva.');
+        if (!selectedDate || !selectedTime) {
+            setError('Por favor, completa la fecha y hora de la reserva.');
+            setIsLoading(false);
             return;
         }
 
         const authToken = localStorage.getItem('authToken');
         if (!authToken || !currentUser) {
-            setError('Sesión no válida o expirada. Por favor, inicia sesión de nuevo.');
+            setError('Sesión no válida. Por favor, inicia sesión de nuevo.');
+            setIsLoading(false);
             navigate('/login');
             return;
         }
@@ -82,10 +70,10 @@ function BookingForm() {
             studioName: studio.name,
             date: selectedDate,
             time: selectedTime,
-            description: description,
+            description: description || `Reserva para ${studio.name}`,
             pricePerHour: studio.price,
-            userEmail: currentUser.email, // Email del usuario autenticado
-            userId: currentUser.id,       // ID del usuario autenticado
+            userEmail: currentUser.email,
+            userId: currentUser.id,
         };
 
         try {
@@ -104,91 +92,70 @@ function BookingForm() {
             }
 
             setBookingSuccess(true);
-            alert('¡Reserva enviada con éxito!');
-            navigate('/studios'); // Redirigir después de la reserva exitosa
+            alert('¡Reserva enviada con éxito! Revisa tu correo para la confirmación.');
+            navigate('/reservations');
 
         } catch (err) {
-            console.error('Error al enviar la reserva:', err);
             setError(`Error al enviar la reserva: ${err.message}`);
+        } finally {
+            setIsLoading(false);
         }
     };
 
-    // Muestra el error si no se pudo autenticar al usuario
+    if (isLoading) {
+        return (
+            <div className="page-container"><Navbar /><h2 className="form-main-title">Cargando...</h2></div>
+        );
+    }
+
     if (error) {
         return (
-            <div className="login-required-page">
-                <Navbar />
-                <div className="login-required-content">
-                    <h1>Login Requerido</h1>
-                    <p>{error}</p>
-                    <button onClick={() => navigate('/login')} className="submit-booking-button">Ir al Login</button>
+            <div className="page-container"><Navbar />
+                <div className="form-wrapper">
+                    <h2 className="form-main-title">Login Requerido</h2>
+                    <p className="form-error-message">{error}</p>
+                    <button onClick={() => navigate('/login')} className="form-submit-button">Ir al Login</button>
                 </div>
             </div>
         );
     }
 
-    // Muestra un mensaje de carga mientras se verifica todo
-    if (!studio || !currentUser) {
-        return (
-            <div className="booking-page-container">
-                <Navbar />
-                <h2 className="booking-form-title">Cargando...</h2>
-            </div>
-        );
-    }
-
-
+    // --- JSX ACTUALIZADO CON LAS CLASES CSS CORRECTAS ---
     return (
-        <div className="booking-page-container">
+        <div className="page-container">
             <Navbar />
-            <h2 className="booking-form-title">Reservar Estudio: {studio.name}</h2>
-            <div className="booking-form-container">
-                <form onSubmit={handleSubmit} className="booking-form">
-                    <div className="form-group">
-                        <label htmlFor="date">Seleccionar Fecha:</label>
-                        <input
-                            type="date"
-                            id="date"
-                            value={selectedDate}
-                            onChange={(e) => setSelectedDate(e.target.value)}
-                            required
-                        />
+            <div className="form-wrapper">
+                <h2 className="form-main-title">Detalles del Pago y Reserva</h2>
+
+                <form onSubmit={handleSubmit} className="booking-form-new">
+                    <div className="form-section-title">Información del Estudio</div>
+                    <p className="studio-booking-info">Estás reservando: {studio?.name}</p>
+                    <p className="studio-booking-info">Precio: {studio?.price}€ / hora</p>
+
+                    <div className="form-section-title">Completa los Detalles de la Reserva</div>
+                    <div className="form-group-new">
+                        <label htmlFor="userEmail">Tu Email</label>
+                        <input type="email" id="userEmail" value={currentUser?.email || ''} readOnly />
                     </div>
-                    <div className="form-group">
-                        <label htmlFor="time">Seleccionar Hora:</label>
-                        <input
-                            type="time"
-                            id="time"
-                            value={selectedTime}
-                            onChange={(e) => setSelectedTime(e.target.value)}
-                            required
-                        />
+                    <div className="form-group-new">
+                        <label htmlFor="date">Fecha de la Reserva</label>
+                        <input type="date" id="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} required />
                     </div>
-                    <div className="form-group">
-                        <label htmlFor="userEmail">Tu Email (de la sesión actual):</label>
-                        <input
-                            type="email"
-                            id="userEmail"
-                            value={currentUser.email}
-                            readOnly // El usuario no debería poder cambiar su email aquí
-                            required
-                        />
+                    <div className="form-group-new">
+                        <label htmlFor="time">Hora de la Reserva</label>
+                        <input type="time" id="time" value={selectedTime} onChange={(e) => setSelectedTime(e.target.value)} required />
                     </div>
-                    <div className="form-group">
-                        <label htmlFor="description">Breve descripción de tus necesidades:</label>
-                        <textarea
-                            id="description"
-                            rows="5"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            placeholder="Ej: 'Sesión de mezcla y mastering para un EP', 'Grabación de voz para un single', 'Ensayo de banda'"
-                            required
-                        ></textarea>
+                    <div className="form-group-new">
+                        <label htmlFor="description">Notas para la reserva (Opcional)</label>
+                        <textarea id="description" rows="4" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Ej: Grabación de voz, ensayo de banda..." />
                     </div>
 
-                    {bookingSuccess && <p className="booking-success-message">¡Reserva enviada con éxito! Te contactaremos pronto.</p>}
+                    {bookingSuccess && <p className="form-success-message">¡Reserva enviada con éxito!</p>}
+                    {!bookingSuccess && error && <p className="form-error-message">{error}</p>}
 
-                    <button type="submit" className="submit-booking-button">Confirmar Reserva</button>
+                    <button type="submit" className="form-submit-button" disabled={isLoading}>
+                        {isLoading ? 'Procesando...' : `Pagar y Confirmar Reserva ${studio?.price}€`}
+                    </button>
                 </form>
             </div>
         </div>

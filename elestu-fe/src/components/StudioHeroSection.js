@@ -4,7 +4,7 @@ import '../App.css'; // Asegúrate de enlazar tu CSS
 
 function StudioHeroSection() {
     return (
-        <div className="hero-section">
+        <div className="hero-section2">
             <div className="hero-overlay">
                 <h2>Encuentra tu Estudio de Grabación Ideal</h2>
                 <p>

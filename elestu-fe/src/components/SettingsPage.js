@@ -29,8 +29,19 @@ function SettingsPage() {
             <Navbar />
             <h1 className="settings-title-main">Settings</h1>
 
-            {/* --- SECCIÓN DE OPCIONES DE CUENTA --- */}
             <div className="settings-options-container">
+                {/* --- AÑADIDO: Botón para ir a Mis Reservas --- */}
+                <div className="settings-option">
+                    <span className="settings-option-label">Mis Reservas</span>
+                    <button
+                        className="change-button"
+                        onClick={() => navigate('/reservations')}
+                    >
+                        Ver
+                    </button>
+                </div>
+                {/* --- FIN DE LA ADICIÓN --- */}
+
                 <div className="settings-option">
                     <span className="settings-option-label">Change Email & Password</span>
                     <button
@@ -51,7 +62,7 @@ function SettingsPage() {
                 </div>
             </div>
 
-            {/* --- SECCIÓN DE PREGUNTAS FRECUENTES (SE MANTIENE IGUAL) --- */}
+            {/* --- SECCIÓN DE PREGUNTAS FRECUENTES --- */}
             <section className="faq-section-settings">
                 <h2>Preguntas Frecuentes</h2>
                 <div className="faq-scroll-container">
@@ -65,9 +76,11 @@ function SettingsPage() {
             </section>
 
             {/* --- BOTÓN DE CERRAR SESIÓN --- */}
-            <button className="logout-button-large" onClick={handleLogout}>
-                Log Out
-            </button>
+            <div className="logout-button-container">
+                <button className="logout-button-large" onClick={handleLogout}>
+                    Log Out
+                </button>
+            </div>
         </div>
     );
 }

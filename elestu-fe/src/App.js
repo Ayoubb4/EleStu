@@ -15,13 +15,13 @@ import BookingForm from "./components/BookingForm";
 import SettingsPage from "./components/SettingsPage";
 import ChangeEmailPasswordPage from "./components/ChangeEmailPasswordPage";
 import ChangePersonalDataPage from "./components/ChangePersonalDataPage";
+import Reservations from './components/Reservations'; // <-- ¡Importa este componente!
 import Footer from './components/Footer';
 
 function App() {
     // Usamos el hook useLocation para obtener la ruta actual
     const location = useLocation();
 
-    // --- CORREGIDO: Añadido '/forgot-password' a la lista ---
     // Definimos las rutas donde NO queremos que aparezca el footer
     const noFooterPaths = ['/login', '/register', '/forgot-password'];
 
@@ -55,6 +55,7 @@ function App() {
                     <Route path="/settings" element={<SettingsPage />} />
                     <Route path="/change-email-password" element={<ChangeEmailPasswordPage />} />
                     <Route path="/change-personal-data" element={<ChangePersonalDataPage />} />
+                    <Route path="/reservations" element={<Reservations />} /> {/* <-- ¡Añade esta ruta! */}
 
                     {/* Redirección por defecto */}
                     <Route path="/" element={<Navigate replace to="/login" />} />
