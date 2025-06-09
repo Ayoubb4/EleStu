@@ -52,7 +52,7 @@ function Login() {
                     </form>
 
                     {/* --- AÑADIDO: Botón de Google y separador --- */}
-                    <div className="or-divider"><span>O</span></div>
+                    <div className="or-divider"></div>
                     <div className="google-login-button-container">
                         <GoogleLogin
                             onSuccess={handleGoogleLoginSuccess}

@@ -93,7 +93,7 @@ function BookingForm() {
 
             setBookingSuccess(true);
             alert('¡Reserva enviada con éxito! Revisa tu correo para la confirmación.');
-            navigate('/reservations');
+            navigate('/Reservations');
 
         } catch (err) {
             setError(`Error al enviar la reserva: ${err.message}`);

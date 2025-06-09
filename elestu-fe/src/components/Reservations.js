@@ -2,9 +2,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Navbar from './Navbar';
 import '../App.css';
-import '../styles/Reservations.css'; // Asumo que tienes este archivo de estilos
+import '../styles/Reservations.css';
 
-// Leemos la URL del backend desde las variables de entorno
 const API_URL = process.env.REACT_APP_API_URL;
 
 function Reservations() {
@@ -15,11 +14,9 @@ function Reservations() {
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [bookingToCancel, setBookingToCancel] = useState(null);
 
-    // --- CORREGIDO: Usamos la clave 'authToken' ---
     const getAuthToken = useCallback(() => {
         return localStorage.getItem('authToken');
     }, []);
-
 
     const fetchUserBookings = useCallback(async () => {
         setLoading(true);
@@ -29,12 +26,11 @@ function Reservations() {
         if (!token) {
             setError('No estás autenticado. Por favor, inicia sesión.');
             setLoading(false);
-            window.location.href = '/login'; // Redirigir si no hay token
+            window.location.href = '/login';
             return;
         }
 
         try {
-            // --- CORREGIDO: Usamos la variable API_URL ---
             const response = await fetch(`${API_URL}/bookings/my`, {
                 method: 'GET',
                 headers: {
@@ -46,7 +42,7 @@ function Reservations() {
             if (!response.ok) {
                 if (response.status === 401 || response.status === 403) {
                     console.error('Autenticación fallida. Redirigiendo a login.');
-                    localStorage.removeItem('authToken'); // Limpiar token inválido
+                    localStorage.removeItem('authToken');
                     window.location.href = '/login';
                     return;
                 }
@@ -55,8 +51,8 @@ function Reservations() {
             }
 
             const data = await response.json();
-            setStudioBookings(data.studioBookings || []); // Asegurarnos de que sea un array
-            setServiceBookings(data.serviceBookings || []); // Asegurarnos de que sea un array
+            setStudioBookings(data.studioBookings || []);
+            setServiceBookings(data.serviceBookings || []);
 
         } catch (err) {
             console.error('Error fetching bookings:', err);
@@ -64,7 +60,7 @@ function Reservations() {
         } finally {
             setLoading(false);
         }
-    }, [getAuthToken]); // La dependencia ahora es getAuthToken
+    }, [getAuthToken]);
 
     useEffect(() => {
         fetchUserBookings();
@@ -91,7 +87,6 @@ function Reservations() {
         }
 
         try {
-            // --- CORREGIDO: Usamos la variable API_URL ---
             const endpoint = `${API_URL}/bookings/${type}/${id}`;
             const response = await fetch(endpoint, {
                 method: 'DELETE',
@@ -144,17 +139,18 @@ function Reservations() {
                                             <h3>{booking.serviceTitle || 'Servicio sin título'}</h3>
                                             <p><strong>Fecha:</strong> {new Date(booking.date).toLocaleDateString()}</p>
                                             {booking.time && <p><strong>Hora:</strong> {booking.time}</p>}
-                                            <p><strong>Precio:</strong> {booking.price?.toFixed(2)}€</p>
+                                            <p><strong>Precio:</strong> {Number(booking.price || 0).toFixed(2)}€</p>
                                             <p><strong>Descripción:</strong> {booking.description || 'N/A'}</p>
-                                            <p><strong>Estado:</strong> <span className={`status-${booking.status?.toLowerCase()}`}>{booking.status}</span></p>
-                                            {booking.status !== 'cancelled' && booking.status !== 'completed' && (
-                                                <button
-                                                    className="cancel-button"
-                                                    onClick={() => handleCancelRequest(booking.id, 'service')}
-                                                >
-                                                    Cancelar
-                                                </button>
-                                            )}
+                                            {/* --- ¡QUITAR ESTA LÍNEA! --- */}
+                                            {/* <p><strong>Estado:</strong> <span className={`status-${booking.status?.toLowerCase()}`}>{booking.status}</span></p> */}
+                                            {/* --- FIN DE QUITAR --- */}
+                                            {/* El botón de cancelar siempre visible si no hay estado */}
+                                            <button
+                                                className="cancel-button"
+                                                onClick={() => handleCancelRequest(booking.id, 'service')}
+                                            >
+                                                Cancelar
+                                            </button>
                                         </div>
                                     ))
                                 ) : (
@@ -174,16 +170,17 @@ function Reservations() {
                                             <p><strong>Fecha:</strong> {new Date(booking.date).toLocaleDateString()}</p>
                                             <p><strong>Hora:</strong> {booking.time}</p>
                                             <p><strong>Descripción:</strong> {booking.description || 'N/A'}</p>
-                                            <p><strong>Precio/Hora:</strong> {booking.pricePerHour?.toFixed(2)}€</p>
-                                            <p><strong>Estado:</strong> <span className={`status-${booking.status?.toLowerCase()}`}>{booking.status}</span></p>
-                                            {booking.status !== 'cancelled' && booking.status !== 'completed' && (
-                                                <button
-                                                    className="cancel-button"
-                                                    onClick={() => handleCancelRequest(booking.id, 'studio')}
-                                                >
-                                                    Cancelar
-                                                </button>
-                                            )}
+                                            <p><strong>Precio/Hora:</strong> {Number(booking.pricePerHour || 0).toFixed(2)}€</p>
+                                            {/* --- ¡QUITAR ESTA LÍNEA! --- */}
+                                            {/* <p><strong>Estado:</strong> <span className={`status-${booking.status?.toLowerCase()}`}>{booking.status}</span></p> */}
+                                            {/* --- FIN DE QUITAR --- */}
+                                            {/* El botón de cancelar siempre visible si no hay estado */}
+                                            <button
+                                                className="cancel-button"
+                                                onClick={() => handleCancelRequest(booking.id, 'studio')}
+                                            >
+                                                Cancelar
+                                            </button>
                                         </div>
                                     ))
                                 ) : (

@@ -2049,3 +2049,40 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: none;
   cursor: not-allowed;
 }
+
+/* --- Estilos para el divisor "O" --- */
+.or-divider-container {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0; /* Espacio alrededor del divisor */
+  width: 100%;
+  max-width: 350px; /* Ajusta al ancho de tu formulario */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.or-line {
+  flex-grow: 1;
+  height: 1px;
+  background-color: #ccc; /* Un color de línea suave */
+}
+
+.or-text {
+  padding: 0 15px; /* Espacio alrededor de la palabra "O" */
+  color: #888; /* Color de texto suave */
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+/* --- Estilos para el contenedor del botón de Google --- */
+.google-login-button-container {
+  display: flex;
+  justify-content: center; /* Centra el botón horizontalmente */
+  margin-top: 20px; /* Espacio superior */
+  width: 100%;
+  max-width: 350px; /* O el ancho de tu formulario */
+  margin-left: auto;
+  margin-right: auto;
+}
+

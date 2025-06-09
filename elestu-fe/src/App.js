@@ -55,7 +55,7 @@ function App() {
                     <Route path="/settings" element={<SettingsPage />} />
                     <Route path="/change-email-password" element={<ChangeEmailPasswordPage />} />
                     <Route path="/change-personal-data" element={<ChangePersonalDataPage />} />
-                    <Route path="/reservations" element={<Reservations />} /> {/* <-- ¡Añade esta ruta! */}
+                    <Route path="/reservations" element={<Reservations />} />
 
                     {/* Redirección por defecto */}
                     <Route path="/" element={<Navigate replace to="/login" />} />
