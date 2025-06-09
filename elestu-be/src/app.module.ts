@@ -18,62 +18,72 @@ import { join } from 'path';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env', // Asegura que lea el archivo .env en desarrollo
+      envFilePath: '.env',
     }),
 
-    // --- MODIFICACIÓN CLAVE PARA RENDER ---
-    // Se simplifica la configuración de TypeORM para que use siempre las mismas
-    // variables de entorno, que configurarás tanto en tu PC como en Render.
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get<string>('DB_HOST'),
-        port: parseInt(configService.get<string>('DB_PORT', '5432')),
-        username: configService.get<string>('DB_USER'),
-        password: configService.get<string>('DB_PASSWORD'),
-        database: configService.get<string>('DB_NAME'),
+      useFactory: (configService: ConfigService) => {
+        // --- CORRECCIÓN AQUÍ ---
+        // 1. Obtenemos la variable de entorno
+        const databaseUrl = configService.get<string>('DATABASE_URL');
 
-        // La opción ssl es CRUCIAL para conectar con bases de datos en la nube como la de Render.
-        // Se activa si NODE_ENV es 'production'.
-        ssl: configService.get<string>('NODE_ENV') === 'production'
-            ? { rejectUnauthorized: false }
-            : false,
+        // 2. Verificamos si existe. Si no, lanzamos un error claro.
+        if (!databaseUrl) {
+          throw new Error('La variable de entorno DATABASE_URL no está definida.');
+        }
 
-        autoLoadEntities: true,
-
-        // IMPORTANTE: En producción (Render), esto debe ser false.
-        // En desarrollo local (tu PC), puedes ponerlo en true si quieres que las tablas se creen solas.
-        synchronize: configService.get<string>('NODE_ENV') !== 'production',
-      }),
+        // 3. Si existe, la usamos en la configuración.
+        return {
+          type: 'postgres',
+          url: databaseUrl,
+          ssl: {
+            rejectUnauthorized: false,
+          },
+          autoLoadEntities: true,
+          synchronize: false,
+        };
+      },
     }),
-    // --- FIN DE LA MODIFICACIÓN ---
 
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        transport: {
-          host: configService.get<string>('EMAIL_HOST'),
-          port: parseInt(configService.get<string>('EMAIL_PORT', '587')),
-          secure: configService.get<string>('EMAIL_SECURE') === 'true',
-          auth: {
-            user: configService.get<string>('EMAIL_USER'),
-            pass: configService.get<string>('EMAIL_PASS'),
+      useFactory: (configService: ConfigService) => {
+        // --- CORRECCIÓN SIMILAR AQUÍ ---
+        const emailHost = configService.get<string>('EMAIL_HOST');
+        const emailUser = configService.get<string>('EMAIL_USER');
+        const emailPass = configService.get<string>('EMAIL_PASS');
+        const emailPort = parseInt(configService.get<string>('EMAIL_PORT', '587'));
+        const emailSecure = configService.get<string>('EMAIL_SECURE') === 'true';
+
+        if (!emailHost || !emailUser || !emailPass) {
+          throw new Error('Las variables de entorno del correo (EMAIL_HOST, EMAIL_USER, EMAIL_PASS) no están definidas.');
+        }
+
+        return {
+          transport: {
+            host: emailHost,
+            port: emailPort,
+            secure: emailSecure,
+            auth: {
+              user: emailUser,
+              pass: emailPass,
+            },
           },
-        },
-        defaults: {
-          from: `"EleStu" <${configService.get<string>('EMAIL_USER')}>`,
-        },
-        template: {
-          dir: join(__dirname, '..', 'templates'),
-          adapter: new HandlebarsAdapter(),
-          options: {
-            strict: true,
+          defaults: {
+            from: `"EleStu" <${emailUser}>`,
           },
-        },
-      })
+          template: {
+            dir: join(__dirname, '..', 'templates'),
+            adapter: new HandlebarsAdapter(),
+            options: {
+              strict: true,
+            },
+          },
+        }
+      }
     }),
     AuthModule,
     UserModule,

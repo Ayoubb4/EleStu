@@ -5,23 +5,13 @@ import { config } from 'dotenv';
 // Cargar variables de .env para que funcione en tu PC
 config();
 
-// --- Lógica de Detección de Entorno Mejorada ---
-// Render define la variable 'RENDER' en su entorno de build y runtime.
-// Usaremos esto para determinar si estamos en producción. Es más fiable.
-const isProduction = process.env.RENDER === 'true';
-
-// --- Añadimos Logs para Depurar la Configuración ---
-console.log('--- Configuración de DataSource ---');
-console.log(`¿Es entorno de Producción (Render)? -> ${isProduction}`);
-console.log(`DB_HOST: ${process.env.DB_HOST}`);
-console.log(`DB_USER: ${process.env.DB_USER}`);
-console.log(`DB_NAME: ${process.env.DB_NAME}`);
-console.log('---------------------------------');
-// ----------------------------------------------------
+// Esta variable nos dirá si estamos en el entorno de Render
+const isProduction = process.env.NODE_ENV === 'production';
 
 export const dataSourceOptions: DataSourceOptions = {
     type: 'postgres',
 
+    // Leemos las variables de entorno que configuraste
     host: process.env.DB_HOST,
     port: parseInt(process.env.DB_PORT || '5432', 10),
     username: process.env.DB_USER,
@@ -33,8 +23,7 @@ export const dataSourceOptions: DataSourceOptions = {
         ? { rejectUnauthorized: false }
         : false,
 
-    // Rutas robustas para encontrar tus entidades y migraciones
-    // tanto en desarrollo (.ts) como en producción (.js en la carpeta /dist)
+    // TypeORM necesita saber dónde encontrar los archivos compilados en producción
     entities: [__dirname + '/**/*.entity{.ts,.js}'],
     migrations: [__dirname + '/migrations/*{.ts,.js}'],
 
