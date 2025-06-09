@@ -28,18 +28,14 @@ export class Booking {
     @Column()
     userEmail: string;
 
-    @ManyToOne(() => User, user => user.bookings, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'userId' })
-    user: User;
+    // Many-to-one relationship with the User entity
+    @ManyToOne(() => User, user => user.bookings, { onDelete: 'CASCADE' }) // This side points to user.bookings
+    @JoinColumn({ name: 'userId' }) // The actual column in 'bookings' table
+    user: User; // The User object when loaded
 
-    @Column({ type: 'int' })
-    userId: number;
+    @Column({ type: 'int' }) // Make sure this matches your DB
+    userId: number; // The actual ID value
 
     @CreateDateColumn({ type: 'timestamp with time zone' })
     createdAt: Date;
-
-    // --- ¡QUITAR ESTA LÍNEA! ---
-    // @Column({ default: 'pending' })
-    // status: string;
-    // --- FIN DE QUITAR ---
 }
