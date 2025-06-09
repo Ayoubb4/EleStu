@@ -18,57 +18,63 @@ import { join } from 'path';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env', // Asegura que lea el archivo .env en desarrollo
+      envFilePath: '.env',
     }),
 
-    // --- Configuración Definitiva de TypeORM para Render ---
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-
-        // Usamos la DATABASE_URL directamente. Render la proporciona en producción.
-        // Tu .env local también debería tener esta variable para desarrollo.
-        url: configService.get<string>('DATABASE_URL'),
-
-        // La opción ssl es CRUCIAL para conectar con Render y otros proveedores en la nube.
-        ssl: {
-          rejectUnauthorized: false,
-        },
-
-        autoLoadEntities: true,
-
-        // En producción, NUNCA usar synchronize: true. Las migraciones se encargan.
-        synchronize: false,
-      }),
+      useFactory: (configService: ConfigService) => {
+        const databaseUrl = configService.get<string>('DATABASE_URL');
+        if (!databaseUrl) {
+          throw new Error('La variable de entorno DATABASE_URL no está definida.');
+        }
+        return {
+          type: 'postgres',
+          url: databaseUrl,
+          ssl: {
+            rejectUnauthorized: false,
+          },
+          autoLoadEntities: true,
+          synchronize: false,
+        };
+      },
     }),
-    // --- FIN ---
 
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        transport: {
-          host: configService.get<string>('EMAIL_HOST'),
-          port: parseInt(configService.get<string>('EMAIL_PORT'), '587'),
-          secure: configService.get<string>('EMAIL_SECURE') === 'true',
-          auth: {
-            user: configService.get<string>('EMAIL_USER'),
-            pass: configService.get<string>('EMAIL_PASS'),
+      useFactory: (configService: ConfigService) => {
+        const emailUser = configService.get<string>('EMAIL_USER');
+        const emailPass = configService.get<string>('EMAIL_PASS');
+        if (!emailUser || !emailPass) {
+          throw new Error('Las variables de entorno del correo no están definidas.');
+        }
+
+        return {
+          transport: {
+            host: configService.get<string>('EMAIL_HOST'),
+            // --- CORREGIDO AQUÍ ---
+            // Le damos a get() un valor por defecto ('587') y a parseInt() el radix 10.
+            port: parseInt(configService.get<string>('EMAIL_PORT', '587'), 10),
+            secure: configService.get<string>('EMAIL_SECURE') === 'true',
+            auth: {
+              user: emailUser,
+              pass: emailPass,
+            },
           },
-        },
-        defaults: {
-          from: `"EleStu" <${configService.get<string>('EMAIL_USER')}>`,
-        },
-        template: {
-          dir: join(__dirname, '..', 'templates'),
-          adapter: new HandlebarsAdapter(),
-          options: {
-            strict: true,
+          defaults: {
+            from: `"EleStu" <${emailUser}>`,
           },
-        },
-      })
+          template: {
+            dir: join(__dirname, '..', 'templates'),
+            adapter: new HandlebarsAdapter(),
+            options: {
+              strict: true,
+            },
+          },
+        }
+      }
     }),
     AuthModule,
     UserModule,
