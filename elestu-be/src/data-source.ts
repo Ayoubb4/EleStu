@@ -5,30 +5,25 @@ import { config } from 'dotenv';
 // Cargar variables de .env para que funcione en tu PC
 config();
 
-// Esta variable nos dirá si estamos en el entorno de Render
-const isProduction = process.env.NODE_ENV === 'production';
-
 export const dataSourceOptions: DataSourceOptions = {
     type: 'postgres',
 
-    // Leemos las variables de entorno que configuraste
-    host: process.env.DB_HOST,
-    port: parseInt(process.env.DB_PORT || '5432', 10),
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
+    // Usamos la DATABASE_URL directamente.
+    // En tu PC, la leerá de tu .env. En Render, la tomará del entorno que configuraste.
+    url: process.env.DATABASE_URL,
 
-    // La opción ssl es CRUCIAL para Render. La activamos si estamos en producción.
-    ssl: isProduction
+    // SSL es necesario para Render. Se activa si la URL contiene 'onrender.com'
+    ssl: process.env.DATABASE_URL?.includes('onrender.com')
         ? { rejectUnauthorized: false }
         : false,
 
-    // TypeORM necesita saber dónde encontrar los archivos compilados en producción
+    // Rutas robustas para encontrar tus entidades y migraciones
+    // tanto en desarrollo (.ts) como en producción (.js en la carpeta /dist)
     entities: [__dirname + '/**/*.entity{.ts,.js}'],
     migrations: [__dirname + '/migrations/*{.ts,.js}'],
 
-    // Sincronizar solo en desarrollo, NUNCA en producción.
-    synchronize: !isProduction,
+    // Las migraciones manejarán la estructura de la base de datos
+    synchronize: false,
 };
 
 // Creamos y exportamos la instancia de DataSource para el CLI de TypeORM
