@@ -1,8 +1,11 @@
 // src/components/Reservations.js
-import React, { useState, useEffect, useCallback } from 'react'; // ¡Añadido useCallback aquí!
+import React, { useState, useEffect, useCallback } from 'react';
 import Navbar from './Navbar';
 import '../App.css';
-import '../styles/Reservations.css';
+import '../styles/Reservations.css'; // Asumo que tienes este archivo de estilos
+
+// Leemos la URL del backend desde las variables de entorno
+const API_URL = process.env.REACT_APP_API_URL;
 
 function Reservations() {
     const [serviceBookings, setServiceBookings] = useState([]);
@@ -12,30 +15,27 @@ function Reservations() {
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [bookingToCancel, setBookingToCancel] = useState(null);
 
-    // Función para obtener el token JWT del localStorage
-    // Es una función pura y no depende de estados o props, por lo que no necesita useCallback.
-    const getAuthToken = () => {
-        return localStorage.getItem('jwt_token');
-    };
+    // --- CORREGIDO: Usamos la clave 'authToken' ---
+    const getAuthToken = useCallback(() => {
+        return localStorage.getItem('authToken');
+    }, []);
 
-    // Función para obtener y mostrar las reservas del usuario, memoizada con useCallback
+
     const fetchUserBookings = useCallback(async () => {
         setLoading(true);
         setError(null);
-        const token = getAuthToken(); // getAuthToken no es una dependencia porque es una función "estable"
+        const token = getAuthToken();
 
         if (!token) {
             setError('No estás autenticado. Por favor, inicia sesión.');
             setLoading(false);
-            // Si el token es nulo, redirige inmediatamente.
-            // Considera usar useNavigate aquí si es un componente de ruta.
-            localStorage.removeItem('jwt_token'); // Limpiar token si no existe
-            window.location.href = '/login'; // O usar navigate
+            window.location.href = '/login'; // Redirigir si no hay token
             return;
         }
 
         try {
-            const response = await fetch('http://localhost:3000/api/bookings/my', {
+            // --- CORREGIDO: Usamos la variable API_URL ---
+            const response = await fetch(`${API_URL}/bookings/my`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ function Reservations() {
             if (!response.ok) {
                 if (response.status === 401 || response.status === 403) {
                     console.error('Autenticación fallida. Redirigiendo a login.');
-                    localStorage.removeItem('jwt_token');
+                    localStorage.removeItem('authToken'); // Limpiar token inválido
                     window.location.href = '/login';
                     return;
                 }
@@ -55,8 +55,8 @@ function Reservations() {
             }
 
             const data = await response.json();
-            setStudioBookings(data.studioBookings);
-            setServiceBookings(data.serviceBookings);
+            setStudioBookings(data.studioBookings || []); // Asegurarnos de que sea un array
+            setServiceBookings(data.serviceBookings || []); // Asegurarnos de que sea un array
 
         } catch (err) {
             console.error('Error fetching bookings:', err);
@@ -64,20 +64,17 @@ function Reservations() {
         } finally {
             setLoading(false);
         }
-    }, [setServiceBookings, setStudioBookings, setLoading, setError]); // getAuthToken no es una dependencia aquí porque es una función de utilidad simple y estable.
+    }, [getAuthToken]); // La dependencia ahora es getAuthToken
 
-    // Cargar las reservas al montar el componente
     useEffect(() => {
-        fetchUserBookings(); // ¡Ahora sí, solo llama a la función!
-    }, [fetchUserBookings]); // fetchUserBookings es la dependencia porque está memoizada.
+        fetchUserBookings();
+    }, [fetchUserBookings]);
 
-    // Función para manejar la solicitud de cancelación (abre el modal)
     const handleCancelRequest = (bookingId, bookingType) => {
         setBookingToCancel({ id: bookingId, type: bookingType });
         setShowConfirmModal(true);
     };
 
-    // Función para confirmar la cancelación (después de la confirmación del modal)
     const confirmCancellation = async () => {
         if (!bookingToCancel) return;
 
@@ -94,7 +91,8 @@ function Reservations() {
         }
 
         try {
-            const endpoint = `http://localhost:3000/api/bookings/${type}/${id}`;
+            // --- CORREGIDO: Usamos la variable API_URL ---
+            const endpoint = `${API_URL}/bookings/${type}/${id}`;
             const response = await fetch(endpoint, {
                 method: 'DELETE',
                 headers: {
@@ -113,7 +111,7 @@ function Reservations() {
 
         } catch (err) {
             console.error('Error cancelling booking:', err);
-            setError(err.message || 'Hubo un error al cancelar la reserva. Por favor, inténtalo de nuevo.');
+            setError(err.message || 'Hubo un error al cancelar la reserva.');
         } finally {
             setLoading(false);
             setBookingToCancel(null);
@@ -143,12 +141,12 @@ function Reservations() {
                                 {serviceBookings.length > 0 ? (
                                     serviceBookings.map(booking => (
                                         <div key={booking.id} className="booking-card service-card">
-                                            <h3>{booking.service?.title || booking.serviceName}</h3>
-                                            <p><strong>Fecha:</strong> {new Date(booking.bookingDate).toLocaleDateString()}</p>
-                                            {booking.bookingTime && <p><strong>Hora:</strong> {booking.bookingTime}</p>}
-                                            <p><strong>Precio:</strong> ${booking.priceAtBooking?.toFixed(2)}</p>
-                                            <p><strong>Detalles:</strong> {booking.details || 'N/A'}</p>
-                                            <p><strong>Estado:</strong> <span className={`status-${booking.status.toLowerCase()}`}>{booking.status}</span></p>
+                                            <h3>{booking.serviceTitle || 'Servicio sin título'}</h3>
+                                            <p><strong>Fecha:</strong> {new Date(booking.date).toLocaleDateString()}</p>
+                                            {booking.time && <p><strong>Hora:</strong> {booking.time}</p>}
+                                            <p><strong>Precio:</strong> {booking.price?.toFixed(2)}€</p>
+                                            <p><strong>Descripción:</strong> {booking.description || 'N/A'}</p>
+                                            <p><strong>Estado:</strong> <span className={`status-${booking.status?.toLowerCase()}`}>{booking.status}</span></p>
                                             {booking.status !== 'cancelled' && booking.status !== 'completed' && (
                                                 <button
                                                     className="cancel-button"
@@ -176,8 +174,8 @@ function Reservations() {
                                             <p><strong>Fecha:</strong> {new Date(booking.date).toLocaleDateString()}</p>
                                             <p><strong>Hora:</strong> {booking.time}</p>
                                             <p><strong>Descripción:</strong> {booking.description || 'N/A'}</p>
-                                            <p><strong>Precio/Hora:</strong> ${booking.pricePerHour?.toFixed(2)}</p>
-                                            <p><strong>Estado:</strong> <span className={`status-${booking.status.toLowerCase()}`}>{booking.status}</span></p>
+                                            <p><strong>Precio/Hora:</strong> {booking.pricePerHour?.toFixed(2)}€</p>
+                                            <p><strong>Estado:</strong> <span className={`status-${booking.status?.toLowerCase()}`}>{booking.status}</span></p>
                                             {booking.status !== 'cancelled' && booking.status !== 'completed' && (
                                                 <button
                                                     className="cancel-button"

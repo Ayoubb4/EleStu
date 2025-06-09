@@ -6,6 +6,9 @@ import Navbar from './Navbar';
 import { Elements, useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
+
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
 function CheckoutForm({ orderSummary, onPaymentSuccess, onPaymentError, userId }) {
@@ -67,7 +70,7 @@ function CheckoutForm({ orderSummary, onPaymentSuccess, onPaymentError, userId }
             }
 
 
-            const response = await fetch('http://localhost:3000/api/payments/create-payment-intent', {
+            const response = await fetch(`${API_URL}/payments/create-payment-intent`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

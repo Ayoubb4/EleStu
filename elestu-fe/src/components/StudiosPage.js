@@ -5,6 +5,8 @@ import Navbar from './Navbar';
 import StudioHeroSection from './StudioHeroSection';
 import '../App.css';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 function StudiosPage() {
     const [studios, setStudios] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -17,7 +19,7 @@ function StudiosPage() {
                 setLoading(true);
                 setError(null);
 
-                const response = await fetch('http://localhost:3000/api/studios');
+                const response = await fetch(`${API_URL}/studios`);
 
                 if (!response.ok) {
                     const errorData = await response.json();

@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
+
 function ServicesList() {
     const [services, setServices] = useState([]);
 
     const fetchServices = async () => {
-        const response = await fetch('http://localhost:3000/api/services');
+        const response = await fetch('${API_URL}/services');
         const data = await response.json();
         setServices(data);
     };

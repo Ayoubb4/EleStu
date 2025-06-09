@@ -5,6 +5,10 @@ import '../App.css'; // Your existing CSS file
 import Navbar from './Navbar';
 import toast from 'react-hot-toast';
 
+
+const API_URL = process.env.REACT_APP_API_URL;
+
+
 function AddService() {
     const navigate = useNavigate();
     const [title, setTitle] = useState('');
@@ -75,7 +79,7 @@ function AddService() {
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:3000/api/services', {
+            const response = await fetch(`${API_URL}/services`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

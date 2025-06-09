@@ -4,6 +4,9 @@ import '../App.css';
 import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
 
+
+const API_URL = process.env.REACT_APP_API_URL;
+
 function Services() {
     const navigate = useNavigate();
     const [services, setServices] = useState([]);
@@ -20,7 +23,7 @@ function Services() {
 
     async function fetchServices() {
         try {
-            const response = await fetch('http://localhost:3000/api/services');
+            const response = await fetch(`${API_URL}/services`);
             const data = await response.json();
             setServices(data);
         } catch (error) {

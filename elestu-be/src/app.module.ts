@@ -1,3 +1,4 @@
+// src/app.module.ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -26,7 +27,7 @@ import { join } from 'path';
       useFactory: (configService: ConfigService) => {
         const databaseUrl = configService.get<string>('DATABASE_URL');
         if (!databaseUrl) {
-          throw new Error('La variable de entorno DATABASE_URL no está definida.');
+          throw new Error('FATAL ERROR: La variable de entorno DATABASE_URL no está definida.');
         }
         return {
           type: 'postgres',
@@ -44,18 +45,15 @@ import { join } from 'path';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        // --- CORRECCIÓN FINAL AQUÍ ---
-        // Verificamos que las variables del email existan ANTES de usarlas
-        const emailHost = configService.get<string>('EMAIL_HOST');
         const emailUser = configService.get<string>('EMAIL_USER');
         const emailPass = configService.get<string>('EMAIL_PASS');
-        if (!emailHost || !emailUser || !emailPass) {
-          throw new Error('Las variables de entorno para el email (EMAIL_HOST, EMAIL_USER, EMAIL_PASS) no están definidas.');
+        if (!emailUser || !emailPass) {
+          throw new Error('FATAL ERROR: Las variables de entorno para el email (EMAIL_USER, EMAIL_PASS) no están definidas.');
         }
 
         return {
           transport: {
-            host: emailHost,
+            host: configService.get<string>('EMAIL_HOST', 'smtp.gmail.com'),
             port: parseInt(configService.get<string>('EMAIL_PORT', '587'), 10),
             secure: configService.get<string>('EMAIL_SECURE') === 'true',
             auth: {
