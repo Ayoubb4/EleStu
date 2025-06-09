@@ -1,8 +1,7 @@
 // src/services/authService.js
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000/api'; // Asegúrate de que esta URL es correcta
-
+const API_URL = process.env.REACT_APP_API_URL;
 // --- Helper para obtener el token de forma segura ---
 const getAuthToken = () => {
     try {

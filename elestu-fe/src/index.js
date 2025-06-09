@@ -9,8 +9,8 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 const container = document.getElementById('root');
 const root = createRoot(container);
 
-// --- AÑADIDO: Tu Client ID de Google va aquí ---
-const GOOGLE_CLIENT_ID = "1084364232885-9b8vs0gi27huqidbi63of0r0fbe3dfqc.apps.googleusercontent.com";
+// --- CORRECCIÓN: Leemos la variable de entorno y la guardamos en la constante ---
+const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
 root.render(
     <React.StrictMode>

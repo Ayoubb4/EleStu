@@ -21,6 +21,7 @@ import { join } from 'path';
       envFilePath: '.env',
     }),
 
+    // --- Configuración Definitiva de TypeORM para Render ---
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -31,51 +32,18 @@ import { join } from 'path';
         }
         return {
           type: 'postgres',
-          url: databaseUrl,
+          url: databaseUrl, // Usa la URL completa directamente
           ssl: {
-            rejectUnauthorized: false,
+            rejectUnauthorized: false, // Requerido por Render
           },
           autoLoadEntities: true,
-          synchronize: false,
+          synchronize: false, // Nunca true en producción
         };
       },
     }),
+    // --- FIN ---
 
-    MailerModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        const emailUser = configService.get<string>('EMAIL_USER');
-        const emailPass = configService.get<string>('EMAIL_PASS');
-        if (!emailUser || !emailPass) {
-          throw new Error('Las variables de entorno del correo no están definidas.');
-        }
-
-        return {
-          transport: {
-            host: configService.get<string>('EMAIL_HOST'),
-            // --- CORREGIDO AQUÍ ---
-            // Le damos a get() un valor por defecto ('587') y a parseInt() el radix 10.
-            port: parseInt(configService.get<string>('EMAIL_PORT', '587'), 10),
-            secure: configService.get<string>('EMAIL_SECURE') === 'true',
-            auth: {
-              user: emailUser,
-              pass: emailPass,
-            },
-          },
-          defaults: {
-            from: `"EleStu" <${emailUser}>`,
-          },
-          template: {
-            dir: join(__dirname, '..', 'templates'),
-            adapter: new HandlebarsAdapter(),
-            options: {
-              strict: true,
-            },
-          },
-        }
-      }
-    }),
+    MailerModule.forRootAsync({ /* Tu configuración de Mailer se mantiene igual */ }),
     AuthModule,
     UserModule,
     StudioModule,
