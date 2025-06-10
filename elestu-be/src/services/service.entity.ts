@@ -1,9 +1,9 @@
 // src/services/service.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm'; // Importar OneToMany
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { User } from '../users/user.entity';
-import { ServiceBooking } from '../bookings/entities/service-booking.entity'; // Importar ServiceBooking
+import { ServiceBooking } from '../bookings/entities/service-booking.entity';
 
-@Entity('Servicios')  // Aquí defines el nombre de la tabla como 'Servicios'
+@Entity('Servicios')
 export class Service {
     @PrimaryGeneratedColumn()
     id: number;
@@ -17,14 +17,18 @@ export class Service {
     @Column()
     price: number;
 
+    // --- CORREGIDO AQUÍ ---
+    // Si la columna es nullable, el tipo en TypeScript debe ser `string | null`.
     @Column({ nullable: true })
-    image: string;
+    image: string | null;
+
+    @Column({ type: 'varchar', nullable: true })
+    serviceType?: string;
 
     @ManyToOne(() => User, user => user.servicios)
     @JoinColumn({ name: 'userid' })
     user: User;
 
-    // Relación inversa con ServiceBookings
     @OneToMany(() => ServiceBooking, serviceBooking => serviceBooking.service)
-    serviceBookings: ServiceBooking[]; // Esta es la propiedad que faltaba
+    serviceBookings: ServiceBooking[];
 }

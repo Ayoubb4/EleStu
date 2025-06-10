@@ -137,12 +137,12 @@ function Reservations() {
                                     serviceBookings.map(booking => (
                                         <div key={booking.id} className="booking-card service-card">
                                             <h3>{booking.serviceTitle || 'Servicio sin título'}</h3>
-                                            <p><strong>Fecha:</strong> {new Date(booking.date).toLocaleDateString()}</p>
-                                            {booking.time && <p><strong>Hora:</strong> {booking.time}</p>}
-                                            <p><strong>Precio:</strong> {Number(booking.price || 0).toFixed(2)}€</p>
-                                            <p><strong>Descripción:</strong> {booking.description || 'N/A'}</p>
+                                            <p>Fecha: {new Date(booking.date).toLocaleDateString()}</p>
+                                            {booking.time && <p>Hora: {booking.time}</p>}
+                                            <p>Precio: {Number(booking.price || 0).toFixed(2)}€</p>
+                                            <p>Descripción: {booking.description || 'N/A'}</p>
                                             {/* --- ¡QUITAR ESTA LÍNEA! --- */}
-                                            {/* <p><strong>Estado:</strong> <span className={`status-${booking.status?.toLowerCase()}`}>{booking.status}</span></p> */}
+                                            {/* <p>Estado: <span className={`status-${booking.status?.toLowerCase()}`}>{booking.status}</span></p> */}
                                             {/* --- FIN DE QUITAR --- */}
                                             {/* El botón de cancelar siempre visible si no hay estado */}
                                             <button
@@ -167,12 +167,12 @@ function Reservations() {
                                     studioBookings.map(booking => (
                                         <div key={booking.id} className="booking-card studio-card">
                                             <h3>{booking.studioName}</h3>
-                                            <p><strong>Fecha:</strong> {new Date(booking.date).toLocaleDateString()}</p>
-                                            <p><strong>Hora:</strong> {booking.time}</p>
-                                            <p><strong>Descripción:</strong> {booking.description || 'N/A'}</p>
-                                            <p><strong>Precio/Hora:</strong> {Number(booking.pricePerHour || 0).toFixed(2)}€</p>
+                                            <p>Fecha: {new Date(booking.date).toLocaleDateString()}</p>
+                                            <p>Hora: {booking.time}</p>
+                                            <p>Descripción: {booking.description || 'N/A'}</p>
+                                            <p>Precio/Hora: {Number(booking.pricePerHour || 0).toFixed(2)}€</p>
                                             {/* --- ¡QUITAR ESTA LÍNEA! --- */}
-                                            {/* <p><strong>Estado:</strong> <span className={`status-${booking.status?.toLowerCase()}`}>{booking.status}</span></p> */}
+                                            {/* <p>Estado: <span className={`status-${booking.status?.toLowerCase()}`}>{booking.status}</span></p> */}
                                             {/* --- FIN DE QUITAR --- */}
                                             {/* El botón de cancelar siempre visible si no hay estado */}
                                             <button

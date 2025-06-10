@@ -1,5 +1,5 @@
 // src/services/services.service.ts
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Service } from './service.entity';
@@ -11,41 +11,42 @@ export class ServicesService {
   constructor(
       @InjectRepository(Service)
       private serviceRepository: Repository<Service>,
-      @InjectRepository(User)  // Inyectamos el repositorio de User
+      @InjectRepository(User)
       private userRepository: Repository<User>,
   ) {}
 
-  // Crear un servicio
   async create(createServiceDto: CreateServiceDto): Promise<Service> {
     const service = new Service();
     service.title = createServiceDto.title;
     service.description = createServiceDto.description;
     service.price = createServiceDto.price;
-    service.image = createServiceDto.image;
+    service.serviceType = createServiceDto.serviceType;
+
+    // --- CORREGIDO AQUÍ ---
+    // Si createServiceDto.image es undefined, asignamos null.
+    service.image = createServiceDto.image || null;
 
     const usuario = await this.userRepository.findOne({
       where: { id: createServiceDto.userid },
     });
 
     if (!usuario) {
-      throw new Error('Usuario no encontrado');
+      throw new NotFoundException(`Usuario con ID ${createServiceDto.userid} no encontrado`);
     }
 
-    service.user = usuario; // ⚠️ CAMBIO: el campo correcto es "user", no "usuario"
+    service.user = usuario;
 
     return this.serviceRepository.save(service);
   }
 
-  // Obtener todos los servicios
   async findAll(): Promise<Service[]> {
-    return this.serviceRepository.find({ relations: ['user'] }); // Cargamos la relación con el usuario
+    return this.serviceRepository.find({ relations: ['user'] });
   }
 
-  // Obtener un servicio por su ID
   async findOne(id: number): Promise<Service> {
     const service = await this.serviceRepository.findOne({
       where: { id },
-      relations: ['user'],  // También cargamos el usuario que creó el servicio
+      relations: ['user'],
     });
     if (!service) {
       throw new HttpException('Service not found', HttpStatus.NOT_FOUND);
