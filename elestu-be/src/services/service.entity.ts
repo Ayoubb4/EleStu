@@ -14,12 +14,13 @@ export class Service {
     @Column()
     description: string;
 
-    @Column()
+    @Column({type: 'float'}) // Usamos float para permitir decimales en el precio
     price: number;
 
-    // --- CORREGIDO AQUÍ ---
-    // Si la columna es nullable, el tipo en TypeScript debe ser `string | null`.
-    @Column({ nullable: true })
+    // --- CORRECCIÓN CLAVE AQUÍ ---
+    // La imagen es una URL o una cadena base64, por lo tanto, su tipo es 'string'.
+    // También puede ser nula.
+    @Column({ type: 'text', nullable: true }) // 'text' permite cadenas muy largas como base64
     image: string | null;
 
     @Column({ type: 'varchar', nullable: true })
