@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class FixServiceEntityType1749560940404 implements MigrationInterface {
-    name = 'FixServiceEntityType1749560940404'
+export class InitialSchema1749561468639 implements MigrationInterface {
+    name = 'InitialSchema1749561468639'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE "Servicios" ADD "serviceType" character varying`);
