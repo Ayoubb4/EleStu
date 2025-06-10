@@ -1529,145 +1529,109 @@ h1, h2, h3, h4, h5, h6 {
 
 
 /* ===========================================================
-13. AddService
+   13. Add Service - DISEÑO MEJORADO
 =========================================================== */
 
-/* Container for the AddService form - specific styling */
-.add-service-container {
-  max-width: 700px; /* Increased width for better layout */
-  margin: 30px auto; /* Centered with some margin */
-  padding: 25px 35px; /* More padding */
-  background-color: #ffffff; /* White background for the form itself */
-  border-radius: 12px; /* Softer rounded corners for the container */
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* A subtle shadow */
-}
+/* Reutilizamos los estilos del booking form para consistencia */
+/* Si ya tienes .page-container, .form-wrapper, etc., no necesitas duplicarlos */
+/* Los pongo aquí por si acaso, para asegurar que todo se vea bien. */
 
-.add-service-container h2 {
-  text-align: center;
-  color: #334155; /* Darker, more professional color for title */
-  margin-bottom: 30px;
-  font-size: 4em; /* Larger title */
-}
-
-/* Styling for each form group (label + input) */
-.form-group {
-  margin-bottom: 22px; /* Space between form groups */
-}
-
-.form-group label {
-  display: block; /* Label on its own line */
-  margin-bottom: 8px;
-  color: #1e293b; /* Dark gray for labels */
-  font-size: 1.5em;
-}
-
-/* Common styling for text inputs, textarea, and select */
-.form-group input[type="text"],
-.form-group input[type="number"],
-.form-group input[type="file"],
-.form-group textarea,
-.form-group select {
-  width: 100%;
-  border-radius: 25px; /* Highly rounded corners like the image's inputs */
-  border: 1px solid #cbd5e1; /* Light gray border */
-  background-color: #f8fafc; /* Very light off-white/purpleish tint - adjust to match image's purple */
-  /* For a more purple background like the image, use something like: */
-  /* background-color: #ede7f6; */
-  /* border: 1px solid #d1c4e9; */
+.page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f4f7f9;
+  min-height: 100vh;
   box-sizing: border-box;
-  color: #334155; /* Text color inside input */
-  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
-.form-group input[type="text"]::placeholder,
-.form-group input[type="number"]::placeholder,
-.form-group textarea::placeholder {
-  color: #94a3b8; /* Lighter placeholder text */
+.form-wrapper {
+  background-color: white;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 650px;
+  margin-top: 2rem;
+  text-align: center;
+  border: 1px solid #e8e8e8;
 }
 
-/* Focus style for inputs */
-.form-group input[type="text"]:focus,
-.form-group input[type="number"]:focus,
-.form-group input[type="file"]:focus,
-.form-group textarea:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: #7c3aed; /* Purple border on focus - match button color */
-  /* box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2); /* Optional focus ring */
-  background-color: #ffffff; /* White background on focus */
+.form-main-title {
+  font-family: 'Firmos', sans-serif;
+  font-size: 2.2rem;
+  color: #0038E1;
+  margin: 0 0 2rem 0;
+  font-weight: normal;
 }
 
-.form-group input[type="file"] {
-  padding: 10px 12px; /* File input padding can be a bit different */
+.form-group-new {
+  margin-bottom: 1.5rem;
+  text-align: left;
 }
 
-/* Style the button part of the file input if possible (browser specific) */
-.form-group input[type="file"]::file-selector-button {
-  padding: 8px 15px;
-  margin-right: 10px;
-  border-radius: 20px;
-  background-color: #a78bfa; /* Light purple */
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+.form-group-new label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #495057;
+  font-family: 'Roboto', sans-serif;
+  font-size: 0.9rem;
+  text-transform: uppercase;
 }
 
-.form-group input[type="file"]::file-selector-button:hover {
-  background-color: #8b5cf6; /* Darker purple */
-}
-
-.form-group textarea {
-  min-height: 140px; /* Good default height for description */
-  resize: vertical; /* Allow vertical resizing */
-  font-family: inherit; /* Ensure textarea uses the same font */
+.form-group-new input,
+.form-group-new textarea,
+.form-group-new select { /* Añadido select a los estilos */
+  width: 100%;
   padding: 1rem;
-  font-size: 1.5rem;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: 'Roboto', sans-serif;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background-color: white;
 }
 
-/* Image preview styling */
+.form-group-new input:focus,
+.form-group-new textarea:focus,
+.form-group-new select:focus {
+  outline: none;
+  border-color: #80bdff;
+  box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.2);
+}
+
 .image-preview-container {
-  margin-top: 10px;
-  margin-bottom: 20px;
-  text-align: center; /* Center the preview image */
+  margin-bottom: 1.5rem;
+  text-align: center;
 }
 
 .preview-img {
   max-width: 100%;
-  height: auto; /* Maintain aspect ratio */
-  max-height: 250px; /* Limit preview height */
-  border-radius: 8px; /* Rounded corners for the image */
-  border: 1px solid #e2e8f0; /* Light border for the image */
-  object-fit: cover; /* Ensure image covers the area nicely */
+  max-height: 200px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
 }
 
-/* Submit button styling */
-.styled-button { /* Using the .styled-button class added to the button */
-  width: 100%;
-  padding: 15px 20px;
-  border-radius: 25px; /* Highly rounded corners */
+.form-submit-button {
+  background: #0038E1;
+  color: white;
   border: none;
-  background-color: #8b5cf6; /* Main purple color - adjust to match image */
-  /* For a gradient like some modern buttons: */
-  /* background-image: linear-gradient(to right, #a78bfa, #8b5cf6); */
-  color: #ffffff; /* White text */
-  font-size: 1.5em; /* Slightly larger font */
+  border-radius: 8px;
+  padding: 1.1rem;
+  font-size: 1.25rem;
+  font-family: 'Firmos', sans-serif;
   cursor: pointer;
-  transition: background-color 0.25s ease, transform 0.1s ease;
-  text-transform: uppercase; /* Optional: if you want uppercase text like "Sign In Now" */
-  letter-spacing: 0.5px; /* Optional: slight letter spacing */
+  width: 100%;
+  margin-top: 1.5rem;
+  transition: all 0.3s ease;
 }
 
-.styled-button:hover {
-  background-color: #7c3aed; /* Darker purple on hover */
-  transform: translateY(-1px); /* Slight lift on hover */
+.form-submit-button:hover:not(:disabled) {
+  background-color: #002DAA;
+  transform: translateY(-2px);
 }
 
-.styled-button:disabled {
-  background-color: #c4b5fd; /* Lighter, desaturated purple when disabled */
-  cursor: not-allowed;
-  transform: translateY(0);
-}
 /* ===========================================================
    14. Settings Pages - DISEÑO FINAL
 =========================================================== */
@@ -2265,5 +2229,303 @@ h1, h2, h3, h4, h5, h6 {
   max-width: 350px; /* O el ancho de tu formulario */
   margin-left: auto;
   margin-right: auto;
+}
+
+/* ===========================================================
+   CSS RESPONSIVE (VERSIÓN FINAL CON MENÚ DESPLEGABLE MEJORADO)
+   =========================================================== */
+
+/* --- Estilos para Tablets y pantallas medianas (hasta 1024px) --- */
+@media (max-width: 1024px) {
+  /* --- Ajustes generales de fuentes --- */
+  html {
+    font-size: 80%;
+  }
+  p {
+    font-size: 2rem;
+  }
+  /* --- Navbar --- */
+  .navbar {
+    min-height: 70px;
+  }
+  .navbar-logo {
+    height: 200px;
+  }
+  .nav-links a {
+    font-size: 2rem;
+  }
+  /* --- Grids de tarjetas --- */
+  .card-grid, .studio-grid {
+    padding: 2rem 2rem;
+    gap: 1.5rem;
+  }
+  /* --- Hero sections --- */
+  .hero-section {
+    padding: 8rem 2rem;
+  }
+  .hero-overlay {
+    max-width: 70%;
+  }
+  /* --- Footer --- */
+  .footer-content {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+  }
+}
+
+/* ===========================================================
+   CÓDIGO PARA NAVBAR RESPONSIVE (VERSIÓN "CHULA")
+   =========================================================== */
+
+/* --- Botón de Hamburguesa --- */
+.hamburger-menu {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  z-index: 1100;
+  filter: drop-shadow(2px 2px 0px black);
+}
+
+/* --- Estilos para Móviles (hasta 768px) --- */
+@media (max-width: 768px) {
+  /* --- Ajustes generales de fuentes más agresivos --- */
+  html {
+    font-size: 62.5%;
+  }
+  p {
+    font-size: 2rem;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.2;
+  }
+
+  /* --- Login & Register --- */
+  .login-box, .register-box {
+    width: 90%;
+    padding: 2rem 1.5rem;
+    margin-top: 2rem;
+  }
+  .login-box h2, .register-box h2 {
+    font-size: 8rem;
+  }
+  .login-box label, .register-box label, .login-box input, .register-box input, .login-box .forgot-password-link {
+    font-size: 1.6rem;
+  }
+  .login-box button, .register-box button {
+    font-size: 2rem;
+    padding: 1rem;
+  }
+
+  /* ======================================================= */
+  /* --- INICIO: SECCIÓN DE NAVBAR ACTUALIZADA Y MEJORADA --- */
+  /* ======================================================= */
+  .navbar {
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    min-height: 70px;
+  }
+
+  .hamburger-menu {
+    display: block;
+  }
+
+  /* El contenedor del menú ahora se centra verticalmente */
+  .navbar-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* ¡CLAVE! Centra los enlaces verticalmente */
+    align-items: center;
+    position: fixed;
+    top: 0; /* Ocupa desde el borde superior... */
+    left: 0;
+    width: 100%;
+    height: 100%; /* ...hasta el inferior */
+    background-color: rgba(0, 35, 145, 0.9); /* Un poco más oscuro */
+    backdrop-filter: blur(12px) saturate(150%); /* Efecto "glass" más intenso */
+
+    /* Animación mejorada: se desliza y se desvanece */
+    opacity: 0;
+    transform: translateX(-100%);
+    transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+    z-index: 1050;
+  }
+
+  .navbar-content.active {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* Ocultamos el icono de escritorio */
+  .settings-link-desktop {
+    display: none;
+  }
+
+  /* Los enlaces ahora son parte del menú centrado */
+  .nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem; /* Más espacio entre ellos */
+    text-align: center;
+  }
+
+  /* Estilo para TODOS los enlaces del menú móvil (más grandes y chulos) */
+  .nav-links a, .settings-link-mobile {
+    color: white;
+    text-decoration: none;
+    font-size: 4.5rem; /* ¡Mucho más grandes! */
+    text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.8);
+    padding: 1rem 2rem;
+    border-radius: 20px;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+
+    /* Animación de entrada para cada elemento */
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  /* Hacemos que la animación de entrada aparezca en cascada */
+  .navbar-content.active .nav-links a,
+  .navbar-content.active .settings-link-mobile {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+  }
+
+  .navbar-content.active .nav-links a:nth-child(1) { transition-delay: 0.2s; }
+  .navbar-content.active .nav-links a:nth-child(2) { transition-delay: 0.3s; }
+  .navbar-content.active .settings-link-mobile { transition-delay: 0.4s; }
+
+
+  /* Efecto "hover" para dar feedback al usuario */
+  .nav-links a:hover, .settings-link-mobile:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+  }
+
+  .settings-link-mobile {
+    display: flex; /* Para que el icono y el texto se alineen */
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .navbar-logo {
+    height: 120px;
+  }
+  /* --- FIN: SECCIÓN DE NAVBAR ACTUALIZADA Y MEJORADA --- */
+
+  /* --- Hero Sections --- */
+  .hero-section {
+    padding: 5rem 1rem;
+    text-align: center;
+  }
+  .hero-overlay {
+    max-width: 100%;
+    padding: 2rem;
+    border-left: none;
+    border-top: 5px solid #00A8FF;
+  }
+  .hero-overlay h2, .hero-title {
+    font-size: 3rem;
+  }
+  .hero-overlay p, .hero-description {
+    font-size: 1.6rem;
+  }
+  .hero-section2 {
+    text-align: center;
+  }
+  .hero-content {
+    margin: 0 auto;
+  }
+
+  /* --- Grid de Tarjetas (Services, Studios) --- */
+  .card-grid, .studio-grid {
+    grid-template-columns: 1fr;
+    padding: 1.5rem;
+  }
+  .card .card-info h3, .studio-card-title { font-size: 2rem; }
+  .card .card-info .card-price, .studio-card-description { font-size: 1.8rem; }
+
+  /* --- Vistas Previas (Preview Pages) --- */
+  .preview-main-content {
+    grid-template-columns: 1fr;
+    padding: 1.5rem;
+    margin-top: -2rem;
+  }
+  .preview-title { font-size: 2.8rem; }
+  .preview-provider { font-size: 1.8rem; }
+  .info-card-item p { font-size: 2.2rem; }
+
+  /* --- Formularios (Booking, Add Service, Settings) --- */
+  .form-wrapper, .payment-content-wrapper, .forgot-password-box {
+    width: 100%;
+    padding: 1.5rem;
+    margin-top: 1rem;
+    box-sizing: border-box;
+  }
+  .form-main-title, .forgot-password-logo-text { font-size: 3rem !important; }
+  .form-section-title, .settings-title-main { font-size: 2.2rem !important; }
+  .form-group-new label { font-size: 1.6rem !important; }
+  .form-group-new input, .form-group-new textarea, .settings-form .form-input {
+    font-size: 1.6rem !important;
+    padding: 0.8rem !important;
+  }
+  .form-submit-button, .forgot-password-button { font-size: 1.8rem !important; }
+
+  /* --- Página de Pagos --- */
+  .payment-options-grid {
+    grid-template-columns: 1fr;
+  }
+  .payment-method-title { font-size: 2rem; }
+  .input-group-inline { flex-direction: column; }
+
+  /* --- Footer --- */
+  .site-footer {
+    padding: 2rem 1rem;
+  }
+  .footer-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 2.5rem;
+  }
+  .links-section {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .links-column {
+    align-items: center;
+  }
+}
+
+/* --- Ajustes finales para pantallas muy pequeñas (hasta 480px) --- */
+@media (max-width: 480px) {
+  html {
+    font-size: 58%;
+  }
+  .login-box h2, .register-box h2 {
+    font-size: 6rem;
+  }
+  .hero-overlay h2, .hero-title {
+    font-size: 2.5rem;
+  }
+  .form-wrapper, .payment-content-wrapper, .forgot-password-box {
+    padding: 1rem;
+  }
+  .site-footer {
+    padding: 2rem 1rem;
+  }
+  .footer-content {
+    gap: 2rem;
+  }
+  .social-link, .links-column a, .footer-logout-button, .copyright-section {
+    font-size: 2.2rem;
+  }
+  .contact-box .contact-title, .contact-box .contact-email {
+    font-size: 2.2rem;
+  }
 }
 
