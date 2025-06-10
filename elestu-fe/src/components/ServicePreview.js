@@ -37,7 +37,7 @@ function ServicePreview() {
             <header className="preview-header">
                 <div className="preview-header-content">
                     <h1 className="preview-title">{service.title}</h1>
-                    <p className="preview-provider">Ofrecido por: <strong>{service.user?.name || 'Artista verificado'}</strong></p>
+                    <p className="preview-provider">Ofrecido por: {service.user?.name || 'Artista verificado'}</p>
                 </div>
             </header>
 
