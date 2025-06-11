@@ -125,7 +125,7 @@ function Register() {
 
                     {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
                     <p style={{ marginTop: '15px' }}>
-                        ¿Ya tienes una cuenta? <Link to="/login" className="auth-link">Iniciar sesión</Link>
+                        Ya tienes una cuenta? <Link to="/login" className="auth-link">Iniciar sesión</Link>
                     </p>
                 </div>
             </div>

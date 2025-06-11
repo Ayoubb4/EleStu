@@ -31,8 +31,7 @@ src/styles/ProfilePage.css
 
 .profile-name {
     margin: 0;
-    font-size: 2.5rem;
-    font-weight: 700;
+    font-size: 3rem;
 }
 
 .profile-member-since {

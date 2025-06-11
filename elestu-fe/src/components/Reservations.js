@@ -197,7 +197,7 @@ function Reservations() {
                 <div className="modal-overlay">
                     <div className="modal-content">
                         <h2>Confirmar Cancelación</h2>
-                        <p>¿Estás seguro de que deseas cancelar esta reserva? Esta acción no se puede deshacer.</p>
+                        <p>Estás seguro de que deseas cancelar esta reserva? Esta acción no se puede deshacer.</p>
                         <div className="modal-actions">
                             <button className="modal-button confirm" onClick={confirmCancellation}>Sí, Cancelar</button>
                             <button className="modal-button cancel" onClick={cancelCancellation}>No, Mantener</button>

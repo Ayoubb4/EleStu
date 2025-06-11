@@ -63,11 +63,11 @@
 
 .service-manage-info h3 {
     margin: 0 0 0.25rem 0;
-    font-size: 1.2rem;
+    font-size: 2rem;
 }
 
 .service-manage-info span {
-    font-size: 0.9rem;
+    font-size: 1.5rem;
     color: #718096;
     background-color: #edf2f7;
     padding: 0.2rem 0.5rem;
@@ -76,8 +76,7 @@
 
 .service-manage-info p {
     margin: 0.5rem 0 0 0;
-    font-size: 1.1rem;
-    font-weight: bold;
+    font-size: 3rem;
     color: #0038E1;
 }
 
@@ -102,6 +101,9 @@
 
 .edit-btn {
     color: #2d3748;
+    font-family: 'Firmos', sans-serif;
+    font-size: 2rem;
+    font-weight: normal;
 }
 .edit-btn:hover {
     background-color: #edf2f7;
@@ -110,6 +112,9 @@
 
 .delete-btn {
     color: #c53030;
+    font-family: 'Firmos', sans-serif;
+    font-size: 2rem;
+    font-weight: normal;
 }
 .delete-btn:hover {
     background-color: #fed7d7;

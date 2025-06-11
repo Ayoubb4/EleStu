@@ -1,25 +1,22 @@
-// src/components/AddEditService.js -> Cámbiale el nombre a AddEditService.js
+// src/components/AddEditService.js
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import '../App.css';
 import Navbar from './Navbar';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-// --- MODIFICADO: El componente ahora es más genérico ---
 function AddEditService() {
     const navigate = useNavigate();
-    const { id: serviceId } = useParams(); // Obtiene el ID del servicio de la URL si existe
-    const location = useLocation(); // Para obtener el estado pasado en la navegación
+    const { id: serviceId } = useParams();
 
-    // --- MODIFICADO: Estado para determinar si estamos en modo edición ---
     const [isEditMode, setIsEditMode] = useState(false);
-
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
+    const [image, setImage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [price, setPrice] = useState('');
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true); // Inicia en true para el chequeo inicial
     const [serviceType, setServiceType] = useState('');
 
     const serviceTypes = ['Cantante', 'Productor', 'DJ', 'Músico de Sesión', 'Compositor', 'Otro'];
@@ -32,25 +29,46 @@ function AddEditService() {
         'Otro': 'Describa aquí detalladamente el servicio que ofrece.'
     };
 
-    // --- AÑADIDO: useEffect para cargar datos en modo edición ---
+    // --- AÑADIDA: Lógica robusta para cargar datos en modo edición ---
     useEffect(() => {
-        if (serviceId && location.state?.service) {
-            const { service } = location.state;
+        if (serviceId) {
             setIsEditMode(true);
-            setTitle(service.title || '');
-            setDescription(service.description || '');
-            setPrice(service.price?.toString() || '');
-            setServiceType(service.serviceType || '');
-            // Nota: La imagen no se puede pre-cargar en un input file por seguridad del navegador.
-            // Se puede mostrar la imagen actual, pero no rellenar el input.
-            setImagePreview(service.image || null);
+
+            const fetchServiceData = async () => {
+                try {
+                    const response = await fetch(`${API_URL}/services/${serviceId}`);
+                    if (!response.ok) {
+                        throw new Error('No se pudo encontrar el servicio para editar.');
+                    }
+                    const service = await response.json();
+
+                    setTitle(service.title || '');
+                    setDescription(service.description || '');
+                    setPrice(service.price?.toString() || '');
+                    setServiceType(service.serviceType || '');
+                    if (service.image) {
+                        setImagePreview(service.image);
+                    }
+
+                } catch (error) {
+                    alert(error.message);
+                    navigate('/my-services');
+                } finally {
+                    setLoading(false);
+                }
+            };
+            fetchServiceData();
+        } else {
+            setIsEditMode(false);
+            setLoading(false);
         }
-    }, [serviceId, location.state]);
+    }, [serviceId, navigate]);
 
 
     function handleImageChange(event) {
         const file = event.target.files[0];
         if (file) {
+            setImage(file);
             const reader = new FileReader();
             reader.onloadend = () => { setImagePreview(reader.result); };
             reader.readAsDataURL(file);
@@ -60,8 +78,7 @@ function AddEditService() {
     const handleServiceTypeChange = (event) => {
         const type = event.target.value;
         setServiceType(type);
-        // --- MODIFICADO: Solo rellenar la plantilla si no estamos en modo edición ---
-        if (!isEditMode) {
+        if (!isEditMode && !description) {
             setDescription(serviceTemplates[type] || '');
         }
     };
@@ -78,22 +95,19 @@ function AddEditService() {
             return;
         }
 
-        // --- MODIFICADO: El FormData ahora puede no incluir la imagen si no se cambia ---
-        const formData = {
-            title,
-            description,
-            price: parseInt(price, 10) || 0,
-            userid: parseInt(userId, 10),
-            serviceType: serviceType,
-        };
-        // Solo añadimos la imagen si se ha subido una nueva, para no sobreescribir la existente con `null`
-        if (imagePreview && imagePreview.startsWith('data:image')) {
-            formData.image = imagePreview;
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('description', description);
+        formData.append('price', parseInt(price, 10) || 0);
+        formData.append('userid', parseInt(userId, 10));
+        formData.append('serviceType', serviceType);
+
+        if (image) {
+            formData.append('image', image);
         }
 
         setLoading(true);
 
-        // --- MODIFICADO: La URL y el método cambian si estamos en modo edición ---
         const url = isEditMode ? `${API_URL}/services/${serviceId}` : `${API_URL}/services`;
         const method = isEditMode ? 'PATCH' : 'POST';
 
@@ -101,32 +115,38 @@ function AddEditService() {
             const response = await fetch(url, {
                 method: method,
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('authToken')}`
                 },
-                body: JSON.stringify(formData),
+                body: formData,
             });
 
             if (response.ok) {
-                // --- MODIFICADO: Mensaje de éxito dinámico ---
                 alert(isEditMode ? 'Servicio actualizado con éxito' : 'Servicio creado con éxito');
-                navigate(`/services`);
+                navigate(`/my-services`);
             } else {
                 const error = await response.json();
                 alert(error.message || 'Hubo un error al guardar el servicio');
             }
         } catch (error) {
-            alert('Error al guardar el servicio.');
+            alert('Error al conectar con el servidor.');
         } finally {
             setLoading(false);
         }
     };
 
+    if (loading) {
+        return (
+            <div className="page-container">
+                <Navbar />
+                <p style={{textAlign: 'center', fontSize: '1.5rem', marginTop: '3rem'}}>Cargando...</p>
+            </div>
+        )
+    }
+
     return (
         <div className="page-container">
             <Navbar />
             <div className="form-wrapper">
-                {/* --- MODIFICADO: Título dinámico --- */}
                 <h2 className="form-main-title">{isEditMode ? 'Editar Servicio' : 'Ofrecer un Nuevo Servicio'}</h2>
 
                 <form onSubmit={handleSubmit} className="booking-form-new">
@@ -134,7 +154,7 @@ function AddEditService() {
                         <label htmlFor="serviceType">Tipo de Servicio</label>
                         <select id="serviceType" value={serviceType} onChange={handleServiceTypeChange} required>
                             <option value="" disabled>Selecciona un tipo...</option>
-                            {serviceTypes.map(type => ( <option key={type} value={type}>{type}</option> ))}
+                            {serviceTypes.map(type => ( <option key={type} value={type}>{type}</option>))}
                         </select>
                     </div>
 
@@ -158,16 +178,14 @@ function AddEditService() {
                         <input id="image" type="file" accept="image/*" onChange={handleImageChange} />
                     </div>
 
-                    {/* --- MODIFICADO: Muestra la imagen existente si no se sube una nueva --- */}
                     {imagePreview && (
                         <div className="image-preview-container">
-                            <p>{isEditMode ? "Imagen actual (sube una nueva para reemplazarla):" : "Vista Previa:"}</p>
+                            <p>{isEditMode && image ? "Nueva imagen:" : (isEditMode ? "Imagen actual:" : "Vista previa:")}</p>
                             <img src={imagePreview} alt="Vista previa" className="preview-img" />
                         </div>
                     )}
 
                     <button type="submit" disabled={loading} className="form-submit-button">
-                        {/* --- MODIFICADO: Texto del botón dinámico --- */}
                         {loading ? 'Guardando...' : (isEditMode ? 'Guardar Cambios' : 'Publicar Servicio')}
                     </button>
                 </form>

@@ -60,7 +60,7 @@ function Services() {
             <Navbar />
             <div className="hero-section">
                 <div className="hero-overlay">
-                    <h2>¿Qué estás buscando?</h2>
+                    <h2>Qué estás buscando?</h2>
                     <p>
                         La sección de Servicios de EleStu te permite contratar músicos,
                         productores e ingenieros de sonido. Encuentra y ofrece

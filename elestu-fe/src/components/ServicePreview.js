@@ -91,7 +91,7 @@ function ServicePreview() {
     }
 
     async function handleDeleteClick() {
-        if (window.confirm('¿Estás seguro de que quieres eliminar este servicio? Esta acción no se puede deshacer.')) {
+        if (window.confirm('Estás seguro de que quieres eliminar este servicio? Esta acción no se puede deshacer.')) {
             try {
                 const authToken = localStorage.getItem('authToken');
                 const response = await fetch(`${API_URL}/services/${service.id}`, {

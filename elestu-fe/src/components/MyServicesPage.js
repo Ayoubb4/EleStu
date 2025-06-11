@@ -51,7 +51,7 @@ function MyServicesPage() {
     };
 
     const handleDelete = async (serviceId) => {
-        if (window.confirm('¿Estás seguro de que quieres eliminar este servicio de forma permanente?')) {
+        if (window.confirm('Estás seguro de que quieres eliminar este servicio de forma permanente?')) {
             const token = localStorage.getItem('authToken');
             try {
                 const response = await fetch(`${API_URL}/services/${serviceId}`, {
