@@ -72,19 +72,19 @@ src/styles/ProfilePage.css
     flex-shrink: 0;
     color: #0052D4;
     background-color: #e9efff;
-    padding: 12px;
+    padding: 15px;
     border-radius: 50%;
 }
 
 .dashboard-card-text h3 {
     margin: 0 0 0.25rem 0;
-    font-size: 1.2rem;
+    font-size: 2rem;
     color: #1a202c;
 }
 
 .dashboard-card-text p {
     margin: 0;
-    font-size: 0.9rem;
+    font-size: 1.25rem;
     color: #718096;
     line-height: 1.5;
 }

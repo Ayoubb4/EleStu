@@ -26,7 +26,19 @@ function CheckoutForm({ orderSummary, onPaymentSuccess, onPaymentError, userId }
         bookingDescription: orderSummary?.description || '', // Nuevo estado para la descripción, pre-llenado si es posible
     });
 
-    // Efecto para pre-rellenar bookingDescription si orderSummary cambia y aún no ha sido modificado por el usuario
+    // Estado para la hora mínima permitida (se actualizará dinámicamente)
+    const [minTime, setMinTime] = useState('');
+
+    // Helper para obtener la fecha de hoy en formato YYYY-MM-DD
+    const getMinDate = () => {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = (today.getMonth() + 1).toString().padStart(2, '0');
+        const day = today.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    // Efecto para pre-rellenar bookingDescription si orderSummary cambia
     useEffect(() => {
         if (orderSummary?.description && formDetails.bookingDescription === '') {
             setFormDetails(prevDetails => ({
@@ -36,6 +48,33 @@ function CheckoutForm({ orderSummary, onPaymentSuccess, onPaymentError, userId }
         }
     }, [orderSummary, formDetails.bookingDescription]);
 
+    // Efecto para actualizar la hora mínima (`minTime`) cuando `bookingDate` cambia
+    useEffect(() => {
+        const today = new Date();
+        const currentHour = today.getHours().toString().padStart(2, '0');
+        const currentMinute = today.getMinutes().toString().padStart(2, '0');
+        const todayFormatted = getMinDate();
+
+        if (formDetails.bookingDate === todayFormatted) {
+            // Si la fecha seleccionada es hoy, la hora mínima es la hora actual
+            setMinTime(`${currentHour}:${currentMinute}`);
+        } else {
+            // Para fechas futuras, no hay restricción de hora (permitir desde 00:00)
+            setMinTime('00:00');
+        }
+        // Opcional: Si la hora seleccionada ya no es válida para la nueva fecha, la borramos.
+        // Esto previene que una hora pasada se mantenga si el usuario cambia la fecha a hoy.
+        if (formDetails.bookingTime && formDetails.bookingDate === todayFormatted) {
+            const [selectedHour, selectedMinute] = formDetails.bookingTime.split(':').map(Number);
+            const [minHour, minMinute] = minTime.split(':').map(Number);
+            if (selectedHour < minHour || (selectedHour === minHour && selectedMinute < minMinute)) {
+                setFormDetails(prevDetails => ({
+                    ...prevDetails,
+                    bookingTime: '' // Borra la hora si es anterior a la mínima permitida
+                }));
+            }
+        }
+    }, [formDetails.bookingDate, formDetails.bookingTime, minTime]); // Añadidas dependencias de ESLint
 
     const handleFormDetailsChange = (e) => {
         const { name, value } = e.target;
@@ -68,6 +107,25 @@ function CheckoutForm({ orderSummary, onPaymentSuccess, onPaymentError, userId }
                 onPaymentError('Fecha y hora de reserva requeridas.');
                 return;
             }
+
+            // --- Validación frontend adicional para la hora (en caso de que el atributo min sea ignorado por el navegador) ---
+            const todayFormatted = getMinDate();
+            if (formDetails.bookingDate === todayFormatted) {
+                const now = new Date();
+                const currentHour = now.getHours();
+                const currentMinute = now.getMinutes();
+
+                const [selectedHour, selectedMinute] = formDetails.bookingTime.split(':').map(Number);
+
+                // Compara la hora seleccionada con la hora actual solo si es la fecha de hoy
+                if (selectedHour < currentHour || (selectedHour === currentHour && selectedMinute < currentMinute)) {
+                    setMessage('No puedes seleccionar una hora en el pasado para hoy.');
+                    setLoading(false);
+                    onPaymentError('Hora en el pasado no permitida.');
+                    return;
+                }
+            }
+            // --- Fin de la Validación frontend ---
 
 
             const response = await fetch(`${API_URL}/payments/create-payment-intent`, {
@@ -190,7 +248,7 @@ function CheckoutForm({ orderSummary, onPaymentSuccess, onPaymentError, userId }
                 </select>
             </div>
 
-            {/* --- NUEVOS CAMPOS PARA LA RESERVA --- */}
+            {/* --- CAMPOS PARA LA RESERVA --- */}
             <h3>Fecha de la Reserva</h3>
             <div className="input-group">
                 <input
@@ -200,6 +258,7 @@ function CheckoutForm({ orderSummary, onPaymentSuccess, onPaymentError, userId }
                     onChange={handleFormDetailsChange}
                     className="payment-input"
                     required
+                    min={getMinDate()}
                 />
             </div>
 
@@ -212,6 +271,7 @@ function CheckoutForm({ orderSummary, onPaymentSuccess, onPaymentError, userId }
                     onChange={handleFormDetailsChange}
                     className="payment-input"
                     required
+                    min={minTime}
                 />
             </div>
 
@@ -224,10 +284,10 @@ function CheckoutForm({ orderSummary, onPaymentSuccess, onPaymentError, userId }
                     onChange={handleFormDetailsChange}
                     className="payment-input"
                     rows="3"
-                    required // El backend lo espera, así que es mejor que sea required
+                    required
                 />
             </div>
-            {/* --- FIN DE NUEVOS CAMPOS --- */}
+            {/* --- FIN DE CAMPOS --- */}
 
 
             <button className="pay-button" type="submit" disabled={!stripe || loading || !orderSummary}>
@@ -240,9 +300,7 @@ function CheckoutForm({ orderSummary, onPaymentSuccess, onPaymentError, userId }
 
 function PaymentMethodPage() {
     const navigate = useNavigate();
-    const [currentStep, setCurrentStep] = useState(1); // Sigue siendo 1 para el método, 2 para detalles/pago
-    // selectedPaymentMethod ya no es necesario pasarlo a CheckoutForm si no se usa en la API de create-payment-intent
-    // const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
+    const [currentStep, setCurrentStep] = useState(1);
     const [orderSummary, setOrderSummary] = useState(null);
     const [userId, setUserId] = useState(null);
 
@@ -259,37 +317,25 @@ function PaymentMethodPage() {
             try {
                 const parsedData = JSON.parse(serviceData);
                 setOrderSummary(parsedData);
-                // Pre-seleccionar el paso 2 si ya tenemos la información del servicio
-                // y asumimos que el método de pago es tarjeta por defecto.
-                setCurrentStep(2); // Ir directamente al formulario de pago si hay orderSummary
+                setCurrentStep(2);
             } catch (e) {
                 console.error("Error parsing service data from localStorage:", e);
-                navigate('/services'); // O a una página de error
+                navigate('/services');
             }
         } else {
             console.warn("No service found for payment. Redirecting to services.");
-            // navigate('/services'); // Podrías redirigir si no hay orderSummary
+            // navigate('/services');
         }
     }, [navigate]);
 
-    // Ya no necesitamos handlePaymentMethodSelect si vamos directo al paso 2
-    /*
-    const handlePaymentMethodSelect = (method) => {
-        setSelectedPaymentMethod(method);
-        setCurrentStep(2);
-    };
-    */
-
     const handlePaymentSuccess = () => {
-        setCurrentStep(3); // Avanzar al paso de confirmación
-        // Limpiar localStorage para evitar reusar datos viejos
+        setCurrentStep(3);
         localStorage.removeItem('currentServiceForPayment');
         console.log("Pago exitoso. Revisar el correo de confirmación.");
     };
 
     const handlePaymentError = (errorMessage) => {
         console.error("Error en el pago:", errorMessage);
-        // Aquí podrías mostrar un mensaje de error más visible al usuario si es necesario
     };
 
     const renderStepCircles = () => (
@@ -301,10 +347,7 @@ function PaymentMethodPage() {
     );
 
     const renderContent = () => {
-        // Simplificado para ir directamente al paso 2 (formulario de pago) si hay orderSummary
-        // El paso 1 de selección de método de pago se omite por ahora, asumiendo tarjeta.
-        // Si necesitas múltiples métodos de pago, deberías reactivar el paso 1.
-        if (!orderSummary && currentStep !== 3) { // Si no hay orderSummary y no estamos en la confirmación
+        if (!orderSummary && currentStep !== 3) {
             return (
                 <>
                     <h2 className="payment-method-title">Procesando Pedido...</h2>
@@ -314,19 +357,17 @@ function PaymentMethodPage() {
             );
         }
 
-
         switch (currentStep) {
-            case 1: // Este caso ya no se usaría si vamos directo al 2
+            case 1:
                 return (
                     <>
                         <h2 className="payment-method-title">Seleccionar Método de Pago</h2>
                         {renderStepCircles()}
                         <p>Este paso se ha omitido y se asume pago con tarjeta.</p>
                         <button onClick={() => setCurrentStep(2)}>Continuar a Detalles de Pago</button>
-                        {/* ... tu UI original para seleccionar método de pago ... */}
                     </>
                 );
-            case 2: // Formulario de detalles de tarjeta y reserva
+            case 2:
                 return (
                     <>
                         <h2 className="payment-method-title">Detalles del Pago y Reserva</h2>
@@ -337,12 +378,11 @@ function PaymentMethodPage() {
                                 onPaymentSuccess={handlePaymentSuccess}
                                 onPaymentError={handlePaymentError}
                                 userId={userId}
-                                // selectedPaymentMethod ya no se pasa
                             />
                         </Elements>
                     </>
                 );
-            case 3: // Confirmación de pago
+            case 3:
                 return (
                     <>
                         <h2 className="payment-method-title">Pago Completado</h2>
@@ -354,14 +394,9 @@ function PaymentMethodPage() {
                             </div>
 
                             <h3 className="order-summary-title">Resumen del Pedido Contratado</h3>
-                            {orderSummary ? ( // orderSummary podría ser null aquí si se limpió antes de tiempo.
-                                // Sería mejor pasar los datos del pedido a este paso o recargarlos.
-                                // Por ahora, asumimos que orderSummary (del estado, antes de limpiar localStorage) todavía está disponible
+                            {orderSummary ? (
                                 <div className="order-summary-box">
                                     <h4>{orderSummary.title}</h4>
-                                    {/* Muestra los detalles de la reserva si los tienes */}
-                                    {/* <p>Fecha: {formDetails.bookingDate}</p> */} {/* Necesitarías pasar estos datos */}
-                                    {/* <p>Hora: {formDetails.bookingTime}</p> */}
                                     <p>Descripción: {orderSummary.description}</p>
                                     <p className="expected-result">
                                         ✔ Revisa tu correo para los detalles completos de la reserva y del servicio.

@@ -6,14 +6,30 @@
   font-family: 'Firmos';
   src: url('./font/firmos-9mv27.woff2') format('woff');
   font-style: normal;
+  font-display: swap; /* Mejora la accesibilidad visual cargando fallback si tarda */
 }
 
 html, body {
-  font-family: 'Firmos', sans-serif; /* Si solo usas Firmos, esta será tu fuente principal */
+  font-family: 'Firmos', sans-serif;
   margin: 0;
   padding: 0;
   letter-spacing: 1.5px;
+  font-size: 16px;
+  line-height: 1.6;
+  background-color: #fff;
+  color: #111;
+}
 
+/* Foco visible para accesibilidad con teclado */
+:focus-visible {
+  outline: 3px solid #005fcc;
+  outline-offset: 4px;
+}
+
+/* Opcional: mejorar legibilidad en pantalla */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* ===========================================================
@@ -1174,7 +1190,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .order-summary-box p {
-  font-size: 1.1em;
+  font-size: 2rem;
   color: #555;
   line-height: 1.6;
   margin-bottom: 8px;
