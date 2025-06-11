@@ -237,16 +237,17 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ===========================================================
-   6. Navbar – Estilos comunes (Actualizado)
+   6. Navbar – Estilos comunes (Actualizado y Mejorado)
    =========================================================== */
 
+/* --- AÑADIDO: Importación de la nueva fuente 'Poppins' --- */
 .navbar {
   width: 100%;
   background-color: #0038E1;
   display: flex;
-  justify-content: space-between; /* Espacio entre logo y contenido derecho */
+  justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 2rem; /* Padding vertical y horizontal */
+  padding: 0.5rem 2rem;
   min-height: 80px;
   box-sizing: border-box;
   position: sticky;
@@ -254,9 +255,7 @@ h1, h2, h3, h4, h5, h6 {
   z-index: 1000;
 }
 
-/* Contenedor del logo para que sea un enlace */
 .navbar-logo-link {
-  /* Posicionamiento absoluto para centrar el logo perfectamente */
   position: absolute;
   left: 50%;
   top: 50%;
@@ -267,7 +266,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .navbar-logo {
-  height: 250px; /* Altura del logo */
+  height: 250px;
   object-fit: contain;
   transition: transform 0.3s ease;
 }
@@ -275,61 +274,60 @@ h1, h2, h3, h4, h5, h6 {
   transform: scale(1.05);
 }
 
-
-/* Contenedor para los enlaces y el icono de ajustes a la derecha */
 .navbar-content {
   display: flex;
   align-items: center;
-  gap: 2rem; /* Espacio entre los enlaces y el icono de ajustes */
-  margin-left: auto; /* Empuja este contenido a la derecha */
+  gap: 2rem;
+  margin-left: auto;
 }
 
 .nav-links {
   display: flex;
-  gap: 2rem; /* Espacio entre "Services" y "Studios" */
+  gap: 2rem;
   align-items: center;
 }
 
+/* --- MODIFICADO: Aplicamos la nueva fuente y ajustamos estilos --- */
 .nav-links a {
   color: white;
-  font-family: 'Firmos', sans-serif; /* Asumiendo que tienes esta fuente */
-  font-size: 2.5rem;
+  font-family: 'Firmos', sans-serif; /* <-- NUEVA FUENTE */
+  font-size: 2rem; /* Ajustado para la nueva fuente */
   text-decoration: none;
-  text-shadow: 2px 2px 0px black; /* Sombra sólida para el efecto de tu diseño */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Sombra más sutil */
   padding: 0.5rem;
   transition: all 0.3s ease;
+  letter-spacing: 0.5px;
 }
 
-/* --- ESTILO AÑADIDO PARA EL EFECTO BORROSO --- */
 .nav-links a.blurred {
-  opacity: 0.4; /* Hacemos el texto semitransparente */
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.7); /* Sombra que simula un desenfoque/brillo */
-  transform: scale(0.95); /* Opcional: hacerlo un poco más pequeño */
+  opacity: 0.5;
+  filter: blur(1px);
+  transform: scale(0.95);
 }
 
 .nav-links a:not(.blurred):hover {
-  color: #ddd; /* Color al pasar el ratón solo si no está borroso */
+  color: #ddd;
   transform: scale(1.05);
 }
 
-
-.settings-link {
-  color: white;
+/* --- AÑADIDO: Estilos para los nuevos botones de Perfil y Ajustes --- */
+.nav-action-link {
   display: flex;
   align-items: center;
-  justify-content: center;
-  transition: transform 0.3s ease;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem !important; /* !important para sobreescribir el padding general de 'a' */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
-.settings-link:hover {
-  transform: scale(1.1) rotate(45deg);
+.nav-action-link:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
-.settings-icon {
-  font-size: 2.5rem; /* Icono de ajustes un poco más grande */
-  cursor: pointer;
-  stroke-width: 2.5; /* Grosor del icono */
-  filter: drop-shadow(2px 2px 0px black); /* Sombra para el icono */
+.nav-action-link span {
+  font-weight: normal;
 }
 /* ===========================================================
    7. Services – DISEÑO FINAL
@@ -1442,7 +1440,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .city-search-input {
   padding: 0.8rem 1.2rem;
-  font-size: 1.1rem;
+  font-size: 2rem;
   border-radius: 8px;
   border: 2px solid #cbd5e0;
   width: 100%;
@@ -1463,9 +1461,8 @@ h1, h2, h3, h4, h5, h6 {
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 1.5rem;
   font-family: 'Firmos', sans-serif;
-  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 10px rgba(0, 82, 212, 0.25);
@@ -1482,9 +1479,8 @@ h1, h2, h3, h4, h5, h6 {
   color: #4a5568;
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 2rem;
   font-family: 'Firmos', sans-serif;
-  font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
@@ -1734,7 +1730,6 @@ h1, h2, h3, h4, h5, h6 {
 .loader-container p {
   font-size: 1.2rem;
   color: #333;
-  font-weight: 600;
 }
 
 @keyframes spin {
@@ -1934,7 +1929,7 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 2rem;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 2px 2px 0px black; /* Sombra sólida para efecto 2D */
+  box-shadow: 2px 2px 0 black; /* Sombra sólida para efecto 2D */
 }
 
 .change-button:hover {
@@ -2519,10 +2514,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ===========================================================
-   CÓDIGO PARA NAVBAR RESPONSIVE (VERSIÓN "CHULA")
+   CÓDIGO PARA NAVBAR RESPONSIVE
    =========================================================== */
 
-/* --- Botón de Hamburguesa --- */
 .hamburger-menu {
   display: none;
   background: none;
@@ -2530,42 +2524,22 @@ h1, h2, h3, h4, h5, h6 {
   color: white;
   cursor: pointer;
   z-index: 1100;
-  filter: drop-shadow(2px 2px 0px black);
+  filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.3));
 }
 
-/* --- Estilos para Móviles (hasta 768px) --- */
+@media (max-width: 992px) { /* Aumentamos el punto de ruptura para que se active antes */
+
+  .nav-action-link span {
+    display: none; /* En escritorio, ocultamos el texto de Perfil y Ajustes */
+  }
+  .nav-action-link {
+    border-radius: 50%; /* Hacemos los botones redondos */
+    padding: 0.8rem !important;
+  }
+}
+
+
 @media (max-width: 768px) {
-  /* --- Ajustes generales de fuentes más agresivos --- */
-  html {
-    font-size: 62.5%;
-  }
-  p {
-    font-size: 2rem;
-  }
-  h1, h2, h3, h4, h5, h6 {
-    line-height: 1.2;
-  }
-
-  /* --- Login & Register --- */
-  .login-box, .register-box {
-    width: 90%;
-    padding: 2rem 1.5rem;
-    margin-top: 2rem;
-  }
-  .login-box h2, .register-box h2 {
-    font-size: 8rem;
-  }
-  .login-box label, .register-box label, .login-box input, .register-box input, .login-box .forgot-password-link {
-    font-size: 1.6rem;
-  }
-  .login-box button, .register-box button {
-    font-size: 2rem;
-    padding: 1rem;
-  }
-
-  /* ======================================================= */
-  /* --- INICIO: SECCIÓN DE NAVBAR ACTUALIZADA Y MEJORADA --- */
-  /* ======================================================= */
   .navbar {
     justify-content: space-between;
     padding: 0.5rem 1rem;
@@ -2576,21 +2550,17 @@ h1, h2, h3, h4, h5, h6 {
     display: block;
   }
 
-  /* El contenedor del menú ahora se centra verticalmente */
   .navbar-content {
-    display: flex;
     flex-direction: column;
-    justify-content: center; /* ¡CLAVE! Centra los enlaces verticalmente */
+    justify-content: center;
     align-items: center;
     position: fixed;
-    top: 0; /* Ocupa desde el borde superior... */
+    top: 0;
     left: 0;
     width: 100%;
-    height: 100%; /* ...hasta el inferior */
-    background-color: rgba(0, 35, 145, 0.9); /* Un poco más oscuro */
-    backdrop-filter: blur(12px) saturate(150%); /* Efecto "glass" más intenso */
-
-    /* Animación mejorada: se desliza y se desvanece */
+    height: 100%;
+    background-color: rgba(0, 35, 145, 0.9);
+    backdrop-filter: blur(12px) saturate(150%);
     opacity: 0;
     transform: translateX(-100%);
     transition: transform 0.4s ease-out, opacity 0.4s ease-out;
@@ -2602,62 +2572,40 @@ h1, h2, h3, h4, h5, h6 {
     transform: translateX(0);
   }
 
-  /* Ocultamos el icono de escritorio */
-  .settings-link-desktop {
-    display: none;
-  }
-
-  /* Los enlaces ahora son parte del menú centrado */
   .nav-links {
-    display: flex;
     flex-direction: column;
-    gap: 2rem; /* Más espacio entre ellos */
+    gap: 2rem;
     text-align: center;
   }
 
-  /* Estilo para TODOS los enlaces del menú móvil (más grandes y chulos) */
-  .nav-links a, .settings-link-mobile {
-    color: white;
-    text-decoration: none;
-    font-size: 4.5rem; /* ¡Mucho más grandes! */
-    text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.8);
-    padding: 1rem 2rem;
-    border-radius: 20px;
-    transition: transform 0.3s ease, background-color 0.3s ease;
-
-    /* Animación de entrada para cada elemento */
-    opacity: 0;
-    transform: translateY(20px);
+  /* El estilo de los enlaces principales en el menú móvil */
+  .nav-links a {
+    font-size: 4rem; /* Tamaño grande para móvil */
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
   }
 
-  /* Hacemos que la animación de entrada aparezca en cascada */
-  .navbar-content.active .nav-links a,
-  .navbar-content.active .settings-link-mobile {
-    opacity: 1;
-    transform: translateY(0);
-    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
-  }
-
-  .navbar-content.active .nav-links a:nth-child(1) { transition-delay: 0.2s; }
-  .navbar-content.active .nav-links a:nth-child(2) { transition-delay: 0.3s; }
-  .navbar-content.active .settings-link-mobile { transition-delay: 0.4s; }
-
-
-  /* Efecto "hover" para dar feedback al usuario */
-  .nav-links a:hover, .settings-link-mobile:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    transform: scale(1.1);
-  }
-
-  .settings-link-mobile {
+  /* Los botones de acción en móvil recuperan su texto y forma */
+  .nav-action-link {
     display: flex; /* Para que el icono y el texto se alineen */
     align-items: center;
     gap: 1.5rem;
+    border-radius: 20px;
+    padding: 1rem 2rem !important;
+  }
+  .nav-action-link span {
+    display: inline; /* Mostramos el texto de nuevo */
+    font-size: 4rem;
+  }
+
+  .nav-links a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
   }
 
   .navbar-logo {
     height: 120px;
   }
+
   /* --- FIN: SECCIÓN DE NAVBAR ACTUALIZADA Y MEJORADA --- */
 
   /* --- Hero Sections --- */

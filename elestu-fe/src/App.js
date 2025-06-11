@@ -15,7 +15,10 @@ import BookingForm from "./components/BookingForm";
 import SettingsPage from "./components/SettingsPage";
 import ChangeEmailPasswordPage from "./components/ChangeEmailPasswordPage";
 import ChangePersonalDataPage from "./components/ChangePersonalDataPage";
-import Reservations from './components/Reservations'; // <-- ¡Importa este componente!
+import Reservations from './components/Reservations';
+import ProfilePage from './components/ProfilePage';
+// --- AÑADIDO: Importamos la nueva página de Mis Servicios ---
+import MyServicesPage from './components/MyServicesPage';
 import Footer from './components/Footer';
 
 function App() {
@@ -41,8 +44,10 @@ function App() {
                     <Route path="/services" element={<Services />} />
                     <Route path="/studios" element={<StudiosPage />} />
 
-                    {/* Flujo de Reserva de Servicios */}
+                    {/* Flujo de Creación y Edición de Servicios */}
                     <Route path="/add-service" element={<AddEditService />} />
+                    {/* --- AÑADIDO: Ruta para editar un servicio existente --- */}
+                    <Route path="/edit-service/:id" element={<AddEditService />} />
                     <Route path="/service/:id" element={<ServiceDetail />} />
                     <Route path="/service-preview" element={<ServicePreview />} />
                     <Route path="/payment-method" element={<PaymentMethodPage />} />
@@ -51,11 +56,14 @@ function App() {
                     <Route path="/studio-preview" element={<StudioPreview />} />
                     <Route path="/booking-form" element={<BookingForm />} />
 
-                    {/* Rutas de Configuración de Cuenta */}
+                    {/* Rutas de Cuenta de Usuario */}
+                    <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/settings" element={<SettingsPage />} />
                     <Route path="/change-email-password" element={<ChangeEmailPasswordPage />} />
                     <Route path="/change-personal-data" element={<ChangePersonalDataPage />} />
                     <Route path="/reservations" element={<Reservations />} />
+                    {/* --- AÑADIDO: Ruta para la nueva página de Mis Servicios --- */}
+                    <Route path="/my-services" element={<MyServicesPage />} />
 
                     {/* Redirección por defecto */}
                     <Route path="/" element={<Navigate replace to="/login" />} />

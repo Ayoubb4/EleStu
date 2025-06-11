@@ -44,7 +44,8 @@ function StudioPreview() {
             <header className="preview-header">
                 <div className="preview-header-content">
                     <h1 className="preview-title">{studio.name}</h1>
-                    <p className="preview-provider">Ubicado en: {studio.description || 'Ubicación no especificada'}</p>
+                    {/* --- MODIFICADO: Usamos studio.address para la ubicación --- */}
+                    <p className="preview-provider">Ubicado en: {studio.address || 'Ubicación no especificada'}</p>
                 </div>
             </header>
 
@@ -69,9 +70,10 @@ function StudioPreview() {
                     </div>
 
                     <div className="preview-description-card">
-                        <h2>Dirección y Detalles</h2>
-                        {/* Aquí se sigue mostrando la descripción completa */}
-                        <p>{studio.description}</p>
+                        <h2>Ubicación y Detalles</h2>
+                        {/* --- MODIFICADO: Mostramos la dirección real aquí también --- */}
+                        <p className="studio-full-address">{studio.address}</p>
+
                         <h3>Equipamiento Principal:</h3>
                         <ul>
                             <li>Consola de mezcla analógica/digital</li>
