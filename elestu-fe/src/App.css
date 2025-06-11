@@ -482,6 +482,8 @@ h1, h2, h3, h4, h5, h6 {
   cursor: pointer;
   box-shadow: 0 5px 15px rgba(0, 56, 225, 0.5);
   transition: all 0.3s ease;
+  z-index: 9999; /* Esto lo coloca por encima de todo */
+
 }
 
 .add-service-btn:hover {

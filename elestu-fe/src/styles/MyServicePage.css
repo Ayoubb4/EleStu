@@ -13,13 +13,13 @@
 
 .my-services-header h1 {
     margin: 0;
-    font-size: 2.2rem;
+    font-size: 3rem;
 }
 
 .my-services-header p {
     margin: 0.5rem 0 0 0;
     color: #a0aec0;
-    font-size: 1.1rem;
+    font-size: 2.5rem;
 }
 
 .my-services-content {
@@ -129,7 +129,7 @@
 }
 
 .no-services-found p {
-    font-size: 1.1rem;
+    font-size: 2rem;
     margin-bottom: 1.5rem;
 }
 

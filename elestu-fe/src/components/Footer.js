@@ -21,7 +21,7 @@ function Footer() {
                 {/* --- Columna de Copyright --- */}
                 <div className="footer-section copyright-section">
                     <p>™️</p>
-                    <p>All Rights Reserved to @elestu777</p>
+                    <p>All Rights Reserved to EleStu</p>
                 </div>
 
                 {/* --- Columna de Redes Sociales --- */}

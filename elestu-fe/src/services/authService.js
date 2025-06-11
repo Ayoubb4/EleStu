@@ -50,6 +50,10 @@ export const login = async (email, password) => {
             localStorage.setItem('userid', response.data.user.id);
             localStorage.setItem('authToken', response.data.token);
 
+            // --- AÑADIDO: Guardamos el nombre y el email para usarlos en el Perfil ---
+            localStorage.setItem('name', response.data.user.name);
+            localStorage.setItem('email', response.data.user.email);
+
             // Devolvemos un objeto que contiene TODO para que el componente Login lo pueda usar.
             return {
                 success: true,
@@ -68,7 +72,8 @@ export const login = async (email, password) => {
  * Cierra la sesión del usuario limpiando localStorage.
  */
 export const logout = () => {
-    const keysToRemove = ['user', 'userid', 'authToken', 'userEmail', 'userName', 'isAuthenticated'];
+    // --- AÑADIDO: Se añaden las nuevas claves a la lista sin quitar las anteriores ---
+    const keysToRemove = ['user', 'userid', 'authToken', 'userEmail', 'userName', 'isAuthenticated', 'name', 'email'];
     keysToRemove.forEach(key => localStorage.removeItem(key));
     console.log('Sesión cerrada y localStorage limpiado.');
 };
@@ -92,6 +97,11 @@ export const loginWithGoogle = async (googleToken) => {
             localStorage.setItem('user', JSON.stringify(response.data.user));
             localStorage.setItem('userid', response.data.user.id);
             localStorage.setItem('authToken', response.data.token);
+
+            // --- AÑADIDO: Guardamos también aquí el nombre y el email ---
+            localStorage.setItem('name', response.data.user.name);
+            localStorage.setItem('email', response.data.user.email);
+
             return { success: true, user: response.data.user };
         }
         return { success: false, error: response.data.message || 'Respuesta inesperada del servidor.' };
@@ -119,6 +129,12 @@ export const updatePersonalInfo = async (personalData) => {
         const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
         const updatedUser = { ...currentUser, ...response.data };
         localStorage.setItem('user', JSON.stringify(updatedUser));
+
+        // --- AÑADIDO: Actualizamos el 'name' en localStorage si se ha modificado ---
+        if (response.data.name) {
+            localStorage.setItem('name', response.data.name);
+        }
+
         return { success: true, user: response.data };
     } catch (error) {
         return { success: false, error: error.response?.data?.message || 'Error al actualizar los datos.' };
