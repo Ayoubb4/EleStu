@@ -19,17 +19,15 @@ async function bootstrap() {
     });
     logger.log('Instancia de NestExpressApplication creada.');
 
-    // --- CONFIGURACIÓN DE CORS DEFINITIVA ---
-    // Esta lista contiene todas las URL desde las que tu frontend hará peticiones.
+    // --- CONFIGURACIÓN DE CORS DEFINITIVA Y REFORZADA ---
     const whitelist = [
         'http://localhost:8000',      // Tu frontend en desarrollo
-        'https://ele-stu.vercel.app'  // Tu frontend desplegado en Vercel
+        'https://ele-stu.vercel.app',  // Tu frontend desplegado en Vercel
+        // --- AÑADIDO: Puedes añadir más dominios aquí en el futuro si es necesario ---
     ];
 
     app.enableCors({
         origin: function (origin, callback) {
-            // Permite solicitudes si el origen está en la whitelist,
-            // o si no hay origen (como en las pruebas con Postman o apps móviles).
             if (!origin || whitelist.indexOf(origin) !== -1) {
                 callback(null, true);
             } else {
@@ -39,11 +37,16 @@ async function bootstrap() {
         },
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
         credentials: true,
+        // --- AÑADIDO: Opciones adicionales para robustecer la configuración ---
+        // Especifica los encabezados que el frontend puede enviar. 'Authorization' es clave para los tokens.
+        allowedHeaders: 'Content-Type, Accept, Authorization',
+        // Nos aseguramos de que las peticiones de pre-vuelo (OPTIONS) sean manejadas correctamente por NestJS.
+        preflightContinue: false,
+        optionsSuccessStatus: 204, // Un estándar para respuestas exitosas a peticiones OPTIONS.
     });
-    logger.log('CORS configurado para permitir orígenes específicos.');
-    // --- FIN ---
+    logger.log('CORS configurado para permitir orígenes específicos y manejar pre-vuelo.');
+    // --- FIN DE LA MODIFICACIÓN ---
 
-    // Este middleware es para que los webhooks de Stripe funcionen bien.
     app.use(express.json({
         limit: '50mb',
         verify: (req: any, res, buf) => { req.rawBody = buf; }
