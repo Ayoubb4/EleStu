@@ -1696,6 +1696,81 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* ===========================================================
+   12.2. Mejoras de UX: Dirección, Loader y Errores
+=========================================================== */
+
+/* Estilo para la dirección en la tarjeta del estudio */
+.studio-card-address {
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 0.5rem; /* Espacio sobre la dirección */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Espacio entre el icono y el texto */
+  line-height: 1.4;
+}
+
+/* Contenedor para la animación de carga */
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 5rem 1rem;
+  gap: 1.5rem;
+}
+
+/* Animación de Spinner */
+.loader-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3; /* Gris claro */
+  border-top: 5px solid #0052D4; /* Azul */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loader-container p {
+  font-size: 1.2rem;
+  color: #333;
+  font-weight: 600;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Contenedor para mensajes de error o "no encontrado" */
+.error-container {
+  text-align: center;
+  padding: 4rem 2rem;
+  background-color: #fff8f8;
+  border: 1px solid #fecdca;
+  margin: 0 2rem 2rem 2rem;
+  border-radius: 12px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.error-container h3 {
+  font-size: 1.8rem;
+  color: #982c2c;
+  margin-bottom: 0.5rem;
+}
+
+.error-container p {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 2rem;
+}
+
+/* Reutilizamos el botón de limpiar búsqueda */
+.error-container .city-clear-button {
+  font-size: 1rem;
+}
 
 /* ===========================================================
    13. Add Service - DISEÑO MEJORADO
