@@ -6,7 +6,9 @@ import { UserModule } from '../users/user.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtStrategy } from './jwt.strategy'; // Importar la nueva estrategia
+import { JwtStrategy } from './jwt.strategy';
+// --- AÑADIDO: Importamos el Guard que creamos en el paso anterior ---
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Module({
     imports: [
@@ -23,8 +25,10 @@ import { JwtStrategy } from './jwt.strategy'; // Importar la nueva estrategia
             inject: [ConfigService],
         }),
     ],
-    providers: [AuthService, JwtStrategy], // Añadir JwtStrategy a los providers
+    // --- MODIFICADO: Añadimos el JwtAuthGuard a los providers ---
+    providers: [AuthService, JwtStrategy, JwtAuthGuard],
     controllers: [AuthController],
-    exports: [AuthService, JwtStrategy, PassportModule], // Exportar para que otros módulos puedan usar AuthGuard
+    // --- MODIFICADO: Exportamos el Guard para que otros módulos puedan usarlo ---
+    exports: [AuthService, JwtStrategy, PassportModule, JwtAuthGuard],
 })
 export class AuthModule {}
