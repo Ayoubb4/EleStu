@@ -466,46 +466,6 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0;
 }
 
-/* Estilos para el mensaje "No hay servicios" */
-.no-services-message {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: 4rem 2rem;
-  background-color: #f9f9f9;
-  border-radius: 15px;
-}
-
-.no-services-message h2 {
-  font-family: 'Firmos', sans-serif;
-  font-size: 2.5rem;
-  color: #13254e;
-  margin-bottom: 1rem;
-}
-
-.no-services-message p {
-  font-size: 2rem;
-  color: #555;
-  max-width: 500px;
-  margin: 0 auto 2rem auto;
-}
-
-.add-first-service-btn {
-  background: linear-gradient(45deg, #007bff, #0056b3);
-  color: white;
-  border: none;
-  padding: 1rem 2rem;
-  font-size: 2rem;
-  border-radius: 50px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
-}
-
-.add-first-service-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.5);
-}
-
 /* Botón flotante para añadir servicio */
 .add-service-btn {
   position: fixed;
@@ -529,6 +489,108 @@ h1, h2, h3, h4, h5, h6 {
 .add-service-btn:hover {
   transform: scale(1.1) rotate(90deg);
   box-shadow: 0 8px 25px rgba(0, 56, 225, 0.6);
+}
+
+/* ===========================================================
+   9. Filtros de Servicios
+=========================================================== */
+
+.filter-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap; /* Para que los botones pasen a la siguiente línea en pantallas pequeñas */
+  gap: 0.75rem;
+  margin: 0 auto 2.5rem auto;
+  padding: 0 1rem;
+  max-width: 900px;
+}
+
+.filter-button {
+  background-color: #fff;
+  color: #4a5568;
+  border: 1px solid #e2e8f0;
+  padding: 0.6rem 1.2rem;
+  border-radius: 20px;
+  font-family: 'Firmos', sans-serif;
+  font-size: 2.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.filter-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  color: #1a202c;
+}
+
+.filter-button.active {
+  background-color: #0038E1;
+  color: #fff;
+  border-color: #0038E1;
+  box-shadow: 0 4px 10px rgba(0, 56, 225, 0.3);
+}
+
+/* Etiqueta de tipo de servicio en la tarjeta */
+.card-image-container {
+  position: relative; /* Necesario para posicionar la etiqueta */
+}
+
+.card-service-type-badge {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background-color: rgba(26, 32, 44, 0.8); /* Fondo oscuro semitransparente */
+  color: #fff;
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Mensaje cuando no hay servicios para un filtro */
+.no-services-message {
+  grid-column: 1 / -1; /* Ocupa todo el ancho del grid */
+  text-align: center;
+  padding: 4rem 2rem;
+  background-color: #fff;
+  margin: 0 2rem 2rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.no-services-message h2 {
+  font-family: 'Firmos', sans-serif;
+  font-size: 1.8rem;
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+}
+
+.no-services-message p {
+  font-family: 'Firmos', sans-serif;
+  font-size: 1.1rem;
+  color: #718096;
+  margin-bottom: 2rem;
+}
+
+.add-first-service-btn {
+  background: linear-gradient(45deg, #0052D4, #4364F7, #6FB1FC);
+  color: white;
+  padding: 0.8rem 1.8rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: 'Firmos', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 82, 212, 0.4);
+}
+
+.add-first-service-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 7px 20px rgba(0, 82, 212, 0.5);
 }
 /* ===========================================================
    8. Vistas Previas (Service & Studio)
@@ -683,6 +745,53 @@ h1, h2, h3, h4, h5, h6 {
 .preview-description-card ul li {
   padding-left: 0.5rem;
   margin-bottom: 0.5rem;
+}
+
+/* ===========================================================
+   8.1 Vistas Previas - Acciones del Propietario
+=========================================================== */
+
+.owner-actions {
+  display: flex;
+  gap: 1rem; /* Espacio entre los botones */
+  margin-top: -1.5rem; /* Sube los botones para que se peguen a la tarjeta de arriba */
+}
+
+.edit-button, .delete-button {
+  flex-grow: 1; /* Para que ambos botones ocupen el mismo espacio */
+  padding: 0.8rem 1rem;
+  font-family: 'Firmos', sans-serif;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.edit-button {
+  background-color: #e2e8f0; /* Un gris claro */
+  color: #2d3748; /* Texto oscuro */
+  border-color: #cbd5e0; /* Borde sutil */
+}
+
+.edit-button:hover {
+  background-color: #cbd5e0;
+  border-color: #a0aec0;
+  transform: translateY(-2px);
+}
+
+.delete-button {
+  background-color: #fff5f5; /* Un rojo muy claro */
+  color: #c53030; /* Texto rojo oscuro */
+  border-color: #fed7d7; /* Borde rojo claro */
+}
+
+.delete-button:hover {
+  background-color: #fed7d7;
+  border-color: #f56565;
+  transform: translateY(-2px);
 }
 
 @media (max-width: 992px) {

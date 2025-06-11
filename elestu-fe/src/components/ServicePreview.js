@@ -4,13 +4,67 @@ import { useNavigate } from 'react-router-dom';
 import '../App.css';
 import Navbar from './Navbar';
 
-// --- AÑADIDO: URL de la API para las peticiones ---
 const API_URL = process.env.REACT_APP_API_URL;
+
+const serviceIncludesData = {
+    'Cantante': [
+        'Voz principal para maquetas o producciones finales.',
+        'Grabación de coros y armonías vocales.',
+        'Interpretación en el estilo musical que requiera el proyecto.',
+        'Entrega de pistas de voz limpias y sin procesar (formato .wav).',
+    ],
+    'Productor': [
+        'Creación de un arreglo musical completo desde cero.',
+        'Producción y selección de instrumentación virtual o real.',
+        'Asesoramiento en la estructura y composición de la canción.',
+        'Entrega de una pre-mezcla de la producción.',
+    ],
+    'Guitarrista': [
+        'Grabación de guitarras rítmicas y solistas.',
+        'Creación de líneas de guitarra y riffs originales.',
+        'Uso de guitarras eléctricas, acústicas o clásicas según se necesite.',
+        'Pistas entregadas con y sin efectos aplicados.',
+    ],
+    'Musico de sesion': [
+        'Grabación de pistas de batería acústica.',
+        'Programación de baterías electrónicas y percusión.',
+        'Creación de ritmos y fills personalizados para la canción.',
+        'Sonido profesional adaptado al género musical.',
+    ],
+    'Compositor': [
+        'Mezcla profesional de hasta 48 pistas.',
+        'Mastering para plataformas de streaming (Spotify, Apple Music).',
+        'Revisión y feedback técnico sobre la producción.',
+        'Entrega en formato de alta calidad .wav y .mp3.',
+    ],
+};
+
+// --- AÑADIDO: Componente para renderizar la lista de "Incluye" ---
+const ServiceIncludes = ({ serviceType }) => {
+    const includesList = serviceIncludesData[serviceType];
+
+    if (includesList && includesList.length > 0) {
+        return (
+            <ul>
+                {includesList.map((item, index) => (
+                    <li key={index}>{item}</li>
+                ))}
+            </ul>
+        );
+    }
+
+    // --- Texto por defecto si el tipo de servicio no está en la lista o es "Otro" ---
+    return (
+        <p>
+            Este servicio incluye una dedicación profesional y personalizada para cumplir con los objetivos de tu proyecto musical. Contacta para más detalles específicos.
+        </p>
+    );
+};
+
 
 function ServicePreview() {
     const navigate = useNavigate();
     const [service, setService] = useState(null);
-    // --- AÑADIDO: Estado para saber si el usuario actual es el dueño del servicio ---
     const [isOwner, setIsOwner] = useState(false);
 
     useEffect(function () {
@@ -20,7 +74,6 @@ function ServicePreview() {
         } else {
             const parsedService = JSON.parse(data);
             setService(parsedService);
-            // --- AÑADIDO: Comprobamos si el usuario es el dueño ---
             const userId = localStorage.getItem('userid');
             if (userId && parsedService.user && parsedService.user.id === parseInt(userId, 10)) {
                 setIsOwner(true);
@@ -33,13 +86,10 @@ function ServicePreview() {
         navigate('/payment-method');
     }
 
-    // --- AÑADIDO: Función para navegar a la página de edición ---
     function handleEditClick() {
-        // Pasamos el servicio completo al estado de la navegación para no tener que volver a cargarlo
         navigate(`/edit-service/${service.id}`, { state: { service } });
     }
 
-    // --- AÑADIDO: Función para eliminar el servicio ---
     async function handleDeleteClick() {
         if (window.confirm('¿Estás seguro de que quieres eliminar este servicio? Esta acción no se puede deshacer.')) {
             try {
@@ -103,29 +153,22 @@ function ServicePreview() {
                         <button className="hire-button" onClick={handleHireClick}>
                             CONTRATAR AHORA
                         </button>
-                        {/* --- AÑADIDO: Botones de Editar y Eliminar para el propietario --- */}
-                        {isOwner && (
-                            <div className="owner-actions">
-                                <button className="edit-button" onClick={handleEditClick}>Editar Servicio</button>
-                                <button className="delete-button" onClick={handleDeleteClick}>Eliminar Servicio</button>
-                            </div>
-                        )}
                     </div>
+
+                    {/* --- MODIFICADO: Botones de Editar y Eliminar movidos fuera de la tarjeta --- */}
+                    {isOwner && (
+                        <div className="owner-actions">
+                            <button className="edit-button" onClick={handleEditClick}>Editar Servicio</button>
+                            <button className="delete-button" onClick={handleDeleteClick}>Eliminar Servicio</button>
+                        </div>
+                    )}
 
                     <div className="preview-description-card">
                         <h2>Descripción del Servicio</h2>
                         <p>{service.description}</p>
 
                         <h3>Incluye:</h3>
-                        {/* El resto del código de la descripción se mantiene igual */}
-                        {service.serviceType === 'Cantante' && ( <ul>...</ul> )}
-                        {service.serviceType === 'Productor' && ( <ul>...</ul> )}
-                        {/* ... etc ... */}
-                        {(!service.serviceType || service.serviceType === 'Otro') && (
-                            <p>
-                                Este servicio incluye una dedicación profesional y personalizada para cumplir con los objetivos de tu proyecto musical. Contacta para más detalles específicos.
-                            </p>
-                        )}
+                        <ServiceIncludes serviceType={service.serviceType} />
                     </div>
                 </div>
             </main>

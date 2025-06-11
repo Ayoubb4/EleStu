@@ -1,5 +1,5 @@
-//src/services/services.controller.ts
-import { Controller, Get, Post, Body, Param, UploadedFile, UseInterceptors, Patch, Delete } from '@nestjs/common';
+// src/services/services.controller.ts
+import { Controller, Get, Post, Body, Param, UploadedFile, UseInterceptors, Patch, Delete, Query } from '@nestjs/common'; // Añadido: Query
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ServicesService } from './services.service';
 import { CreateServiceDto } from './dto/create-service.dto';
@@ -10,7 +10,7 @@ export class ServicesController {
 
   // Crear un servicio con archivo
   @Post()
-  @UseInterceptors(FileInterceptor('image')) // Para procesar el archivo 'image'
+  @UseInterceptors(FileInterceptor('image'))
   async create(@Body() createServiceDto: CreateServiceDto, @UploadedFile() file: Express.Multer.File) {
     console.log("User ID recibido en el backend:", createServiceDto.userid);
     console.log('Recibiendo solicitud para crear servicio:', createServiceDto);
@@ -21,9 +21,10 @@ export class ServicesController {
     return this.servicesService.create(createServiceDto);
   }
 
+  // --- MODIFICADO: Acepta un parámetro de consulta 'type' para filtrar ---
   @Get()
-  async findAll() {
-    return this.servicesService.findAll();
+  async findAll(@Query('type') type?: string) {
+    return this.servicesService.findAll(type);
   }
 
   @Get(':id')
@@ -33,7 +34,6 @@ export class ServicesController {
 
   // --- AÑADIDO: Endpoint para actualizar (editar) un servicio por su ID ---
   @Patch(':id')
-  // Lo ideal sería crear un UpdateServiceDto con campos opcionales.
   async update(@Param('id') id: number, @Body() updateServiceDto: any) {
     return this.servicesService.update(id, updateServiceDto);
   }

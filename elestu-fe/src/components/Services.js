@@ -6,27 +6,40 @@ import { useNavigate } from 'react-router-dom';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
+// --- AÑADIDO: Lista de tipos de servicio para los filtros ---
+const SERVICE_TYPES = ['Todos', 'Cantante', 'Productor', 'Guitarrista', 'Batería', 'Técnico de Sonido', 'DJ', 'Otro'];
+
 function Services() {
     const navigate = useNavigate();
     const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    // --- AÑADIDO: Estado para el filtro activo ---
+    const [activeFilter, setActiveFilter] = useState('Todos');
 
     function handleAddServiceClick() {
         navigate('/add-service');
     }
 
     function handleServiceClick(service) {
-        // Guardamos el objeto de servicio completo, que ya incluye el 'serviceType'
         localStorage.setItem('currentService', JSON.stringify(service));
         navigate('/service-preview');
     }
 
+    // --- MODIFICADO: useEffect ahora depende de 'activeFilter' y lo usa para la petición ---
     useEffect(() => {
         async function fetchServices() {
             try {
                 setLoading(true);
-                const response = await fetch(`${API_URL}/services`);
+                setError(null); // Resetea el error en cada nueva petición
+
+                // Construimos la URL con el filtro si no es "Todos"
+                let url = `${API_URL}/services`;
+                if (activeFilter !== 'Todos') {
+                    url += `?type=${activeFilter}`;
+                }
+
+                const response = await fetch(url);
                 if (!response.ok) {
                     throw new Error('No se pudo conectar con el servidor.');
                 }
@@ -40,7 +53,7 @@ function Services() {
             }
         }
         fetchServices();
-    }, []);
+    }, [activeFilter]); // Se ejecutará cada vez que cambie el filtro
 
     return (
         <div className="services-page">
@@ -60,6 +73,20 @@ function Services() {
                 <h1 className="services-main-title">Servicios Disponibles</h1>
             </div>
 
+            {/* --- AÑADIDO: Contenedor para los botones de filtro --- */}
+            <div className="filter-container">
+                {SERVICE_TYPES.map((type) => (
+                    <button
+                        key={type}
+                        className={`filter-button ${activeFilter === type ? 'active' : ''}`}
+                        onClick={() => setActiveFilter(type)}
+                    >
+                        {type}
+                    </button>
+                ))}
+            </div>
+
+
             {loading ? (
                 <p className="services-info-message">Cargando servicios...</p>
             ) : error ? (
@@ -74,6 +101,8 @@ function Services() {
                                         src={service.image || 'https://placehold.co/400x300/13254e/FFFFFF?text=EleStu'}
                                         alt={service.title}
                                     />
+                                    {/* --- AÑADIDO: Etiqueta con el tipo de servicio sobre la imagen --- */}
+                                    <span className="card-service-type-badge">{service.serviceType}</span>
                                 </div>
                                 <div className="card-info">
                                     <h3>{service.title}</h3>
@@ -84,10 +113,10 @@ function Services() {
                         ))
                     ) : (
                         <div className="no-services-message">
-                            <h2>¡Aún no hay servicios!</h2>
-                            <p>Sé el primero en marcar la diferencia. Crea un servicio y ponte activo.</p>
+                            <h2>No hay servicios para el filtro "{activeFilter}"</h2>
+                            <p>Prueba a seleccionar otra categoría o sé el primero en ofrecer este tipo de servicio.</p>
                             <button className="add-first-service-btn" onClick={handleAddServiceClick}>
-                                Ofrecer mi Primer Servicio
+                                Ofrecer un Servicio
                             </button>
                         </div>
                     )}
