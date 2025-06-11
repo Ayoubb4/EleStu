@@ -19,7 +19,10 @@ export const dataSourceOptions: DataSourceOptions = {
     entities: [__dirname + '/**/*.entity{.ts,.js}'],
     migrations: [__dirname + '/migrations/*{.ts,.js}'],
 
-    synchronize: true,
+    // --- CORRECCIÓN DEFINITIVA ---
+    // Synchronize NUNCA debe ser true en producción.
+    // Las migraciones son las que se deben encargar de la base de datos.
+    synchronize: false,
 };
 
 const AppDataSource = new DataSource(dataSourceOptions);
