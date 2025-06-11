@@ -6,8 +6,8 @@ import { useNavigate } from 'react-router-dom';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-// --- AÑADIDO: Lista de tipos de servicio para los filtros ---
-const SERVICE_TYPES = ['Todos', 'Cantante', 'Productor', 'Guitarrista', 'Batería', 'Técnico de Sonido', 'DJ', 'Otro'];
+// --- MODIFICADO: Lista de tipos de servicio actualizada para coincidir con el formulario ---
+const SERVICE_TYPES = ['Todos', 'Cantante', 'Productor', 'DJ', 'Músico de Sesión', 'Compositor', 'Otro'];
 
 function Services() {
     const navigate = useNavigate();

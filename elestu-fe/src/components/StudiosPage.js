@@ -1,4 +1,4 @@
-//src/components/StudiosPage.js
+// src/components/StudiosPage.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
@@ -13,13 +13,24 @@ function StudiosPage() {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
+    // --- AÑADIDO: Estados para manejar la búsqueda por ciudad ---
+    const [cityInput, setCityInput] = useState(''); // El texto que el usuario escribe
+    const [searchQuery, setSearchQuery] = useState(''); // La ciudad que se busca al pulsar el botón
+
+    // --- MODIFICADO: useEffect ahora depende de 'searchQuery' ---
     useEffect(() => {
         const fetchStudiosFromBackend = async () => {
             try {
                 setLoading(true);
                 setError(null);
 
-                const response = await fetch(`${API_URL}/studios`);
+                // Construimos la URL con la ciudad si hay una búsqueda activa
+                let url = `${API_URL}/studios`;
+                if (searchQuery) {
+                    url += `?city=${encodeURIComponent(searchQuery)}`;
+                }
+
+                const response = await fetch(url);
 
                 if (!response.ok) {
                     const errorData = await response.json();
@@ -28,15 +39,14 @@ function StudiosPage() {
 
                 const data = await response.json();
 
+                // Formateamos los datos como antes
                 const formattedStudios = data.map(place => ({
                     id: place.place_id,
                     name: place.name,
                     description: place.formatted_address || 'Estudio de grabación.',
                     imageUrl: place.photoUrl || 'https://placehold.co/400x200/cccccc/000000?text=No+Image',
-                    price: 200,
-                    location: {
-                        address: "Avinguda de Roma, 50, L'Eixample, 08015 Barcelona",
-                    }
+                    price: 200, // Precio de ejemplo
+                    location: place.location, // Usamos la location de Google
                 }));
                 setStudios(formattedStudios);
 
@@ -49,65 +59,82 @@ function StudiosPage() {
         };
 
         fetchStudiosFromBackend();
-    }, []);
+    }, [searchQuery]); // El efecto se vuelve a ejecutar cada vez que cambia la búsqueda
 
-    // **REQUIRED CHANGE HERE**
     const handleStudioCardClick = (studio) => {
-        navigate('/studio-preview', { state: { studio } }); // Changed from '/service-preview' to '/studio-preview'
+        navigate('/studio-preview', { state: { studio } });
     };
 
-    if (loading) {
-        return (
-            <div className="studios-page-container">
-                <Navbar />
-                <StudioHeroSection />
-                <h2 className="studios-grid-section-title">Cargando Estudios...</h2>
-            </div>
-        );
-    }
+    // --- AÑADIDO: Manejador para el botón de búsqueda ---
+    const handleSearch = () => {
+        setSearchQuery(cityInput);
+    };
 
-    if (error) {
-        return (
-            <div className="studios-page-container">
-                <Navbar />
-                <StudioHeroSection />
-                <h2 className="studios-grid-section-title">Error al cargar Estudios</h2>
-                <p style={{ textAlign: 'center', color: 'red', fontSize: '1.5rem' }}>{error}</p>
-            </div>
-        );
-    }
+    // --- AÑADIDO: Manejador para limpiar la búsqueda ---
+    const clearSearch = () => {
+        setCityInput('');
+        setSearchQuery('');
+    };
 
     return (
         <div className="studios-page-container">
             <Navbar />
             <StudioHeroSection />
 
-            <h2 className="studios-grid-section-title">Nuestros Estudios de Grabación en España</h2>
-
-            <div className="studio-grid">
-                {studios.map((studio) => (
-                    <div
-                        key={studio.id}
-                        className="studio-card"
-                        onClick={() => handleStudioCardClick(studio)}
-                        style={{ cursor: 'pointer' }}
-                    >
-                        <img
-                            src={studio.imageUrl}
-                            alt={studio.name}
-                            className="studio-card-image"
-                            onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.src = `https://placehold.co/400x200/cccccc/000000?text=No+Image`;
-                            }}
-                        />
-                        <div className="studio-card-info">
-                            <h3 className="studio-card-title">{studio.name}</h3>
-                            <p className="studio-card-description">{studio.description}</p>
-                        </div>
-                    </div>
-                ))}
+            {/* --- AÑADIDO: Formulario de búsqueda de ciudad --- */}
+            <div className="city-search-container">
+                <input
+                    type="text"
+                    value={cityInput}
+                    onChange={(e) => setCityInput(e.target.value)}
+                    placeholder="Busca estudios en tu ciudad..."
+                    className="city-search-input"
+                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                />
+                <button onClick={handleSearch} className="city-search-button">Buscar</button>
+                {searchQuery && (
+                    <button onClick={clearSearch} className="city-clear-button">Mostrar Todos</button>
+                )}
             </div>
+
+            <h2 className="studios-grid-section-title">
+                {searchQuery ? `Estudios de Grabación en ${searchQuery}` : 'Nuestros Estudios de Grabación en España'}
+            </h2>
+
+            {loading ? (
+                <p style={{ textAlign: 'center', fontSize: '1.5rem', padding: '3rem' }}>Cargando Estudios...</p>
+            ) : error ? (
+                <p style={{ textAlign: 'center', color: 'red', fontSize: '1.5rem' }}>{error}</p>
+            ) : studios.length > 0 ? (
+                <div className="studio-grid">
+                    {studios.map((studio) => (
+                        <div
+                            key={studio.id}
+                            className="studio-card"
+                            onClick={() => handleStudioCardClick(studio)}
+                            style={{ cursor: 'pointer' }}
+                        >
+                            <img
+                                src={studio.imageUrl}
+                                alt={studio.name}
+                                className="studio-card-image"
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = `https://placehold.co/400x200/cccccc/000000?text=No+Image`;
+                                }}
+                            />
+                            <div className="studio-card-info">
+                                <h3 className="studio-card-title">{studio.name}</h3>
+                                <p className="studio-card-description">{studio.description}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <p style={{ textAlign: 'center', fontSize: '1.5rem', padding: '3rem' }}>
+                    No se encontraron estudios para "{searchQuery}".
+                </p>
+            )}
         </div>
     );
 }

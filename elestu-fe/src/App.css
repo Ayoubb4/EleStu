@@ -376,7 +376,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Título chulo para la sección de servicios */
 .services-title-container {
-  padding: 3rem 0 1rem 0;
+  padding: 0.5rem 0 0.5rem 0;
   text-align: center;
 }
 
@@ -512,7 +512,7 @@ h1, h2, h3, h4, h5, h6 {
   padding: 0.6rem 1.2rem;
   border-radius: 20px;
   font-family: 'Firmos', sans-serif;
-  font-size: 2.5rem;
+  font-size: 2rem;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
@@ -544,8 +544,7 @@ h1, h2, h3, h4, h5, h6 {
   color: #fff;
   padding: 0.3rem 0.8rem;
   border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: 1.5rem;
   backdrop-filter: blur(4px);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
@@ -618,7 +617,6 @@ h1, h2, h3, h4, h5, h6 {
   font-family: 'Firmos', sans-serif;
   font-size: 3.5rem;
   margin: 0 0 0.5rem 0;
-  font-weight: normal;
   text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
 }
 
@@ -676,7 +674,6 @@ h1, h2, h3, h4, h5, h6 {
   color: #718096;
   text-transform: uppercase;
   letter-spacing: 1px;
-  font-weight: 600;
 }
 
 .info-card-item p {
@@ -733,7 +730,6 @@ h1, h2, h3, h4, h5, h6 {
 .preview-description-card h3 {
   font-family: 'Firmos', sans-serif;
   font-size: 1.5rem;
-  font-weight: 700;
   margin-top: 1.5rem;
   margin-bottom: 0.5rem;
 }
@@ -766,7 +762,6 @@ h1, h2, h3, h4, h5, h6 {
   border: 2px solid transparent;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-weight: 600;
   letter-spacing: 0.5px;
 }
 
@@ -946,7 +941,6 @@ h1, h2, h3, h4, h5, h6 {
 .preview-description-card h3 {
   font-family: 'Roboto', sans-serif;
   font-size: 1.1rem;
-  font-weight: 700;
   margin-top: 1.5rem;
   margin-bottom: 0.5rem;
 }
@@ -1432,6 +1426,72 @@ h1, h2, h3, h4, h5, h6 {
 /* ===========================================================
 12. Studios – Sección de Héroe y Ajustes de Tarjetas
 =========================================================== */
+/* ===========================================================
+   12.1. Filtro de Estudios por Ciudad
+=========================================================== */
+
+.city-search-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding: 2.5rem 1rem;
+  background-color: #f4f7f9;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.city-search-input {
+  padding: 0.8rem 1.2rem;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  border: 2px solid #cbd5e0;
+  width: 100%;
+  max-width: 400px;
+  transition: all 0.2s ease;
+  font-family: 'Firmos', sans-serif;
+}
+
+.city-search-input:focus {
+  outline: none;
+  border-color: #0052D4;
+  box-shadow: 0 0 0 3px rgba(0, 82, 212, 0.2);
+}
+
+.city-search-button {
+  padding: 0.9rem 2rem;
+  background: linear-gradient(45deg, #0052D4, #4364F7);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: 'Firmos', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 82, 212, 0.25);
+}
+
+.city-search-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 82, 212, 0.35);
+}
+
+.city-clear-button {
+  padding: 0.9rem 1.5rem;
+  background-color: #e2e8f0;
+  color: #4a5568;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: 'Firmos', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.city-clear-button:hover {
+  background-color: #cbd5e0;
+}
 
  .studios-page-container {
    /* Mantener los estilos existentes si los tenías */
