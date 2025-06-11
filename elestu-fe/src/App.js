@@ -5,7 +5,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import ForgotPassword from "./components/ForgotPassword";
 import Services from "./components/Services";
-import AddService from './components/AddService';
+import AddEditService from './components/AddEditService';
 import ServiceDetail from './components/ServiceDetail';
 import ServicePreview from './components/ServicePreview';
 import PaymentMethodPage from './components/PaymentMethodPage';
@@ -42,7 +42,7 @@ function App() {
                     <Route path="/studios" element={<StudiosPage />} />
 
                     {/* Flujo de Reserva de Servicios */}
-                    <Route path="/add-service" element={<AddService />} />
+                    <Route path="/add-service" element={<AddEditService />} />
                     <Route path="/service/:id" element={<ServiceDetail />} />
                     <Route path="/service-preview" element={<ServicePreview />} />
                     <Route path="/payment-method" element={<PaymentMethodPage />} />

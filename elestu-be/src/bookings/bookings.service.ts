@@ -5,7 +5,8 @@ import {
     Logger,
     BadRequestException,
     NotFoundException,
-    ForbiddenException
+    ForbiddenException,
+    ConflictException // --- AÑADIDO: Importamos ConflictException ---
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -14,7 +15,6 @@ import { CreateBookingDto } from './dto/create-booking.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { User } from '../users/user.entity';
 import { join } from 'path';
-
 import { ServiceBooking } from './entities/service-booking.entity';
 
 @Injectable()
@@ -33,6 +33,21 @@ export class BookingsService {
 
     async create(createBookingDto: CreateBookingDto): Promise<Booking> {
         try {
+            // --- AÑADIDO: Comprobación de conflicto de reserva ---
+            const existingBooking = await this.studioBookingsRepository.findOne({
+                where: {
+                    studioId: createBookingDto.studioId,
+                    date: createBookingDto.date,
+                    time: createBookingDto.time,
+                }
+            });
+
+            if (existingBooking) {
+                // Si ya existe una reserva, lanzamos un error de conflicto (409)
+                throw new ConflictException('Esta fecha y hora ya están reservadas. Por favor, elige otra.');
+            }
+            // --- FIN DE LA ADICIÓN ---
+
             const user = await this.usersRepository.findOne({ where: { id: createBookingDto.userId } });
             if (!user) {
                 throw new BadRequestException(`User with ID ${createBookingDto.userId} not found.`);
@@ -51,7 +66,8 @@ export class BookingsService {
             return newBooking;
         } catch (error) {
             this.logger.error(`Error creating booking: ${error.message}`, error.stack);
-            if (error instanceof BadRequestException) {
+            // --- MODIFICADO: Relanzamos el error para que el frontend lo reciba ---
+            if (error instanceof BadRequestException || error instanceof ConflictException) {
                 throw error;
             }
             throw new InternalServerErrorException('Failed to create booking or send confirmation email.');
@@ -108,12 +124,11 @@ export class BookingsService {
         }
     }
 
-    // --- CÓDIGO DE CANCELACIÓN DE RESERVAS MODIFICADO ---
     async cancelBooking(
         id: string,
         type: 'studio' | 'service',
         userId: number
-    ): Promise<{ message: string }> { // Retornamos un mensaje de éxito, ya que la reserva se eliminará
+    ): Promise<{ message: string }> {
         let repository: Repository<any>;
 
         if (type === 'studio') {
@@ -124,7 +139,6 @@ export class BookingsService {
             throw new BadRequestException('Tipo de reserva inválido. Debe ser "studio" o "service".');
         }
 
-        // Buscamos la reserva para asegurarnos de que existe y pertenece al usuario
         const bookingExists = await repository.findOne({
             where: { id: id, user: { id: userId } },
         });
@@ -133,11 +147,9 @@ export class BookingsService {
             throw new NotFoundException(`Reserva de ${type} con ID ${id} no encontrada o no pertenece a este usuario.`);
         }
 
-        // Realizamos un "hard delete" (eliminación directa de la base de datos)
         await repository.delete(id);
         this.logger.log(`Booking ${id} of type ${type} deleted by user ${userId}.`);
 
         return { message: 'Reserva eliminada correctamente.' };
     }
-    // --- FIN DEL CÓDIGO DE CANCELACIÓN MODIFICADO ---
 }

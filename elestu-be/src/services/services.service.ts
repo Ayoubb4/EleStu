@@ -1,10 +1,12 @@
 // src/services/services.service.ts
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Service } from './service.entity';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { User } from '../users/user.entity';
+// --- AÑADIDO: Idealmente, tendríamos un DTO para la actualización ---
+// import { UpdateServiceDto } from './dto/update-service.dto';
 
 @Injectable()
 export class ServicesService {
@@ -22,16 +24,19 @@ export class ServicesService {
     service.description = createServiceDto.description;
     service.price = createServiceDto.price;
     service.image = createServiceDto.image;
+    // --- AÑADIDO: Guardamos también el tipo de servicio ---
+    service.serviceType = createServiceDto.serviceType;
 
     const usuario = await this.userRepository.findOne({
       where: { id: createServiceDto.userid },
     });
 
     if (!usuario) {
-      throw new Error('Usuario no encontrado');
+      // --- MODIFICADO: Lanzamos una excepción más clara ---
+      throw new NotFoundException(`Usuario con ID ${createServiceDto.userid} no encontrado`);
     }
 
-    service.user = usuario; // ⚠️ CAMBIO: el campo correcto es "user", no "usuario"
+    service.user = usuario;
 
     return this.serviceRepository.save(service);
   }
@@ -48,8 +53,29 @@ export class ServicesService {
       relations: ['user'],  // También cargamos el usuario que creó el servicio
     });
     if (!service) {
-      throw new HttpException('Service not found', HttpStatus.NOT_FOUND);
+      // --- MODIFICADO: Usamos la excepción estándar de NestJS ---
+      throw new NotFoundException(`Servicio con ID ${id} no encontrado`);
     }
     return service;
+  }
+
+  // --- AÑADIDO: Lógica para actualizar (editar) un servicio ---
+  async update(id: number, updateServiceDto: any): Promise<Service> {
+    // Usamos preload para cargar la entidad existente y aplicar los cambios del DTO
+    const service = await this.serviceRepository.preload({
+      id: id,
+      ...updateServiceDto,
+    });
+    if (!service) {
+      throw new NotFoundException(`Servicio con ID "${id}" no encontrado.`);
+    }
+    return this.serviceRepository.save(service);
+  }
+
+  // --- AÑADIDO: Lógica para eliminar un servicio ---
+  async remove(id: number): Promise<{ message: string }> {
+    const service = await this.findOne(id); // Reutilizamos findOne para verificar que existe
+    await this.serviceRepository.remove(service);
+    return { message: `Servicio "${service.title}" eliminado correctamente.` };
   }
 }

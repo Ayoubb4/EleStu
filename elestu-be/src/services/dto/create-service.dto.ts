@@ -14,11 +14,17 @@ export class CreateServiceDto {
     @IsNotEmpty()
     price: number;
 
+    // --- MODIFICADO: La imagen es opcional, así que usamos @IsOptional ---
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     image: string;
 
     @IsNumber()
     @IsNotEmpty()
-    userid: number; // Usuario ID
+    userid: number;
+
+    // --- AÑADIDO: La propiedad que faltaba para el tipo de servicio ---
+    @IsString()
+    @IsNotEmpty()
+    serviceType: string;
 }

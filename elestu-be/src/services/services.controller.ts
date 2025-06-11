@@ -1,10 +1,8 @@
-import { Controller, Get, Post, Body, Param, UploadedFile, UseInterceptors } from '@nestjs/common';
+//src/services/services.controller.ts
+import { Controller, Get, Post, Body, Param, UploadedFile, UseInterceptors, Patch, Delete } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ServicesService } from './services.service';
 import { CreateServiceDto } from './dto/create-service.dto';
-// Make sure @types/multer is installed (npm install --save-dev @types/multer)
-// This type should be available globally if @types/multer is correctly set up.
-// If you still have issues, you might need to adjust tsconfig.json or use 'any' as a last resort.
 
 @Controller('services')
 export class ServicesController {
@@ -31,5 +29,18 @@ export class ServicesController {
   @Get(':id')
   async findOne(@Param('id') id: number) {
     return this.servicesService.findOne(id);
+  }
+
+  // --- AÑADIDO: Endpoint para actualizar (editar) un servicio por su ID ---
+  @Patch(':id')
+  // Lo ideal sería crear un UpdateServiceDto con campos opcionales.
+  async update(@Param('id') id: number, @Body() updateServiceDto: any) {
+    return this.servicesService.update(id, updateServiceDto);
+  }
+
+  // --- AÑADIDO: Endpoint para eliminar un servicio por su ID ---
+  @Delete(':id')
+  async remove(@Param('id') id: number) {
+    return this.servicesService.remove(id);
   }
 }

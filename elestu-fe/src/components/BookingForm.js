@@ -86,6 +86,13 @@ function BookingForm() {
                 body: JSON.stringify(bookingDetails),
             });
 
+            // --- MODIFICADO: Manejo de errores específico para el conflicto ---
+            if (response.status === 409) { // 409 Conflict
+                const errorData = await response.json();
+                // Usamos el mensaje del backend directamente
+                throw new Error(errorData.message || 'La fecha y hora seleccionadas ya no están disponibles.');
+            }
+
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || 'Error al enviar la reserva.');
@@ -96,19 +103,21 @@ function BookingForm() {
             navigate('/Reservations');
 
         } catch (err) {
-            setError(`Error al enviar la reserva: ${err.message}`);
+            // El error ahora se establece con el mensaje correcto, ya sea de conflicto u otro.
+            setError(`${err.message}`);
         } finally {
             setIsLoading(false);
         }
     };
 
+    // ... el resto del componente (isLoading, error, JSX) se mantiene igual ...
     if (isLoading) {
         return (
             <div className="page-container"><Navbar /><h2 className="form-main-title">Cargando...</h2></div>
         );
     }
 
-    if (error) {
+    if (error && !currentUser) { // --- MODIFICADO: Solo mostrar si no hay usuario ---
         return (
             <div className="page-container"><Navbar />
                 <div className="form-wrapper">
@@ -120,7 +129,6 @@ function BookingForm() {
         );
     }
 
-    // --- JSX ACTUALIZADO CON LAS CLASES CSS CORRECTAS ---
     return (
         <div className="page-container">
             <Navbar />
@@ -151,7 +159,8 @@ function BookingForm() {
                     </div>
 
                     {bookingSuccess && <p className="form-success-message">¡Reserva enviada con éxito!</p>}
-                    {!bookingSuccess && error && <p className="form-error-message">{error}</p>}
+                    {/* --- MODIFICADO: El error ahora se muestra siempre que exista --- */}
+                    {error && <p className="form-error-message">{error}</p>}
 
                     <button type="submit" className="form-submit-button" disabled={isLoading}>
                         {isLoading ? 'Procesando...' : `Pagar y Confirmar Reserva ${studio?.price}€`}
