@@ -6,7 +6,7 @@ import {
     BadRequestException,
     NotFoundException,
     ForbiddenException,
-    ConflictException
+    ConflictException // --- AÑADIDO: Importamos ConflictException ---
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -14,10 +14,8 @@ import { Booking } from './entities/booking.entity';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { User } from '../users/user.entity';
+import { join } from 'path';
 import { ServiceBooking } from './entities/service-booking.entity';
-import { CreateServiceBookingDto } from './dto/create-service-booking.dto'; // AÑADIDO: DTO para reservas de servicio
-import { PdfService } from '../pdf/pdf.service'; // AÑADIDO: Importamos nuestro servicio de PDF
-import { Service } from '../services/service.entity'; // AÑADIDO: Importamos la entidad de Servicio
 
 @Injectable()
 export class BookingsService {
@@ -30,17 +28,12 @@ export class BookingsService {
         private serviceBookingsRepository: Repository<ServiceBooking>,
         @InjectRepository(User)
         private usersRepository: Repository<User>,
-        // AÑADIDO: Importamos el repositorio de Service para obtener datos del proveedor
-        @InjectRepository(Service)
-        private servicesRepository: Repository<Service>,
         private readonly mailerService: MailerService,
-        // AÑADIDO: Inyectamos el servicio de PDF
-        private readonly pdfService: PdfService,
     ) {}
 
-    // --- Lógica para Reservas de ESTUDIOS ---
     async create(createBookingDto: CreateBookingDto): Promise<Booking> {
         try {
+            // --- AÑADIDO: Comprobación de conflicto de reserva ---
             const existingBooking = await this.studioBookingsRepository.findOne({
                 where: {
                     studioId: createBookingDto.studioId,
@@ -48,40 +41,43 @@ export class BookingsService {
                     time: createBookingDto.time,
                 }
             });
+
             if (existingBooking) {
-                throw new ConflictException('Esta fecha y hora ya están reservadas para este estudio.');
+                // Si ya existe una reserva, lanzamos un error de conflicto (409)
+                throw new ConflictException('Esta fecha y hora ya están reservadas. Por favor, elige otra.');
             }
+            // --- FIN DE LA ADICIÓN ---
 
             const user = await this.usersRepository.findOne({ where: { id: createBookingDto.userId } });
-            if (!user) throw new BadRequestException(`User with ID ${createBookingDto.userId} not found.`);
+            if (!user) {
+                throw new BadRequestException(`User with ID ${createBookingDto.userId} not found.`);
+            }
 
-            const newBooking = this.studioBookingsRepository.create({ ...createBookingDto, user });
+            const newBooking = this.studioBookingsRepository.create({
+                ...createBookingDto,
+                user: user,
+            });
+
             await this.studioBookingsRepository.save(newBooking);
-            this.logger.log(`Studio Booking created: ${newBooking.id} by user ${user.email}`);
+            this.logger.log(`Booking created for studio: ${newBooking.studioName} by user ${newBooking.userId} (${newBooking.userEmail})`);
 
-            const invoiceData = {
-                invoiceNumber: newBooking.id.substring(0, 8).toUpperCase(),
-                issueDate: new Date().toLocaleDateString('es-ES'),
-                serviceDate: newBooking.date,
-                userName: `${user.name} ${user.lastName || ''}`,
-                userEmail: user.email,
-                serviceTitle: `Reserva de estudio: ${newBooking.studioName}`,
-                price: newBooking.pricePerHour, // Ajustar si el precio es por horas
-                logoUrl: 'https://i.imgur.com/sCnu9T5.png'
-            };
-            const pdfBuffer = await this.pdfService.generateInvoicePdf(invoiceData);
-            await this.sendBookingConfirmationEmail(newBooking, pdfBuffer);
+            await this.sendBookingConfirmationEmail(newBooking);
 
             return newBooking;
         } catch (error) {
-            this.logger.error(`Error creating studio booking: ${error.message}`, error.stack);
-            if (error instanceof BadRequestException || error instanceof ConflictException) throw error;
-            throw new InternalServerErrorException('Failed to create studio booking.');
+            this.logger.error(`Error creating booking: ${error.message}`, error.stack);
+            // --- MODIFICADO: Relanzamos el error para que el frontend lo reciba ---
+            if (error instanceof BadRequestException || error instanceof ConflictException) {
+                throw error;
+            }
+            throw new InternalServerErrorException('Failed to create booking or send confirmation email.');
         }
     }
 
-    private async sendBookingConfirmationEmail(booking: Booking, pdfInvoice: Buffer): Promise<void> {
+    private async sendBookingConfirmationEmail(booking: Booking): Promise<void> {
         try {
+            const logoPath = join(process.cwd(), 'dist', 'images', 'EleStu.png');
+
             await this.mailerService.sendMail({
                 to: booking.userEmail,
                 subject: `Confirmación de Reserva en ${booking.studioName}`,
@@ -94,82 +90,19 @@ export class BookingsService {
                     pricePerHour: booking.pricePerHour,
                     currentYear: new Date().getFullYear(),
                 },
-                attachments: [{
-                    filename: `factura-estudio-${booking.id.substring(0,8)}.pdf`,
-                    content: pdfInvoice,
-                    contentType: 'application/pdf',
-                }],
+                attachments: [
+                    {
+                        filename: 'EleStuLogo.png',
+                        path: logoPath,
+                        cid: 'EleStuLogo',
+                    },
+                ],
             });
-            this.logger.log(`Studio booking confirmation email sent to ${booking.userEmail}`);
+            this.logger.log(`Booking confirmation email sent to ${booking.userEmail}`);
         } catch (error) {
-            this.logger.error(`Error sending email for studio booking ${booking.id}: ${error.message}`, error.stack);
+            this.logger.error(`Error sending email for booking ${booking.id}: ${error.message}`, error.stack);
         }
     }
-
-    // --- AÑADIDO: Toda la lógica para Reservas de SERVICIOS ---
-    async createServiceBooking(createDto: CreateServiceBookingDto): Promise<ServiceBooking> {
-        try {
-            const user = await this.usersRepository.findOne({ where: { id: createDto.userId } });
-            if (!user) throw new BadRequestException(`User with ID ${createDto.userId} not found.`);
-
-            const service = await this.servicesRepository.findOne({ where: { id: createDto.serviceId }, relations: ['user']});
-            if (!service) throw new BadRequestException(`Service with ID ${createDto.serviceId} not found.`);
-
-            const newBooking = this.serviceBookingsRepository.create({ ...createDto, user, service });
-            await this.serviceBookingsRepository.save(newBooking);
-            this.logger.log(`Service Booking created: ${newBooking.id} by user ${user.email}`);
-
-            const invoiceData = {
-                invoiceNumber: newBooking.id.substring(0, 8).toUpperCase(),
-                issueDate: new Date().toLocaleDateString('es-ES'),
-                serviceDate: newBooking.date,
-                userName: `${user.name} ${user.lastName || ''}`,
-                userEmail: user.email,
-                serviceTitle: `Contratación de servicio: ${service.title}`,
-                price: newBooking.price,
-                logoUrl: 'https://i.imgur.com/sCnu9T5.png'
-            };
-
-            const pdfBuffer = await this.pdfService.generateInvoicePdf(invoiceData);
-            await this.sendServiceBookingConfirmationEmail(newBooking, service, pdfBuffer);
-
-            return newBooking;
-
-        } catch (error) {
-            this.logger.error(`Error creating service booking: ${error.message}`, error.stack);
-            throw new InternalServerErrorException('Failed to create service booking.');
-        }
-    }
-
-    private async sendServiceBookingConfirmationEmail(booking: ServiceBooking, service: Service, pdfInvoice: Buffer): Promise<void> {
-        try {
-            await this.mailerService.sendMail({
-                to: booking.userEmail,
-                subject: `Confirmación de Reserva del Servicio ${booking.serviceTitle}`,
-                template: 'service-booking-confirmation',
-                context: {
-                    serviceTitle: booking.serviceTitle,
-                    date: booking.date,
-                    time: booking.time,
-                    description: booking.description,
-                    price: booking.price,
-                    ownerName: `${service.user.name} ${service.user.lastName || ''}`,
-                    ownerEmail: service.user.email,
-                    ownerPhoneNumber: service.user.phoneNumber || 'No especificado',
-                    currentYear: new Date().getFullYear(),
-                },
-                attachments: [{
-                    filename: `factura-servicio-${booking.id.substring(0,8)}.pdf`,
-                    content: pdfInvoice,
-                    contentType: 'application/pdf',
-                }],
-            });
-            this.logger.log(`Service booking confirmation email sent to ${booking.userEmail}`);
-        } catch (error) {
-            this.logger.error(`Error sending email for service booking ${booking.id}: ${error.message}`, error.stack);
-        }
-    }
-
 
     async findUserBookings(userId: number): Promise<{ studioBookings: Booking[], serviceBookings: ServiceBooking[] }> {
         try {
@@ -191,7 +124,11 @@ export class BookingsService {
         }
     }
 
-    async cancelBooking(id: string, type: 'studio' | 'service', userId: number): Promise<{ message: string }> {
+    async cancelBooking(
+        id: string,
+        type: 'studio' | 'service',
+        userId: number
+    ): Promise<{ message: string }> {
         let repository: Repository<any>;
 
         if (type === 'studio') {

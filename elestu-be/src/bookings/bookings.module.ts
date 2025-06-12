@@ -4,23 +4,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BookingsController } from './bookings.controller';
 import { BookingsService } from './bookings.service';
 import { Booking } from './entities/booking.entity';
-import { ServiceBooking } from './entities/service-booking.entity';
+import { ServiceBooking } from './entities/service-booking.entity'; // <--- AÑADE ESTA IMPORTACIÓN
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from '../users/user.entity';
-// --- AÑADIDO: Importamos la entidad Service y el módulo Pdf ---
-import { Service } from '../services/service.entity';
-import { PdfModule } from '../pdf/pdf.module';
 
 @Module({
     imports: [
-        // --- MODIFICADO: Añadimos la entidad 'Service' para que el repositorio esté disponible ---
-        TypeOrmModule.forFeature([Booking, User, ServiceBooking, Service]),
-
-        // --- AÑADIDO: Importamos el PdfModule para poder inyectar PdfService ---
-        PdfModule,
-
+        TypeOrmModule.forFeature([Booking, User, ServiceBooking]), // <--- AÑADE ServiceBooking AQUÍ
         MailerModule.forRootAsync({
             imports: [ConfigModule],
             useFactory: async (configService: ConfigService) => ({

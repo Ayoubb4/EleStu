@@ -13,8 +13,6 @@ import { BookingsModule } from './bookings/bookings.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { join } from 'path';
-// --- AÑADIDO: Importamos el nuevo módulo para generar PDFs ---
-import { PdfModule } from './pdf/pdf.module';
 
 @Module({
   imports: [
@@ -81,9 +79,7 @@ import { PdfModule } from './pdf/pdf.module';
     StudioModule,
     ServicesModule,
     PaymentsModule,
-    BookingsModule,
-    // --- AÑADIDO: Registramos el módulo de PDF para que esté disponible en la aplicación ---
-    PdfModule,
+    BookingsModule
   ],
   controllers: [AppController],
   providers: [AppService]

@@ -1699,7 +1699,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Estilo para la dirección en la tarjeta del estudio */
 .studio-card-address {
-  font-size: 1.5rem;
+  font-size: 0.9rem;
   color: #555;
   margin-top: 0.5rem; /* Espacio sobre la dirección */
   display: flex;
