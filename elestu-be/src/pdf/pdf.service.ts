@@ -1,10 +1,12 @@
 // src/pdf/pdf.service.ts
 import { Injectable, Logger } from '@nestjs/common';
-import * as puppeteer from 'puppeteer';
+// --- MODIFICADO: Importamos desde 'puppeteer-core' ---
+import * as puppeteer from 'puppeteer-core';
+// --- AÑADIDO: Importamos la nueva librería que contiene Chrome ---
+import * as chromium from 'chrome-aws-lambda';
 import * as fs from 'fs/promises';
 import * as handlebars from 'handlebars';
 import { join } from 'path';
-// --- AÑADIDO: Importamos Buffer explícitamente para asegurar la conversión ---
 import { Buffer } from 'buffer';
 
 @Injectable()
@@ -18,11 +20,16 @@ export class PdfService {
             const template = handlebars.compile(templateHtml);
             const html = template(data);
 
-            this.logger.log('Lanzando Puppeteer para generar el PDF...');
+            this.logger.log('Lanzando Puppeteer con la versión de Chrome para servidor...');
+
+            // --- MODIFICADO: Cambiamos la forma en que se inicia el navegador ---
             const browser = await puppeteer.launch({
-                headless: true,
-                args: ['--no-sandbox', '--disable-setuid-sandbox']
+                args: chromium.args,
+                defaultViewport: chromium.defaultViewport,
+                executablePath: await chromium.executablePath, // <-- La clave está aquí
+                headless: chromium.headless,
             });
+
             const page = await browser.newPage();
 
             await page.setContent(html, { waitUntil: 'networkidle0' });
@@ -36,7 +43,6 @@ export class PdfService {
             await browser.close();
             this.logger.log('PDF generado con éxito.');
 
-            // --- AÑADIDO: Conversión explícita a Buffer para evitar el error de tipos ---
             const finalBuffer = Buffer.from(pdfBuffer);
             this.logger.log(`Buffer del PDF convertido correctamente, tamaño: ${finalBuffer.length} bytes.`);
             return finalBuffer;
