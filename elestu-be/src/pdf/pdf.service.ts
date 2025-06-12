@@ -1,9 +1,7 @@
 // src/pdf/pdf.service.ts
 import { Injectable, Logger } from '@nestjs/common';
-// --- MODIFICADO: Importamos desde 'puppeteer-core' ---
 import * as puppeteer from 'puppeteer-core';
-// --- AÑADIDO: Importamos la nueva librería que contiene Chrome ---
-import * as chromium from 'chrome-aws-lambda';
+import chromium from '@sparticuz/chrome-aws-lambda';
 import * as fs from 'fs/promises';
 import * as handlebars from 'handlebars';
 import { join } from 'path';
