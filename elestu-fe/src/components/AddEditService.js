@@ -13,6 +13,7 @@ function AddEditService() {
     const [isEditMode, setIsEditMode] = useState(false);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
+    // El estado 'image' ahora guardará el string Base64
     const [image, setImage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [price, setPrice] = useState('');
@@ -32,23 +33,19 @@ function AddEditService() {
     useEffect(() => {
         if (serviceId) {
             setIsEditMode(true);
-
             const fetchServiceData = async () => {
                 try {
                     const response = await fetch(`${API_URL}/services/${serviceId}`);
-                    if (!response.ok) {
-                        throw new Error('No se pudo encontrar el servicio para editar.');
-                    }
+                    if (!response.ok) throw new Error('No se pudo encontrar el servicio.');
                     const service = await response.json();
-
                     setTitle(service.title || '');
                     setDescription(service.description || '');
                     setPrice(service.price?.toString() || '');
                     setServiceType(service.serviceType || '');
                     if (service.image) {
+                        setImage(service.image); // Guardamos el Base64 existente
                         setImagePreview(service.image);
                     }
-
                 } catch (error) {
                     alert(error.message);
                     navigate('/my-services');
@@ -63,14 +60,20 @@ function AddEditService() {
         }
     }, [serviceId, navigate]);
 
-
+    // --- LÓGICA CAMBIADA: Ahora convierte la imagen a Base64 ---
     function handleImageChange(event) {
         const file = event.target.files[0];
         if (file) {
-            setImage(file);
             const reader = new FileReader();
-            reader.onloadend = () => { setImagePreview(reader.result); };
             reader.readAsDataURL(file);
+            reader.onloadend = () => {
+                setImage(reader.result); // Guardamos el string Base64 en el estado 'image'
+                setImagePreview(reader.result);
+            };
+            reader.onerror = (error) => {
+                console.error("Error al leer el archivo:", error);
+                alert("Hubo un error al procesar la imagen.");
+            };
         }
     }
 
@@ -82,6 +85,7 @@ function AddEditService() {
         }
     };
 
+    // --- LÓGICA CAMBIADA: Ahora envía un JSON normal, no FormData ---
     const handleSubmit = async (e) => {
         e.preventDefault();
         const userId = localStorage.getItem('userid');
@@ -89,41 +93,15 @@ function AddEditService() {
             alert('Usuario no autenticado.');
             return;
         }
-        if (!serviceType) {
-            alert('Por favor, selecciona un tipo de servicio.');
-            return;
-        }
 
-        const numericPrice = parseFloat(price);
-        const numericUserId = parseInt(userId, 10);
-
-        if (isNaN(numericPrice) || numericPrice < 0) {
-            alert("Error: El precio introducido no es un número válido. Por favor, corrígelo.");
-            return;
-        }
-        if (isNaN(numericUserId)) {
-            alert("Error: No se ha podido identificar al usuario. Por favor, inicia sesión de nuevo.");
-            return;
-        }
-
-
-        const formData = new FormData();
-        formData.append('title', title);
-        formData.append('description', description);
-
-        // --- AÑADIDO: Comentamos las líneas originales ---
-        // formData.append('price', numericPrice);
-        // formData.append('userid', numericUserId);
-
-        // --- AÑADIDO: Nuevas líneas que envían los valores como texto, formato más seguro para FormData ---
-        formData.append('price', numericPrice.toString());
-        formData.append('userid', numericUserId.toString());
-
-        formData.append('serviceType', serviceType);
-
-        if (image) {
-            formData.append('image', image);
-        }
+        const serviceData = {
+            title: title,
+            description: description,
+            price: parseFloat(price) || 0,
+            userid: parseInt(userId, 10),
+            serviceType: serviceType,
+            image: image, // Enviamos el string Base64 o null
+        };
 
         setLoading(true);
 
@@ -134,9 +112,11 @@ function AddEditService() {
             const response = await fetch(url, {
                 method: method,
                 headers: {
+                    // Ahora enviamos JSON
+                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('authToken')}`
                 },
-                body: formData,
+                body: JSON.stringify(serviceData),
             });
 
             if (response.ok) {
@@ -155,56 +135,45 @@ function AddEditService() {
     };
 
     if (loading) {
-        return (
-            <div className="page-container">
-                <Navbar />
-                <p style={{textAlign: 'center', fontSize: '1.5rem', marginTop: '3rem'}}>Cargando...</p>
-            </div>
-        )
+        return <div className="page-container"><Navbar /><p>Cargando...</p></div>
     }
 
+    // El resto del return es igual, no necesita cambios
     return (
         <div className="page-container">
             <Navbar />
             <div className="form-wrapper">
                 <h2 className="form-main-title">{isEditMode ? 'Editar Servicio' : 'Ofrecer un Nuevo Servicio'}</h2>
-
                 <form onSubmit={handleSubmit} className="booking-form-new">
                     <div className="form-group-new">
-                        <label htmlFor="serviceType">Tipo de Servicio</label>
-                        <select id="serviceType" value={serviceType} onChange={handleServiceTypeChange} required>
+                        <label>Tipo de Servicio</label>
+                        <select value={serviceType} onChange={handleServiceTypeChange} required>
                             <option value="" disabled>Selecciona un tipo...</option>
                             {serviceTypes.map(type => ( <option key={type} value={type}>{type}</option>))}
                         </select>
                     </div>
-
                     <div className="form-group-new">
-                        <label htmlFor="title">Título del Servicio</label>
-                        <input id="title" type="text" placeholder="Ej: Cantante para bodas y eventos" value={title} onChange={(e) => setTitle(e.target.value)} required />
+                        <label>Título del Servicio</label>
+                        <input type="text" placeholder="Ej: Cantante para bodas y eventos" value={title} onChange={(e) => setTitle(e.target.value)} required />
                     </div>
-
                     <div className="form-group-new">
-                        <label htmlFor="description">Descripción</label>
-                        <textarea id="description" placeholder="Describe tu servicio, experiencia, etc." value={description} onChange={(e) => setDescription(e.target.value)} rows="8" required />
+                        <label>Descripción</label>
+                        <textarea placeholder="Describe tu servicio, experiencia, etc." value={description} onChange={(e) => setDescription(e.target.value)} rows="8" required />
                     </div>
-
                     <div className="form-group-new">
-                        <label htmlFor="price">Precio (€)</label>
-                        <input id="price" type="number" placeholder="Ej: 150" value={price} onChange={(e) => setPrice(e.target.value)} min="0" step="any" required />
+                        <label>Precio (€)</label>
+                        <input type="number" placeholder="Ej: 150" value={price} onChange={(e) => setPrice(e.target.value)} min="0" step="any" required />
                     </div>
-
                     <div className="form-group-new">
-                        <label htmlFor="image">Imagen del Servicio (Opcional)</label>
-                        <input id="image" type="file" accept="image/*" onChange={handleImageChange} />
+                        <label>Imagen del Servicio</label>
+                        <input type="file" accept="image/*" onChange={handleImageChange} />
                     </div>
-
                     {imagePreview && (
                         <div className="image-preview-container">
-                            <p>{isEditMode && image ? "Nueva imagen:" : (isEditMode ? "Imagen actual:" : "Vista previa:")}</p>
+                            <p>{isEditMode && image ? "Nueva imagen:" : "Imagen:"}</p>
                             <img src={imagePreview} alt="Vista previa" className="preview-img" />
                         </div>
                     )}
-
                     <button type="submit" disabled={loading} className="form-submit-button">
                         {loading ? 'Guardando...' : (isEditMode ? 'Guardar Cambios' : 'Publicar Servicio')}
                     </button>

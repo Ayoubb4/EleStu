@@ -1,26 +1,10 @@
 // src/services/services.service.ts
-import { Injectable, HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, Repository } from 'typeorm';
 import { Service } from './service.entity';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { User } from '../users/user.entity';
-
-// --- AÑADIDO: Función de ayuda para construir la URL de la imagen ---
-// La sacamos fuera para poder reutilizarla y mantener el código limpio.
-const mapServiceToDto = (service: Service): Service => {
-  if (service.image) {
-    // Construye la URL completa. Usa la variable APP_URL que añadiste a tu .env
-
-    // --- AÑADIDO: Comentamos la línea antigua que tenía el error en la ruta ---
-    // const imageUrl = `${process.env.APP_URL}/api/uploads/${service.image}`;
-
-    // --- AÑADIDO: Nueva línea con la URL corregida, sin '/api' ---
-    const imageUrl = `${process.env.APP_URL}/uploads/${service.image}`;
-    return { ...service, image: imageUrl };
-  }
-  return service;
-};
 
 @Injectable()
 export class ServicesService {
@@ -36,6 +20,7 @@ export class ServicesService {
     service.title = createServiceDto.title;
     service.description = createServiceDto.description;
     service.price = createServiceDto.price;
+    // La imagen ya viene como texto Base64, la guardamos directamente
     service.image = createServiceDto.image;
     service.serviceType = createServiceDto.serviceType;
 
@@ -47,11 +32,8 @@ export class ServicesService {
       throw new NotFoundException(`Usuario con ID ${createServiceDto.userid} no encontrado`);
     }
     service.user = usuario;
-
-    const newService = await this.serviceRepository.save(service);
-
-    // --- AÑADIDO: Devolvemos el servicio con la URL de la imagen ya construida ---
-    return mapServiceToDto(newService);
+    // Simplemente guardamos y devolvemos. No hay que construir ninguna URL.
+    return this.serviceRepository.save(service);
   }
 
   async findAll(serviceType?: string): Promise<Service[]> {
@@ -63,22 +45,17 @@ export class ServicesService {
     if (serviceType) {
       options.where = { serviceType: serviceType };
     }
-    const services = await this.serviceRepository.find(options);
-    // --- AÑADIDO: Mapeamos los resultados para construir la URL de cada imagen ---
-    return services.map(mapServiceToDto);
+    return this.serviceRepository.find(options);
   }
 
-  // --- AÑADIDO: Nueva función para buscar servicios por el ID del usuario ---
   async findServicesByUserId(userId: number): Promise<Service[]> {
-    const services = await this.serviceRepository.find({
+    return this.serviceRepository.find({
       where: {
         user: { id: userId }
       },
       relations: ['user'],
       order: { id: 'DESC' }
     });
-    // --- AÑADIDO: Mapeamos también aquí para construir la URL ---
-    return services.map(mapServiceToDto);
   }
 
   async findOne(id: number): Promise<Service> {
@@ -89,8 +66,7 @@ export class ServicesService {
     if (!service) {
       throw new NotFoundException(`Servicio con ID ${id} no encontrado`);
     }
-    // --- AÑADIDO: Devolvemos el servicio con la URL de la imagen construida ---
-    return mapServiceToDto(service);
+    return service;
   }
 
   async update(id: number, updateServiceDto: any): Promise<Service> {
@@ -101,9 +77,7 @@ export class ServicesService {
     if (!service) {
       throw new NotFoundException(`Servicio con ID "${id}" no encontrado.`);
     }
-    const updatedService = await this.serviceRepository.save(service);
-    // --- AÑADIDO: Devolvemos el servicio actualizado con la URL construida ---
-    return mapServiceToDto(updatedService);
+    return this.serviceRepository.save(service);
   }
 
   async remove(id: number): Promise<{ message: string }> {
