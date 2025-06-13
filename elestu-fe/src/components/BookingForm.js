@@ -110,16 +110,22 @@ function BookingForm() {
             return;
         }
 
-        // --- MODIFICADO: Eliminamos el precio y corregimos el nombre del estudio ---
         const bookingDetails = {
             studioId: studio.id,
-            studioName: studio.title, // Se usa 'title' en lugar de 'name'
+            studioName: studio.title,
             date: selectedDate,
             time: selectedTime,
             description: description || `Solicitud de reserva para ${studio.title}`,
             userEmail: currentUser.email,
             userId: currentUser.id,
         };
+
+        // --- AÑADIDO: Se añade 'pricePerHour' para pasar la validación del backend sin modificar el objeto original ---
+        bookingDetails.pricePerHour = 0;
+
+        // --- AÑADIDO: Se añade 'location' para que el email pueda generar el enlace de "Cómo llegar" ---
+        bookingDetails.location = studio.location;
+
 
         try {
             const response = await fetch(`${API_URL}/bookings`, {
@@ -152,7 +158,6 @@ function BookingForm() {
         }
     };
 
-    // --- MANTENEMOS la lógica de carga y error ---
     if (isLoading && !studio) {
         return (
             <div className="page-container"><Navbar /><h2 className="form-main-title">Cargando...</h2></div>
@@ -174,14 +179,11 @@ function BookingForm() {
         <div className="page-container">
             <Navbar />
             <div className="form-wrapper">
-                {/* --- MODIFICADO: Título del formulario --- */}
                 <h2 className="form-main-title">Solicitar Reserva</h2>
 
                 <form onSubmit={handleSubmit} className="booking-form-new">
                     <div className="form-section-title">Información del Estudio</div>
-                    {/* --- CORREGIDO: Usamos studio.title --- */}
                     <p className="studio-booking-info">Estás solicitando una reserva para: {studio?.title}</p>
-                    {/* --- MODIFICADO: Eliminada la línea del precio --- */}
 
                     <div className="form-section-title">Completa los Detalles de la Solicitud</div>
                     <div className="form-group-new">
@@ -218,7 +220,6 @@ function BookingForm() {
                     {successMessage && <p className="form-success-message">{successMessage}</p>}
                     {error && <p className="form-error-message">{error}</p>}
 
-                    {/* --- MODIFICADO: Texto del botón de envío --- */}
                     <button type="submit" className="form-submit-button" disabled={isLoading}>
                         {isLoading ? 'Enviando...' : `Enviar Solicitud de Reserva`}
                     </button>

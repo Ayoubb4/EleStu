@@ -16,7 +16,7 @@ function AddEditService() {
     const [image, setImage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [price, setPrice] = useState('');
-    const [loading, setLoading] = useState(true); // Inicia en true para el chequeo inicial
+    const [loading, setLoading] = useState(true);
     const [serviceType, setServiceType] = useState('');
 
     const serviceTypes = ['Cantante', 'Productor', 'DJ', 'Músico de Sesión', 'Compositor', 'Otro'];
@@ -29,7 +29,6 @@ function AddEditService() {
         'Otro': 'Describa aquí detalladamente el servicio que ofrece.'
     };
 
-    // --- AÑADIDA: Lógica robusta para cargar datos en modo edición ---
     useEffect(() => {
         if (serviceId) {
             setIsEditMode(true);
@@ -95,11 +94,29 @@ function AddEditService() {
             return;
         }
 
+        // --- LÍNEAS AÑADIDAS: Validación y conversión explícita antes de enviar ---
+        // 1. Convertimos los valores a número. Usamos parseFloat para admitir decimales en el precio.
+        const numericPrice = parseFloat(price);
+        const numericUserId = parseInt(userId, 10);
+
+        // 2. Añadimos una validación extra para detener el envío si la conversión falla (por si meten texto o algo raro)
+        if (isNaN(numericPrice) || numericPrice < 0) {
+            alert("Error: El precio introducido no es un número válido. Por favor, corrígelo.");
+            return; // Detenemos el envío
+        }
+        if (isNaN(numericUserId)) {
+            alert("Error: No se ha podido identificar al usuario. Por favor, inicia sesión de nuevo.");
+            return; // Detenemos el envío
+        }
+        // --- FIN DE LAS LÍNEAS AÑADIDAS ---
+
+
         const formData = new FormData();
         formData.append('title', title);
         formData.append('description', description);
-        formData.append('price', parseInt(price, 10) || 0);
-        formData.append('userid', parseInt(userId, 10));
+        // --- MODIFICACIÓN SUTIL: Usamos las variables numéricas que acabamos de validar ---
+        formData.append('price', numericPrice);
+        formData.append('userid', numericUserId);
         formData.append('serviceType', serviceType);
 
         if (image) {
@@ -125,7 +142,9 @@ function AddEditService() {
                 navigate(`/my-services`);
             } else {
                 const error = await response.json();
-                alert(error.message || 'Hubo un error al guardar el servicio');
+                // --- AÑADIDO: Unimos los mensajes de error si vienen en un array ---
+                const errorMessage = Array.isArray(error.message) ? error.message.join(', ') : error.message;
+                alert(errorMessage || 'Hubo un error al guardar el servicio');
             }
         } catch (error) {
             alert('Error al conectar con el servidor.');
@@ -170,7 +189,7 @@ function AddEditService() {
 
                     <div className="form-group-new">
                         <label htmlFor="price">Precio (€)</label>
-                        <input id="price" type="number" placeholder="Ej: 150" value={price} onChange={(e) => setPrice(e.target.value)} min="0" step="1" required />
+                        <input id="price" type="number" placeholder="Ej: 150" value={price} onChange={(e) => setPrice(e.target.value)} min="0" step="any" required />
                     </div>
 
                     <div className="form-group-new">

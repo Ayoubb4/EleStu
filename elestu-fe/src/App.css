@@ -704,8 +704,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .card-user-name {
   /* --- MODIFICADO: Quitado el font-weight --- */
-  font-size: 2rem;
+  font-size: 1rem;
+  font-family: "SF Pro Display", sans-serif;
   color: #222;
+  font-weight: bolder;
 }
 
 /* --- MODIFICADO: Clase .card-user-level eliminada porque no se usa --- */
@@ -880,6 +882,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .info-card-item.type p {
+  font-family: "SF Pro Display", "Sans Serif Collection";
   font-size: 1.2rem;
   color: #2d3748;
   letter-spacing: 1px;
@@ -1071,7 +1074,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .info-card-item span {
-  font-size: 1rem;
+  font-size: 2rem;
   color: #718096; /* Gris para el texto pequeño */
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -1092,13 +1095,14 @@ h1, h2, h3, h4, h5, h6 {
 
 
 .hire-button {
+  font-family: "SF Pro Display", sans-serif;
+  font-weight: bolder;
   background: #0038E1;
   color: white;
   padding: 1rem;
   border: none;
   border-radius: 8px;
   font-size: 2rem;
-  font-family: 'Firmos', sans-serif;
   cursor: pointer;
   transition: all 0.3s ease;
   width: 100%;
@@ -1122,7 +1126,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .preview-description-card h2 {
   font-family: 'Firmos', sans-serif;
-  font-size: 1.5rem;
+  font-size: 2.25rem;
   margin: 0 0 1rem 0;
 }
 
@@ -1134,8 +1138,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .preview-description-card h3 {
-  font-family: 'SF Pro Display', sans-serif;
-  font-size: 1.1rem;
+  font-family: 'Firmos', sans-serif;
+  font-size: 2.25rem;
   margin-top: 1.5rem;
   margin-bottom: 0.5rem;
 }
@@ -1637,13 +1641,14 @@ h1, h2, h3, h4, h5, h6 {
 
 .city-search-input {
   padding: 0.8rem 1.2rem;
-  font-size: 2rem;
+  font-size: 1rem;
   border-radius: 8px;
   border: 2px solid #cbd5e0;
   width: 100%;
+  font-weight: bold;
   max-width: 400px;
   transition: all 0.2s ease;
-  font-family: 'Firmos', sans-serif;
+  font-family: 'SF Pro Display', sans-serif;
 }
 
 .city-search-input:focus {
@@ -2035,7 +2040,9 @@ h1, h2, h3, h4, h5, h6 {
 .card-rating-reviews { font-size: 1.5rem; color: #777; }
 
 .card-address {
-  font-size: 2rem !important;
+  font-family: "SF Pro Display", sans-serif;
+  font-size: 1rem !important;
+  font-weight: bold;
   color: #555 !important;
   display: flex;
   align-items: flex-start;

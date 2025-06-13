@@ -19,11 +19,9 @@ async function bootstrap() {
     });
     logger.log('Instancia de NestExpressApplication creada.');
 
-    // --- CONFIGURACIÓN DE CORS DEFINITIVA Y REFORZADA ---
     const whitelist = [
-        'http://localhost:8000',      // Tu frontend en desarrollo
-        'https://ele-stu.vercel.app',  // Tu frontend desplegado en Vercel
-        // --- AÑADIDO: Puedes añadir más dominios aquí en el futuro si es necesario ---
+        'http://localhost:8000',
+        'https://ele-stu.vercel.app',
     ];
 
     app.enableCors({
@@ -37,15 +35,11 @@ async function bootstrap() {
         },
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
         credentials: true,
-        // --- AÑADIDO: Opciones adicionales para robustecer la configuración ---
-        // Especifica los encabezados que el frontend puede enviar. 'Authorization' es clave para los tokens.
         allowedHeaders: 'Content-Type, Accept, Authorization',
-        // Nos aseguramos de que las peticiones de pre-vuelo (OPTIONS) sean manejadas correctamente por NestJS.
         preflightContinue: false,
-        optionsSuccessStatus: 204, // Un estándar para respuestas exitosas a peticiones OPTIONS.
+        optionsSuccessStatus: 204,
     });
     logger.log('CORS configurado para permitir orígenes específicos y manejar pre-vuelo.');
-    // --- FIN DE LA MODIFICACIÓN ---
 
     app.use(express.json({
         limit: '50mb',
@@ -71,12 +65,23 @@ async function bootstrap() {
     );
     logger.log('Middleware de sesión configurado.');
 
+    // --- AÑADIDO: Comentamos la configuración antigua para no borrarla ---
+    // app.useGlobalPipes(new ValidationPipe({
+    //     transform: true,
+    //     whitelist: true,
+    //     forbidNonWhitelisted: false,
+    // }));
+
+    // --- AÑADIDO: Nueva configuración del ValidationPipe con la conversión implícita activada ---
     app.useGlobalPipes(new ValidationPipe({
-        transform: true,
-        whitelist: true,
-        forbidNonWhitelisted: false,
+        transform: true, // Mantiene la transformación de objetos
+        whitelist: true, // Mantiene la limpieza de propiedades no deseadas
+        forbidNonWhitelisted: false, // Mantiene el comportamiento de no prohibir
+        transformOptions: {
+            enableImplicitConversion: true, // <-- ESTA ES LA LÍNEA MÁGICA
+        },
     }));
-    logger.log('Pipe de validación global configurado.');
+    logger.log('Pipe de validación global configurado con conversión implícita habilitada.');
 
     app.setGlobalPrefix('api');
     logger.log("Prefijo global 'api' configurado para las rutas.");
