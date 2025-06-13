@@ -6,7 +6,7 @@ import {
     BadRequestException,
     NotFoundException,
     ForbiddenException,
-    ConflictException // --- AÑADIDO: Importamos ConflictException ---
+    ConflictException
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -33,7 +33,6 @@ export class BookingsService {
 
     async create(createBookingDto: CreateBookingDto): Promise<Booking> {
         try {
-            // --- AÑADIDO: Comprobación de conflicto de reserva ---
             const existingBooking = await this.studioBookingsRepository.findOne({
                 where: {
                     studioId: createBookingDto.studioId,
@@ -43,10 +42,8 @@ export class BookingsService {
             });
 
             if (existingBooking) {
-                // Si ya existe una reserva, lanzamos un error de conflicto (409)
                 throw new ConflictException('Esta fecha y hora ya están reservadas. Por favor, elige otra.');
             }
-            // --- FIN DE LA ADICIÓN ---
 
             const user = await this.usersRepository.findOne({ where: { id: createBookingDto.userId } });
             if (!user) {
@@ -61,12 +58,13 @@ export class BookingsService {
             await this.studioBookingsRepository.save(newBooking);
             this.logger.log(`Booking created for studio: ${newBooking.studioName} by user ${newBooking.userId} (${newBooking.userEmail})`);
 
-            await this.sendBookingConfirmationEmail(newBooking);
+            // --- AÑADIDO: Ahora también pasamos el DTO original a la función del email ---
+            // Esto nos da acceso a la dirección y ubicación que no se guardan en la entidad Booking.
+            await this.sendBookingConfirmationEmail(newBooking, createBookingDto);
 
             return newBooking;
         } catch (error) {
             this.logger.error(`Error creating booking: ${error.message}`, error.stack);
-            // --- MODIFICADO: Relanzamos el error para que el frontend lo reciba ---
             if (error instanceof BadRequestException || error instanceof ConflictException) {
                 throw error;
             }
@@ -74,7 +72,8 @@ export class BookingsService {
         }
     }
 
-    private async sendBookingConfirmationEmail(booking: Booking): Promise<void> {
+    // --- AÑADIDO: La función ahora acepta el DTO para tener más contexto ---
+    private async sendBookingConfirmationEmail(booking: Booking, dto: CreateBookingDto): Promise<void> {
         try {
             const logoPath = join(process.cwd(), 'dist', 'images', 'EleStu.png');
 
@@ -89,6 +88,9 @@ export class BookingsService {
                     description: booking.description,
                     pricePerHour: booking.pricePerHour,
                     currentYear: new Date().getFullYear(),
+                    // --- AÑADIDO: Pasamos la dirección y la ubicación a la plantilla del email ---
+                    address: dto.address,
+                    location: dto.location,
                 },
                 attachments: [
                     {
@@ -101,6 +103,8 @@ export class BookingsService {
             this.logger.log(`Booking confirmation email sent to ${booking.userEmail}`);
         } catch (error) {
             this.logger.error(`Error sending email for booking ${booking.id}: ${error.message}`, error.stack);
+            // --- AÑADIDO: Relanzamos el error para que el log principal lo capture si falla el email ---
+            throw new InternalServerErrorException(`Failed to send confirmation email. Error: ${error.message}`);
         }
     }
 

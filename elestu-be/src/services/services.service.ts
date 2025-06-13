@@ -6,6 +6,17 @@ import { Service } from './service.entity';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { User } from '../users/user.entity';
 
+// --- AÑADIDO: Función de ayuda para construir la URL de la imagen ---
+// La sacamos fuera para poder reutilizarla y mantener el código limpio.
+const mapServiceToDto = (service: Service): Service => {
+  if (service.image) {
+    // Construye la URL completa. Usa la variable APP_URL que añadiste a tu .env
+    const imageUrl = `${process.env.APP_URL}/api/uploads/${service.image}`;
+    return { ...service, image: imageUrl };
+  }
+  return service;
+};
+
 @Injectable()
 export class ServicesService {
   constructor(
@@ -31,7 +42,11 @@ export class ServicesService {
       throw new NotFoundException(`Usuario con ID ${createServiceDto.userid} no encontrado`);
     }
     service.user = usuario;
-    return this.serviceRepository.save(service);
+
+    const newService = await this.serviceRepository.save(service);
+
+    // --- AÑADIDO: Devolvemos el servicio con la URL de la imagen ya construida ---
+    return mapServiceToDto(newService);
   }
 
   async findAll(serviceType?: string): Promise<Service[]> {
@@ -43,18 +58,22 @@ export class ServicesService {
     if (serviceType) {
       options.where = { serviceType: serviceType };
     }
-    return this.serviceRepository.find(options);
+    const services = await this.serviceRepository.find(options);
+    // --- AÑADIDO: Mapeamos los resultados para construir la URL de cada imagen ---
+    return services.map(mapServiceToDto);
   }
 
   // --- AÑADIDO: Nueva función para buscar servicios por el ID del usuario ---
   async findServicesByUserId(userId: number): Promise<Service[]> {
-    return this.serviceRepository.find({
+    const services = await this.serviceRepository.find({
       where: {
         user: { id: userId }
       },
-      relations: ['user'], // Opcional, si quieres seguir mostrando info del user
+      relations: ['user'],
       order: { id: 'DESC' }
     });
+    // --- AÑADIDO: Mapeamos también aquí para construir la URL ---
+    return services.map(mapServiceToDto);
   }
 
   async findOne(id: number): Promise<Service> {
@@ -65,7 +84,8 @@ export class ServicesService {
     if (!service) {
       throw new NotFoundException(`Servicio con ID ${id} no encontrado`);
     }
-    return service;
+    // --- AÑADIDO: Devolvemos el servicio con la URL de la imagen construida ---
+    return mapServiceToDto(service);
   }
 
   async update(id: number, updateServiceDto: any): Promise<Service> {
@@ -76,7 +96,9 @@ export class ServicesService {
     if (!service) {
       throw new NotFoundException(`Servicio con ID "${id}" no encontrado.`);
     }
-    return this.serviceRepository.save(service);
+    const updatedService = await this.serviceRepository.save(service);
+    // --- AÑADIDO: Devolvemos el servicio actualizado con la URL construida ---
+    return mapServiceToDto(updatedService);
   }
 
   async remove(id: number): Promise<{ message: string }> {

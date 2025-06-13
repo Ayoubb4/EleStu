@@ -1,5 +1,5 @@
 // src/bookings/dto/create-booking.dto.ts
-import { IsString, IsNotEmpty, IsNumber, IsEmail, IsDateString, IsInt } from 'class-validator'; // Import IsInt, remove IsUUID
+import { IsString, IsNotEmpty, IsNumber, IsEmail, IsDateString, IsInt, IsOptional, IsObject } from 'class-validator'; // AÑADIDO: IsOptional, IsObject
 
 export class CreateBookingDto {
     @IsString()
@@ -30,7 +30,17 @@ export class CreateBookingDto {
     @IsNotEmpty()
     userEmail: string;
 
-    @IsInt() // <--- CHANGE HERE: Validate as integer
+    @IsInt()
     @IsNotEmpty()
-    userId: number; // <--- CHANGE HERE: TypeScript type is number
+    userId: number;
+
+    // --- AÑADIDO: Propiedades para la dirección y ubicación que usará el email ---
+    // Las marcamos como opcionales para que no sean obligatorias en todas las peticiones.
+    @IsString()
+    @IsOptional()
+    address?: string;
+
+    @IsObject()
+    @IsOptional()
+    location?: { lat: number; lng: number };
 }

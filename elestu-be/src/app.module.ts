@@ -2,6 +2,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+// --- AÑADIDO: Importamos MulterModule y sus dependencias ---
+import { MulterModule } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname, join } from 'path';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './users/user.module';
 import { StudioModule } from './studios/studio.module';
@@ -12,13 +16,26 @@ import { PaymentsModule } from './payments/payments.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
-import { join } from 'path';
+
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
+    }),
+
+    // --- AÑADIDO: Configuración de MulterModule para gestionar la subida de archivos ---
+    MulterModule.register({
+      storage: diskStorage({
+        destination: './uploads', // La carpeta donde se guardarán las imágenes
+        filename: (req, file, callback) => {
+          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+          const ext = extname(file.originalname);
+          const filename = `${file.fieldname}-${uniqueSuffix}${ext}`;
+          callback(null, filename);
+        },
+      }),
     }),
 
     TypeOrmModule.forRootAsync({
