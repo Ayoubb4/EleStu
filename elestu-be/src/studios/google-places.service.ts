@@ -31,7 +31,7 @@ export class GooglePlacesService {
                     query,
                     language: 'es',
                     key: this.apiKey,
-                    fields: 'place_id,name,formatted_address,geometry,photos' // <-- ESTA LÍNEA ES LA SOLUCIÓN
+                    fields: 'place_id,name,formatted_address,geometry,photos,rating,user_ratings_total' // <-- ESTA LÍNEA CONTIENE LAS ADICIONES
                 }
             });
 
@@ -63,8 +63,6 @@ export class GooglePlacesService {
                     keyword: 'estudio de grabación',
                     language: 'es',
                     key: this.apiKey,
-                    // No se usa 'fields' en Nearby Search, pero lo dejamos aquí comentado por si Google cambia su API en el futuro.
-                    // A diferencia de Text Search, Nearby Search devuelve la dirección (vicinity) por defecto.
                 },
             });
 
@@ -91,6 +89,9 @@ export class GooglePlacesService {
             photoUrl: place.photos && place.photos.length > 0
                 ? getPhotoUrl(place.photos[0].photo_reference, this.apiKey!)
                 : null,
+            // --- AÑADIDO: Pasamos los datos de valoración al frontend ---
+            rating: place.rating || 0,
+            user_ratings_total: place.user_ratings_total || 0,
         }));
     }
 }
