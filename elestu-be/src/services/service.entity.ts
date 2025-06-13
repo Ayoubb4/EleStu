@@ -17,15 +17,13 @@ export class Service {
     @Column()
     price: number;
 
-    @Column({ nullable: true })
-        // --- AÑADIDO: Comentamos la línea original que no permitía null ---
-        // image: string;
-        // --- AÑADIDO: Nueva línea que permite que la imagen sea de tipo string O null ---
+    // --- CORRECCIÓN DEFINITIVA ---
+    // Especificamos explícitamente el tipo de columna para la base de datos ('varchar' o 'text')
+    // y el tipo en TypeScript ('string | null') para que no haya ninguna confusión.
+    @Column({ type: 'text', nullable: true })
     image: string | null;
 
-
-    // --- AÑADIDO: La columna que faltaba para el tipo de servicio ---
-    @Column({ default: 'Otro' }) // Asignamos un valor por defecto para evitar problemas
+    @Column({ default: 'Otro' })
     serviceType: string;
 
     @ManyToOne(() => User, user => user.servicios)
