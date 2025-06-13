@@ -94,29 +94,31 @@ function AddEditService() {
             return;
         }
 
-        // --- LÍNEAS AÑADIDAS: Validación y conversión explícita antes de enviar ---
-        // 1. Convertimos los valores a número. Usamos parseFloat para admitir decimales en el precio.
         const numericPrice = parseFloat(price);
         const numericUserId = parseInt(userId, 10);
 
-        // 2. Añadimos una validación extra para detener el envío si la conversión falla (por si meten texto o algo raro)
         if (isNaN(numericPrice) || numericPrice < 0) {
             alert("Error: El precio introducido no es un número válido. Por favor, corrígelo.");
-            return; // Detenemos el envío
+            return;
         }
         if (isNaN(numericUserId)) {
             alert("Error: No se ha podido identificar al usuario. Por favor, inicia sesión de nuevo.");
-            return; // Detenemos el envío
+            return;
         }
-        // --- FIN DE LAS LÍNEAS AÑADIDAS ---
 
 
         const formData = new FormData();
         formData.append('title', title);
         formData.append('description', description);
-        // --- MODIFICACIÓN SUTIL: Usamos las variables numéricas que acabamos de validar ---
-        formData.append('price', numericPrice);
-        formData.append('userid', numericUserId);
+
+        // --- AÑADIDO: Comentamos las líneas originales ---
+        // formData.append('price', numericPrice);
+        // formData.append('userid', numericUserId);
+
+        // --- AÑADIDO: Nuevas líneas que envían los valores como texto, formato más seguro para FormData ---
+        formData.append('price', numericPrice.toString());
+        formData.append('userid', numericUserId.toString());
+
         formData.append('serviceType', serviceType);
 
         if (image) {
@@ -142,7 +144,6 @@ function AddEditService() {
                 navigate(`/my-services`);
             } else {
                 const error = await response.json();
-                // --- AÑADIDO: Unimos los mensajes de error si vienen en un array ---
                 const errorMessage = Array.isArray(error.message) ? error.message.join(', ') : error.message;
                 alert(errorMessage || 'Hubo un error al guardar el servicio');
             }
