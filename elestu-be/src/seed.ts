@@ -1,3 +1,4 @@
+// src/seed.ts
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ServicesService } from './services/services.service';
@@ -5,8 +6,8 @@ import { User } from './users/user.entity';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { CreateServiceDto } from './services/dto/create-service.dto';
+import axios from 'axios';
 
-// --- DATOS DE PRUEBA MEJORADOS CON PALABRAS CLAVE PARA IMÁGENES ---
 const serviceData = {
     Cantante: {
         titles: ['Cantante para Eventos y Bodas', 'Voz para Jingles Publicitarios', 'Corista de Estudio Profesional'],
@@ -15,7 +16,7 @@ const serviceData = {
             'Creación de melodías y grabación de jingles para marcas. Entrega rápida y profesional.',
             'Aporto armonías y coros para grabaciones de estudio. Experiencia en múltiples géneros musicales.',
         ],
-        keywords: 'singer,microphone,singing,vocalist', // Palabras clave para buscar imágenes de cantantes
+        keywords: 'singer,microphone,singing,vocalist',
     },
     Productor: {
         titles: ['Producción de Beats de Trap/Hip-Hop', 'Mezcla y Mastering Profesional', 'Producción Musical Completa'],
@@ -24,7 +25,7 @@ const serviceData = {
             'Servicio de mezcla y mastering para llevar tus canciones al siguiente nivel. Sonido potente y claro.',
             'Te ayudo a desarrollar tu canción desde la idea inicial hasta el producto final. Arreglos, producción y post-producción.',
         ],
-        keywords: 'music,producer,studio,mixing,console', // Palabras clave para productores
+        keywords: 'music,producer,studio,mixing,console',
     },
     DJ: {
         titles: ['DJ para Fiestas y Discotecas', 'Sesiones de Deep House & Techno', 'DJ de Bodas con Equipo Propio'],
@@ -33,7 +34,7 @@ const serviceData = {
             'Sesiones especializadas en Deep House, Tech House y Techno para clubs y festivales. Ambiente elegante y contundente.',
             'Servicio completo de DJ para bodas, incluyendo equipo de sonido e iluminación profesional. Planificación musical personalizada.',
         ],
-        keywords: 'dj,turntable,mixer,club,party', // Palabras clave para DJs
+        keywords: 'dj,turntable,mixer,club,party',
     },
     'Músico de Sesión': {
         titles: ['Guitarrista de Sesión (Eléctrica/Acústica)', 'Bajista para Grabaciones', 'Baterista de Estudio'],
@@ -42,7 +43,7 @@ const serviceData = {
             'Líneas de bajo sólidas y creativas para tus canciones. Equipo profesional para un sonido de alta calidad.',
             'Baterista con amplia experiencia en estudio. Grabo pistas de batería dinámicas y con pegada para tu proyecto.',
         ],
-        keywords: 'guitar,bass,drums,musician,instrument', // Palabras clave para músicos
+        keywords: 'guitar,bass,drums,musician,instrument',
     },
     Compositor: {
         titles: ['Composición de Letras y Melodías', 'Bandas Sonoras para Cortometrajes', 'Arreglos Musicales para Artistas'],
@@ -51,7 +52,7 @@ const serviceData = {
             'Composición de música original para proyectos audiovisuales. Aporto la emoción que tu historia necesita.',
             'Desarrollo arreglos de cuerdas, vientos o teclados para enriquecer tus composiciones.',
         ],
-        keywords: 'composer,sheet,music,piano,writing', // Palabras clave para compositores
+        keywords: 'composer,sheet,music,piano,writing',
     },
     Otro: {
         titles: ['Técnico de Sonido en Directo', 'Clases de Producción Musical', 'Diseño de Sonido para Videojuegos'],
@@ -60,11 +61,10 @@ const serviceData = {
             'Clases particulares de producción musical con Ableton Live o Logic Pro X. Para todos los niveles.',
             'Creación de efectos de sonido (SFX) y ambientes para videojuegos y aplicaciones interactivas.',
         ],
-        keywords: 'sound,audio,engineer,technology', // Palabras clave genéricas
+        keywords: 'sound,audio,engineer,technology',
     },
 };
 
-// --- FUNCIÓN PRINCIPAL DEL SCRIPT ---
 async function bootstrap() {
     const app = await NestFactory.createApplicationContext(AppModule);
     console.log('✅ Aplicación iniciada. Conectando a servicios...');
@@ -86,14 +86,31 @@ async function bootstrap() {
             const randomUser = existingUsers[Math.floor(Math.random() * existingUsers.length)];
             const randomIndex = Math.floor(Math.random() * serviceData[serviceType].titles.length);
 
+            // --- CORREGIDO: Declaramos explícitamente el tipo de la variable ---
+            let imageAsBase64: string | null = null;
+            try {
+                console.log(`   - Descargando imagen para "${serviceData[serviceType].titles[randomIndex]}"...`);
+                const imageUrl = `https://source.unsplash.com/400x300/?${serviceData[serviceType].keywords}`;
+                const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+
+                // --- CORREGIDO: Le decimos a TypeScript que response.data es un ArrayBuffer ---
+                const buffer = Buffer.from(response.data as ArrayBuffer);
+                const mimeType = response.headers['content-type'];
+                imageAsBase64 = `data:${mimeType};base64,${buffer.toString('base64')}`;
+                console.log(`   - Imagen convertida a Base64.`);
+
+            } catch (imageError) {
+                console.error(`   🔥 Error al descargar/convertir la imagen:`, imageError.message);
+                // Si hay un error, imageAsBase64 se quedará como null, lo cual es correcto.
+            }
+
             const serviceToCreate: CreateServiceDto = {
                 title: serviceData[serviceType].titles[randomIndex],
                 description: serviceData[serviceType].descriptions[randomIndex],
                 price: Math.floor(Math.random() * (500 - 50 + 1) + 50),
                 serviceType: serviceType,
                 userid: randomUser.id,
-                // --- URL DE IMAGEN MEJORADA ---
-                image: `https://source.unsplash.com/400x300/?${serviceData[serviceType].keywords}`,
+                image: imageAsBase64, // Ahora 'imageAsBase64' es de tipo string | null, compatible con el DTO
             };
 
             try {
