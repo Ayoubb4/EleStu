@@ -11,7 +11,12 @@ import { User } from '../users/user.entity';
 const mapServiceToDto = (service: Service): Service => {
   if (service.image) {
     // Construye la URL completa. Usa la variable APP_URL que añadiste a tu .env
-    const imageUrl = `${process.env.APP_URL}/api/uploads/${service.image}`;
+
+    // --- AÑADIDO: Comentamos la línea antigua que tenía el error en la ruta ---
+    // const imageUrl = `${process.env.APP_URL}/api/uploads/${service.image}`;
+
+    // --- AÑADIDO: Nueva línea con la URL corregida, sin '/api' ---
+    const imageUrl = `${process.env.APP_URL}/uploads/${service.image}`;
     return { ...service, image: imageUrl };
   }
   return service;
