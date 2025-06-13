@@ -84,7 +84,7 @@ function Services() {
             <Navbar />
             <div className="hero-section">
                 <div className="hero-overlay">
-                    <h2>¿Qué estás buscando?</h2>
+                    <h2>Qué estás buscando?</h2>
                     <p>
                         Encuentra y contrata a los mejores músicos, productores e ingenieros de sonido para llevar tu proyecto al siguiente nivel.
                     </p>
