@@ -107,23 +107,48 @@
             color: #3498db;
             text-decoration: none;
         }
+        /* --- AÑADIDO: Estilos para el nuevo botón y la sección de consejos --- */
+        .button.secondary {
+            background-color: #2ecc71; /* Green button for directions */
+            margin-left: 10px;
+        }
+        .pro-tip {
+            background-color: #e8f6fd;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin-top: 25px;
+            border-radius: 4px;
+        }
+        .pro-tip p {
+            margin: 0;
+            font-size: 15px;
+        }
+        .pro-tip strong {
+            color: #2980b9;
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
-        <img src="cid:EleStuLogo" alt="EleStu Logo" style="max-width: 150px; height: auto; display: block; margin: 0 auto 10px;">        <h1>¡Reserva Confirmada!</h1>
+        <img src="cid:EleStuLogo" alt="EleStu Logo" style="max-width: 150px; height: auto; display: block; margin: 0 auto 10px;">
+        <h1>¡Solicitud de Reserva Recibida!</h1>
     </div>
 
     <div class="content">
         <p>Hola,</p>
-        <p>Tu reserva en <strong>EleStu</strong> ha sido confirmada con éxito. ¡Estamos emocionados de tenerte!</p>
+        <p>Hemos recibido tu solicitud de reserva para <strong>EleStu</strong>. El estudio se pondrá en contacto contigo para confirmar todos los detalles.</p>
 
-        <h2>Detalles de tu Reserva:</h2>
+        <h2>Detalles de tu Solicitud:</h2>
         <table class="details-table">
             <tr>
                 <th>Estudio:</th>
                 <td>{{studioName}}</td>
+            </tr>
+            <!-- --- AÑADIDO: Fila para la dirección completa --- -->
+            <tr>
+                <th>Dirección:</th>
+                <td>{{address}}</td>
             </tr>
             <tr>
                 <th>Fecha:</th>
@@ -133,23 +158,41 @@
                 <th>Hora:</th>
                 <td>{{time}}</td>
             </tr>
+            <!-- --- AÑADIDO: Fila para el teléfono de contacto del estudio (si existe) --- -->
+            {{#if phone}}
+                <tr>
+                    <th>Teléfono del Estudio:</th>
+                    <td>{{phone}}</td>
+                </tr>
+            {{/if}}
+            <!-- --- AÑADIDO: Fila para la web del estudio (si existe) --- -->
+            {{#if website}}
+                <tr>
+                    <th>Página Web:</th>
+                    <td><a href="{{website}}" style="color: #3498db; text-decoration: none;">Visitar web</a></td>
+                </tr>
+            {{/if}}
             <tr>
                 <th>Descripción:</th>
                 <td>{{description}}</td>
             </tr>
-            <tr>
-                <th>Precio por Hora:</th>
-                <td>{{pricePerHour}} €/hora</td>
-            </tr>
+            <!-- --- MODIFICADO: Ya no se muestra el precio por hora --- -->
         </table>
 
-        <p>Recibirás un correo electrónico de seguimiento con más información o si se requiere algo adicional.</p>
+        <!-- --- AÑADIDO: Sección de "Consejo Pro" --- -->
+        <div class="pro-tip">
+            <p><strong>Consejo Pro:</strong> Llega 10-15 minutos antes para prepararte y aprovechar al máximo tu tiempo en el estudio.</p>
+        </div>
+
         <p>¡Esperamos verte pronto!</p>
     </div>
 
     <div class="button-container">
-        {{!-- You can link to a user dashboard or contact page here --}}
-        <a href="https://ele-stu.vercel.app/reservations" class="button">Ver mis reservas</a>
+        <a href="https://ele-stu.vercel.app/reservations" class="button">Ver mis solicitudes</a>
+        <!-- --- AÑADIDO: Botón "Cómo llegar" con el enlace dinámico de Google Maps --- -->
+        {{#if location.lat}}
+            <a href="https://www.google.com/maps/dir/?api=1&destination={{location.lat}},{{location.lng}}" class="button secondary">Cómo llegar</a>
+        {{/if}}
     </div>
 
     <div class="footer">

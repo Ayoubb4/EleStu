@@ -43,38 +43,36 @@ function StudioPreview() {
             <Navbar />
             <header className="preview-header">
                 <div className="preview-header-content">
-                    <h1 className="preview-title">{studio.name}</h1>
-                    {/* --- MODIFICADO: Usamos studio.address para la ubicación --- */}
+                    {/* --- CORREGIDO: Usamos studio.title en lugar de studio.name --- */}
+                    <h1 className="preview-title">{studio.title}</h1>
                     <p className="preview-provider">Ubicado en: {studio.address || 'Ubicación no especificada'}</p>
                 </div>
             </header>
 
             <main className="preview-main-content">
                 <div className="preview-image-container">
-                    <img src={studio.imageUrl || "https://placehold.co/800x500/1a202c/FFFFFF?text=Estudio"} alt={studio.name} className="preview-image" />
+                    {/* --- CORREGIDO: Usamos studio.image en lugar de studio.imageUrl --- */}
+                    <img src={studio.image || "https://placehold.co/800x500/1a202c/FFFFFF?text=Estudio"} alt={studio.title} className="preview-image" />
                 </div>
 
                 <div className="preview-details-container">
                     <div className="preview-info-card">
-                        <div className="info-card-item price">
-                            <span>Precio por Hora</span>
-                            <p>{studio.price}€</p>
-                        </div>
+                        {/* --- MODIFICADO: Eliminada la sección de precio por hora --- */}
+
                         <div className="info-card-item type">
                             <span>Tipo</span>
                             <p>ESTUDIO DE GRABACIÓN</p>
                         </div>
                         <button className="hire-button" onClick={handleHireClick}>
-                            RESERVAR AHORA
+                            CONTACTAR PARA RESERVAR
                         </button>
                     </div>
 
                     <div className="preview-description-card">
                         <h2>Ubicación y Detalles</h2>
-                        {/* --- MODIFICADO: Mostramos la dirección real aquí también --- */}
                         <p className="studio-full-address">{studio.address}</p>
 
-                        <h3>Equipamiento Principal:</h3>
+                        <h3>Equipamiento Principal (Ejemplo)</h3>
                         <ul>
                             <li>Consola de mezcla analógica/digital</li>
                             <li>Monitores de estudio de alta fidelidad</li>
@@ -83,6 +81,9 @@ function StudioPreview() {
                             <li>Software de producción (DAW) estándar</li>
                             <li>Disponibilidad de instrumentos base</li>
                         </ul>
+                        <p>
+                            Contacta con el estudio para confirmar la disponibilidad del equipamiento y concretar los detalles de tu sesión.
+                        </p>
                     </div>
                 </div>
             </main>

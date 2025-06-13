@@ -7,6 +7,88 @@
   src: url('./font/firmos-9mv27.woff2') format('woff');
   font-style: normal;
 }
+/* Tu fuente original (corregida) */
+@font-face {
+  font-family: 'Firmos';
+  src: url('./font/firmos-9mv27.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* --- Fuentes SF Pro Display --- */
+
+/* Regular */
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('./font/SFPRODISPLAYREGULAR.OTF') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Medium */
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('./font/SFPRODISPLAYMEDIUM.OTF') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+/* Bold */
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('./font/SFPRODISPLAYBOLD.OTF') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* Thin Italic */
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('./font/SFPRODISPLAYTHINITALIC.OTF') format('opentype');
+  font-weight: 100;
+  font-style: italic;
+}
+
+/* Ultralight Italic */
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('./font/SFPRODISPLAYULTRALIGHTITALIC.OTF') format('opentype');
+  font-weight: 200;
+  font-style: italic;
+}
+
+/* Light Italic */
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('./font/SFPRODISPLAYLIGHTITALIC.OTF') format('opentype');
+  font-weight: 300;
+  font-style: italic;
+}
+
+/* Semibold Italic */
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('./font/SFPRODISPLAYSEMIBOLDITALIC.OTF') format('opentype');
+  font-weight: 600;
+  font-style: italic;
+}
+
+/* Heavy Italic */
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('./font/SFPRODISPLAYHEAVYITALIC.OTF') format('opentype');
+  font-weight: 800;
+  font-style: italic;
+}
+
+/* Black Italic */
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('./font/SFPRODISPLAYBLACKITALIC.OTF') format('opentype');
+  font-weight: 900;
+  font-style: italic;
+}
+
 
 html, body {
   font-family: 'Firmos', sans-serif; /* Si solo usas Firmos, esta será tu fuente principal */
@@ -596,14 +678,7 @@ h1, h2, h3, h4, h5, h6 {
   transform: scale(1.1);
 }
 
-.card-image-dots {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 6px;
-}
+
 
 
 .card-user-info {
@@ -636,9 +711,8 @@ h1, h2, h3, h4, h5, h6 {
 /* --- MODIFICADO: Clase .card-user-level eliminada porque no se usa --- */
 
 .card-title {
-  font-family: "JetBrains Mono", monospace;
+  font-family: "SF Pro Display", sans-serif;
   font-size: 1.5rem;
-  font-weight: 600;
   color: #333;
   margin: 0;
   line-height: 1.4;
@@ -659,18 +733,18 @@ h1, h2, h3, h4, h5, h6 {
 
 .card-rating-star {
   color: #ffc107;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
 }
 
 .card-rating-value {
   /* --- MODIFICADO: Quitado el font-weight bold --- */
   font-weight: 500; /* Medium */
-  font-size: 0.95rem;
+  font-size: 1.5rem;
   color: #333;
 }
 
 .card-rating-reviews {
-  font-size: 0.9rem;
+  font-size: 1.5rem;
   color: #777;
 }
 
@@ -1053,14 +1127,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .preview-description-card p, .preview-description-card li {
-  font-family: 'Roboto', sans-serif;
+  font-family: 'SF Pro Display', sans-serif;
   font-size: 1rem;
   line-height: 1.7;
   color: #4a5568;
 }
 
 .preview-description-card h3 {
-  font-family: 'Roboto', sans-serif;
+  font-family: 'SF Pro Display', sans-serif;
   font-size: 1.1rem;
   margin-top: 1.5rem;
   margin-bottom: 0.5rem;
@@ -1936,21 +2010,13 @@ h1, h2, h3, h4, h5, h6 {
   color: #333; border-radius: 50%; display: flex; align-items: center;
   justify-content: center; font-size: 24px; cursor: pointer; transition: all 0.2s ease;
 }
-.card-heart-icon:hover { color: #ff4d4d; transform: scale(1.1); }
-.card-image-dots {
+.card-heart-icon:hover { color: #ff4d4d; transform: scale(1.1); }{
   position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
   display: flex; gap: 6px;
 }
-.card-image-dots .dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.6); transition: all 0.3s ease;
-}
-.card-image-dots .dot.active { background-color: #fff; transform: scale(1.2); }
-
 .card-title {
-  font-family: 'Roboto', sans-serif !important;
-  font-size: 1.2rem !important;
-  font-weight: 500;
+  font-family: 'Firmos', sans-serif !important;
+  font-size: 3rem !important;
   color: #0038E1 !important;
   text-transform: uppercase;
   overflow: hidden;
@@ -1964,16 +2030,16 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   gap: 4px;
 }
-.card-rating-star { color: #ffc107; font-size: 1.2rem; }
-.card-rating-value { font-weight: 500; font-size: 0.95rem; color: #333; }
-.card-rating-reviews { font-size: 0.9rem; color: #777; }
+.card-rating-star { color: #ffc107; font-size: 1.5rem; }
+.card-rating-value {; font-size: 1.5rem; color: #333; }
+.card-rating-reviews { font-size: 1.5rem; color: #777; }
 
 .card-address {
-  font-size: 0.95rem !important;
+  font-size: 2rem !important;
   color: #555 !important;
   display: flex;
   align-items: flex-start;
-  gap: 0.5rem;
+  gap: 1rem;
   line-height: 1.5;
   margin-top: auto;
   padding-top: 0.75rem;
@@ -2026,7 +2092,7 @@ h1, h2, h3, h4, h5, h6 {
   display: block;
   margin-bottom: 0.5rem;
   color: #495057;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'SF', sans-serif;
   font-size: 0.9rem;
   text-transform: uppercase;
 }
@@ -2039,7 +2105,7 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid #ced4da;
   border-radius: 8px;
   font-size: 1rem;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'SF Pro Display', sans-serif;
   box-sizing: border-box;
   transition: border-color 0.2s, box-shadow 0.2s;
   background-color: white;
