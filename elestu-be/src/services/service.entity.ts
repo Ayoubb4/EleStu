@@ -18,7 +18,11 @@ export class Service {
     price: number;
 
     @Column({ nullable: true })
-    image: string;
+        // --- AÑADIDO: Comentamos la línea original que no permitía null ---
+        // image: string;
+        // --- AÑADIDO: Nueva línea que permite que la imagen sea de tipo string O null ---
+    image: string | null;
+
 
     // --- AÑADIDO: La columna que faltaba para el tipo de servicio ---
     @Column({ default: 'Otro' }) // Asignamos un valor por defecto para evitar problemas
