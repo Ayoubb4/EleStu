@@ -28,12 +28,6 @@ El proyecto nace de la necesidad de unificar un mercado disperso, ofreciendo una
 * **Diseño Responsivo:** Interfaz adaptable a cualquier dispositivo (escritorio, tablet y móvil).
 * **Accesibilidad Web:** Integración del widget de **UserWay** para cumplir con las pautas WCAG y garantizar una experiencia inclusiva.
 
-## 📺 Vistas de la Aplicación
-
-*(Aquí puedes añadir capturas de pantalla de tu aplicación. Te recomiendo usar la imagen `WireFrame Definitivo.jpg` que me pasaste o capturas de la versión final).*
-
-![Wireframes de EleStu](https://i.imgur.com/link_a_tu_imagen.jpg)
-
 
 ## 🛠️ Stack Tecnológico
 
